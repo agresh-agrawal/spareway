@@ -1,0 +1,13 @@
+pay_id,pay_type,region,skill_category,zone,schedule,per_month_inr,per_day_inr,per_hour_inr
+P01,legal_minimum,Haryana,skilled,all,shops_and_establishments,18500.81,711.56,88.94
+P02,legal_minimum,Rajasthan,skilled,all,shops_and_establishments,8034,309,38.62
+P03,legal_minimum,Gujarat,skilled,zone_I,general,14209,546.5,68.31
+P04,legal_minimum,Gujarat,skilled,zone_II,general,13897,534.5,66.81
+P05,legal_minimum,Maharashtra,skilled,zone_I,varies_by_schedule,15766,606.38,75.8
+P06,legal_minimum,Maharashtra,skilled,zone_II,varies_by_schedule,15170,583.46,72.93
+P07,legal_minimum,Maharashtra,skilled,zone_III,varies_by_schedule,14574,560.54,70.07
+P08,legal_minimum,Madhya Pradesh,skilled,all,shops_and_establishments,15294,588,73.5
+P09,market_average,India,truck_driver,national,not_applicable,20385,784.04,98
+P10,market_average,Mumbai,truck_driver,city,not_applicable,23610,908.08,113.51
+P11,market_range_low,India,heavy_truck_and_lorry_driver,national,not_applicable,19500,750,93.75
+P12,market_range_high,India,heavy_truck_and_lorry_driver,national,not_applicable,41506,1596.38,199.55

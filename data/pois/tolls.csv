@@ -1,0 +1,56 @@
+seq,route_group,plaza_name,plaza_code,state,highway,section,latitude,longitude,car_jeep_van,lcv,truck_2axle,truck_3axle,truck_4to6axle,truck_7plus_axle,nearest_police_station,police_phone,nearest_hospital,route_patrol_phone,crane_phone
+1,main_NH48,Shahjahanpur,9001,Rajasthan,NH48,Gurgaon-Kotputli-Jaipur,27.99978,76.430522,205,330,685,750,1080,1310,Shahjahanpur,01494-235231,Getwell Hospital Neemrana,9887405447,9309366001
+2,main_NH48,Manoharpur,9002,Rajasthan,NH48,Gurgaon-Kotputli-Jaipur,27.3056399,75.9535128,95,150,315,345,495,605,Manoharpur,01422-241200,Shahpura Hospital and Research Centre Shahpura,9887405448,9309366001
+3,main_NH48,Daulatpura,9003,Rajasthan,NH48,Gurgaon-Kotputli-Jaipur,27.0868994,75.8345568,80,130,270,295,425,515,not_listed,not_listed,not_listed,9887405449,9309366001
+4,main_NH48,Thikariya,8001,Rajasthan,NH48,Jaipur-Kishangarh,26.843328,75.615578,100,160,335,370,530,645,Bagru,0141-2865422,SMS Hospital Jaipur,9773388538,9773388538
+5,main_NH48,Kishangarh (Badgaon),8002,Rajasthan,NH48,Jaipur-Kishangarh,26.595329,74.939169,60,95,195,215,305,375,Kishangarh,0145-2629166,Y.N. Hospital Kishangarh,9773388538,9773388538
+6,main_NH48,Khedi,330008,Rajasthan,NH48,Kishangarh-Gulabpura,26.1029659,74.6849376,155,245,515,565,810,985,Bhinai,01466-273427,Hospital Bandanwara,7240413613,7737215623
+7,main_NH48,Lambia Kalan,330007,Rajasthan,NH48,Gulabpura-Chittorgarh,25.5871683,74.593839,105,170,355,385,555,675,Raila,01487-273180,Hospital Gulabpura,7240413611,9982468737
+8,main_NH48,Jojro Ka Kheda,10002,Rajasthan,NH48,Gulabpura-Chittorgarh,25.082922,74.624379,110,175,365,400,575,700,Gangrar,01471-220227,Government Hospital Chittaurgarh,7240413612,8233221148
+9,main_NH48,Narayanpura,10004,Rajasthan,NH48,Chittorgarh-Udaipur,24.613529,74.233079,150,240,510,555,795,970,Mangalwad,01470-246007,Shreeji Hospital Dabok,9116666708,9116666705
+10,main_NH48,Dakan Kotra,536075,Rajasthan,NH48,Udaipur Bypass,24.500543,73.720874,80,135,280,305,435,530,not_listed,not_listed,not_listed,7737418892,9351473883
+11,main_NH48,Khandi Obari,10006,Rajasthan,NH48,Udaipur-Ratanpur-Shamlaji,23.9941418,73.6271827,190,305,635,695,995,1215,Kherwada,9929188473,Govt Hospital Kherwada,8955290941,8000192405
+12,main_NH48,Vantada,336007,Gujarat,NH48,Ratanpur-Himatnagar,23.61615,73.254472,35,60,120,135,190,235,Shamlaji,7433975962,Community Health Centre Shamlaji,6358076665,9660695941
+13,main_NH48,Kathpur,336019,Gujarat,NH48,Himatnagar-Chiloda,23.410181,72.828618,75,120,250,270,390,475,Prantij,6359626910,Primary Health Centre Prantij,8780261797,6200338164
+14,main_NH48,Radhvanaj (Kheda),2011,Gujarat,NH48,Ahmedabad-Vadodara,22.715971,72.740887,115,180,370,405,570,715,Matar,02694-222033,Civil Hospital Kheda,9274798163,8320682529
+15,main_NH48,Vasad,2012,Gujarat,NH48,Ahmedabad-Vadodara,22.453254,73.070539,160,255,520,565,790,1010,Vasad,02692-274245,Unity Hospital Vasad,9274598163,8476842088
+16,main_NH48,Bharthana,1002,Gujarat,NH48,Vadodara-Bharuch,22.015027,73.115049,155,255,530,580,835,1015,Karjan,02666-232060,Sumeru Hospital,9909048018,7069156147
+17,main_NH48,Mandva,336006,Gujarat,NH48,Narmada Bridge Bharuch-Ankleshwar,21.702698,73.059975,30,50,105,115,160,195,Ankleshwar City,02646-247352,Civil Hospital Bharuch,9662006336,8320537674
+18,main_NH48,Choryasi,2004,Gujarat,NH48,Bharuch-Surat,21.303367,72.95418,125,200,420,460,660,805,Kosamba,02629-231444,Jaya Ben Modi Hospital Ankleshwar,9714015434,9714015739
+19,main_NH48,Boriach,2001,Gujarat,NH48,Surat-Dahisar,20.885548,73.052162,120,195,405,445,640,775,Navsari,02637-267248,Kharel Hospital,9979500051,9694054184
+20,main_NH48,Bhagwada,2003,Gujarat,NH48,Surat-Dahisar,20.43495,72.917204,125,205,430,470,675,825,Pardi,02602-373433,Pardi Civil Hospital,7678384756,7819924092
+21,main_NH48,Charoti,2002,Maharashtra,NH48,Surat-Dahisar,19.890544,72.942644,95,155,325,355,510,620,Kasa,02528-264044,Kasa Civil Hospital,7378944897,9322814931
+22,main_NH48,Khaniwade,40001,Maharashtra,NH48,Surat-Dahisar,19.519667,72.916898,135,215,450,495,710,860,Manor,112,Manor Rural Hospital,8806702113,9172345924
+23,main_NH48,Dahisar (Mumbai entry),540014,Maharashtra,NH48,Mumbai Entry Point,19.2587,72.8718,0,90,180,225,225,225,not_listed,not_listed,not_listed,not_listed,not_listed
+24,alt_Kishangarh_Beawar_Udaipur,Gegal,6001,Rajasthan,NH58,Kishangarh-Ajmer-Beawar,26.5513492,74.7776251,75,120,245,385,385,470,Gegal (Kishangarh),0145-2791419,Government Hospital Madanganj Kishangarh,7568625555,8529710966
+25,alt_Kishangarh_Beawar_Udaipur,Pipalaz,6002,Rajasthan,NH58,Kishangarh-Ajmer-Beawar,26.158466,74.371725,70,115,240,375,375,460,Sadar Beawar,01462-255595,Jai Clinic and Hospital Beawar,7568626666,8127111124
+26,alt_Kishangarh_Beawar_Udaipur,Bagaliya,330116,Rajasthan,NH58,Beawar-Gomti,25.8843501,74.1608431,80,125,265,290,415,505,Jawaja,01462-266266,Govt Hospital Jawaja,9950083786,7611960371
+27,alt_Kishangarh_Beawar_Udaipur,Baggad,330117,Rajasthan,NH58,Beawar-Gomti,25.5903343,73.9028527,90,145,300,330,475,575,Devgarh,02904-252010,Hospital Deogarh,9166836572,9352722326
+28,alt_Kishangarh_Beawar_Udaipur,Mandawada (Gomati),235001,Rajasthan,NH58,Gomti Chauraha-Udaipur,25.20385,73.814701,55,85,180,195,285,345,Kelwa,02952-274800,Govt Hospital Kelwa,7300051504,7300051513
+29,alt_Kishangarh_Beawar_Udaipur,Negadiya,235002,Rajasthan,NH58,Gomti Chauraha-Udaipur,24.799787,73.760951,165,260,530,580,810,1040,Delwara,02953-289338,Delwara Govt Hospital,7300051514,7300051513
+30,nearby_Jaipur_ring_and_Sikar,Sitarampura,330109,Rajasthan,NH148,Jaipur Ring Road Tonk Road-Ajmer Road,26.7473,75.7686,65,105,220,240,340,415,Sadar Thana,9413380427,Bagra Hospital Sanganer,8233561033,9829441099
+31,nearby_Jaipur_ring_and_Sikar,Hingonia,330108,Rajasthan,NH148C,Jaipur Ring Road Agra Road-Tonk Road,26.8508333,75.9247222,60,100,205,225,325,395,Kanota,8963055555,Tilak Hospital Jaipur,8233561033,7632981226
+32,nearby_Jaipur_ring_and_Sikar,Tatiyawas,47001,Rajasthan,NH52,Jaipur-Reengus,27.089775,75.7415,80,130,275,430,430,520,Chomu,01423-220009,S.K. Soni Hospital Jaipur,9636414960,7056671091
+33,nearby_Jaipur_Kota_NH52,Barkheda (Chandlai),31001,Rajasthan,NH52,Jaipur-Deoli,26.68816,75.904726,130,205,420,650,650,810,Shivdaspura,01429-277222,Mamodiya Medicose Sitapura Jaipur,9116600184,9001799706
+34,nearby_Jaipur_Kota_NH52,Sonwa,31002,Rajasthan,NH52,Jaipur-Deoli,26.1098541,75.7435763,110,175,370,580,580,705,Mahendwas,01432-288668,Jyoti Kiran Hospital Deoli,7727010490,7727010494
+35,nearby_Jaipur_Kota_NH52,Kishorpura,330104,Rajasthan,NH52,Deoli-Kota,25.135915,75.7966206,170,275,575,625,900,1095,Hindoli,07436-276232,Hospital Hindoli,7976773939,7300372789
+36,nearby_Bhilwara_links,Rupakheda,243000,Rajasthan,NH758,Rajsamand-Bhilwara,25.1100285,73.9887022,80,125,265,290,415,510,not_listed,not_listed,not_listed,7340010853,8003396555
+37,nearby_Bhilwara_links,Khachrol (Hoda),330093,Rajasthan,NH758,Bhilwara-Ladpura,25.22635,75.0488993,75,120,250,275,395,480,Mandalgarh Bigod,01489-230028,Govt Hospital Mandalgarh,9460916852,6350465687
+38,nearby_Chittorgarh_Kota_NH27,Bassi,330095,Rajasthan,NH27,Chittorgarh-Kota,25.033192,74.816392,100,160,340,370,530,645,Bassi,112,Bassi Hospital,9257028061,7297855449
+39,nearby_Chittorgarh_Kota_NH27,Dhaneshwar,330097,Rajasthan,NH27,Chittorgarh-Kota,25.07255,75.598475,85,135,280,310,440,540,Dabi,0747-2437880,Dabi Hospital,9257028063,9828774507
+40,alt_Udaipur_Palanpur_NH27,Gogunda (Jaswantgarh),330103,Rajasthan,NH27,Udaipur-Pindwara,24.766166,73.523999,90,145,305,335,480,585,Gogunda,02956-282027,Govt Hospital Gogunda,7297070464,9799797061
+41,alt_Udaipur_Palanpur_NH27,Malera,330102,Rajasthan,NH27,Udaipur-Pindwara,24.712368,73.093755,125,200,415,455,650,795,Pindwara,02971-282100,Mahavir Hospital Pindwara,7742425507,9784230775
+42,alt_Udaipur_Palanpur_NH27,Undvariya,330077,Rajasthan,NH27,Abu Road-Palanpur,24.633564,72.907054,50,80,170,185,270,330,Swaroopganj,02971-226222,Swaroopganj Civil General Hospital,9924588864,9887533418
+43,alt_Udaipur_Palanpur_NH27,Khemana,336005,Gujarat,NH27,Abu Road-Palanpur,24.241335,72.462709,80,130,270,295,420,510,Palanpur Taluka,02742-268300,Palanpur Civil General Hospital,9924588863,9898472710
+44,nearby_Ahmedabad_Indore_NH47,Pithai,336016,Gujarat,NH47,Ahmedabad-Godhra,22.9128,72.957428,130,210,435,670,670,840,Kathlal,02691-243433,Shrey Hospital,9723516718,9978943437
+45,nearby_Ahmedabad_Indore_NH47,Vavadikhurd,336017,Gujarat,NH47,Ahmedabad-Godhra,22.792571,73.533274,150,230,465,710,710,915,Godhra Taluka,02672-243146,Godhra Civil Hospital,6345005881,9924829010
+46,nearby_Ahmedabad_Indore_NH47,Bhatwada,63001,Gujarat,NH47,Godhra-Gujarat/MP Border,22.792886,73.842871,190,300,615,950,950,1190,Devgadh Baria,02678-221300,Piplod Hospital,8141344222,7434859974
+47,nearby_Surat_Dhule_NH53,Bhatia,217001,Gujarat,NH53,Gujarat/Maharashtra Border-Surat Hazira Port,21.090354,72.922502,145,225,465,720,720,905,Sachin,0261-2392258,Samarpan Hospital,7069016474,9336492711
+48,nearby_Surat_Dhule_NH53,Mandal (Vyara),217002,Gujarat,NH53,Gujarat/Maharashtra Border-Surat Hazira Port,21.134892,73.478457,185,285,585,895,895,1145,Songadh,02624-222033,Referral Hospital Songadh,7486017730,9674309819
+49,nearby_Mumbai_Nashik_Dhule,Arjunali,142001,Maharashtra,NH160,Vadape-Gonde,19.361481,73.165874,75,125,260,285,410,500,Padgha,02522-268100,Primary Health Centre Padgha,7350515292,7350515292
+50,nearby_Mumbai_Nashik_Dhule,Ghoti,142002,Maharashtra,NH160,Vadape-Gonde,19.708905,73.614819,70,115,245,265,380,465,not_listed,not_listed,not_listed,7741909645,7741909645
+51,nearby_Mumbai_Nashik_Dhule,Baswant (Pimpalgaon),340019,Maharashtra,NH160,Pimpalgaon-Nashik-Gonde,20.141701,73.976492,235,380,795,865,1245,1515,Pimpalgaon,02550-250033,Dhanwantari Hospital,9623701246,9076534147
+52,nearby_Mumbai_Nashik_Dhule,Laling (Dhule),140002,Maharashtra,NH60,Pimpalgaon-Dhule,20.833039,74.754271,170,295,590,950,950,950,Mohadi,02562-288221,Govt Civil Hospital Dhule,8329298049,8329298049
+53,nearby_Mumbai_Nashik_Dhule,Songir,139002,Maharashtra,NH52,MP/Maharashtra Border-Dhule,21.050768,74.784939,90,140,285,435,435,550,Songir,not_listed,Dhule Civil Hospital,8956904091,8956123616
+54,nearby_Rewari_Rohtak_NH352,Gangaycha Jatt,103001,Haryana,NH352,Rohtak-Bawal,28.275006,76.613363,100,155,320,495,495,630,Sadar Rewari,01274-222621,Civil Hospital Rewari,8607441626,8295864990
+55,nearby_Rewari_Rohtak_NH352,Dighal,103002,Haryana,NH352,Rohtak-Bawal,28.776746,76.621688,60,95,200,220,315,385,Jhajjar,01251-252010,Civil Hospital Rohtak,7988205603,8059248001

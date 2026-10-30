@@ -1,0 +1,60 @@
+checkpoint_id,seq,name,checkpoint_type,route_group,state,highway,location,linked_toll_plaza_code,operated_by,status,status_as_of,trucks_stop
+C01,1,Commercial tax check post,commercial_tax,main_NH48,Haryana/Rajasthan,NH48,Haryana-Rajasthan border near Shahjahanpur,9001,State tax departments,abolished,2017-07-01,no
+C02,2,Shahjahanpur barrier-free tolling,anpr_mlff_toll,main_NH48,Rajasthan,NH48,Shahjahanpur toll plaza,9001,NHAI,active,2026-08-01,no
+C03,3,Manoharpur barrier-free tolling,anpr_mlff_toll,main_NH48,Rajasthan,NH48,Manoharpur toll plaza,9002,NHAI,active,2026-10-01,no
+C04,4,Daulatpura barrier-free tolling,anpr_mlff_toll,main_NH48,Rajasthan,NH48,Daulatpura toll plaza,9003,NHAI,active,2026-10-01,no
+C05,5,Thikariya weigh bridge,weigh_bridge,main_NH48,Rajasthan,NH48,Thikariya toll plaza,8001,NHAI concessionaire,pending_nhai_approval,2026-10-29,no
+C06,6,Khedi weigh bridge (2 units),weigh_bridge,main_NH48,Rajasthan,NH48,Khedi toll plaza,330008,NHAI concessionaire,operational,2026-10-29,yes
+C07,7,Lambia Kalan weigh bridge,weigh_bridge,main_NH48,Rajasthan,NH48,km 80.800 Gulabpura-Chittorgarh,330007,NHAI concessionaire,operational,2026-10-29,yes
+C08,8,Jojro Ka Kheda weigh bridge,weigh_bridge,main_NH48,Rajasthan,NH48,km 163.650 Gulabpura-Chittorgarh,10002,NHAI concessionaire,operational,2026-10-29,yes
+C09,9,Narayanpura weigh bridge (2 units),weigh_bridge,main_NH48,Rajasthan,NH48,Narayanpura toll plaza,10004,NHAI concessionaire,operational,2026-10-29,yes
+C10,10,Khandi Obari weigh bridge (2 units),weigh_bridge,main_NH48,Rajasthan,NH48,Khandi Obari toll plaza,10006,NHAI concessionaire,operational,2026-10-29,yes
+C11,11,Commercial tax check post,commercial_tax,main_NH48,Gujarat,NH48,Rajasthan-Gujarat border Ratanpur-Shamlaji,336007,Gujarat tax department,abolished,2017-07-01,no
+C12,12,Gujarat RTO border check post,rto_border,main_NH48,Gujarat,NH48,Rajasthan-Gujarat border Ratanpur-Shamlaji,336007,Gujarat transport department,abolished_statewide,2019-11-20,no
+C13,13,Gujarat Police interstate check post,police_interstate,main_NH48,Gujarat,NH48,Rajasthan-Gujarat border districts,336007,Gujarat Police,active_reported,2023-10-21,random_checks
+C14,14,Radhvanaj weigh bridge (2 units),weigh_bridge,main_NH48,Gujarat,NH48,Radhvanaj (Kheda) toll plaza,2011,NHAI concessionaire,operational,2026-10-29,yes
+C15,15,Vasad weigh bridge (2 units),weigh_bridge,main_NH48,Gujarat,NH48,Vasad toll plaza,2012,NHAI concessionaire,operational,2026-10-29,yes
+C16,16,Choryasi weigh bridge,weigh_bridge,main_NH48,Gujarat,NH48,Choryasi toll plaza,2004,NHAI concessionaire,under_construction,2026-10-29,no
+C17,17,Choryasi barrier-free tolling,anpr_mlff_toll,main_NH48,Gujarat,NH48,Choryasi toll plaza,2004,NHAI,active,2026-10-01,no
+C18,18,Commercial tax check post,commercial_tax,main_NH48,Gujarat/Maharashtra,NH48,Gujarat-Maharashtra border,2002,State tax departments,abolished,2017-07-01,no
+C19,19,Gujarat RTO border check post,rto_border,main_NH48,Gujarat,NH48,Gujarat-Maharashtra border,2002,Gujarat transport department,abolished_statewide,2019-11-20,no
+C20,20,Achhad border check post,rto_border,main_NH48,Maharashtra,NH48,Achhad Talasari Palghar (Gujarat border),2002,Maharashtra transport department,closure_ordered_still_operating,2025-12-01,yes
+C21,21,Gegal weigh bridge (2 units),weigh_bridge,alt_Kishangarh_Beawar_Udaipur,Rajasthan,NH58,Gegal toll plaza,6001,NHAI concessionaire,operational,2026-10-29,yes
+C22,22,Pipalaz weigh bridge (2 units),weigh_bridge,alt_Kishangarh_Beawar_Udaipur,Rajasthan,NH58,Pipalaz toll plaza,6002,NHAI concessionaire,operational,2026-10-29,yes
+C23,23,Bagaliya weigh bridges,weigh_bridge,alt_Kishangarh_Beawar_Udaipur,Rajasthan,NH58,km 84 and km 134 Beawar-Gomti,330116,NHAI concessionaire,operational,2026-10-29,yes
+C24,24,Baggad weigh bridge,weigh_bridge,alt_Kishangarh_Beawar_Udaipur,Rajasthan,NH58,Baggad toll plaza,330117,NHAI concessionaire,operational,2026-10-29,yes
+C25,25,Mandawada weigh bridge (2 units),weigh_bridge,alt_Kishangarh_Beawar_Udaipur,Rajasthan,NH58,Mandawada (Gomati) toll plaza,235001,NHAI concessionaire,operational,2026-10-29,yes
+C26,26,Negadiya weigh bridge (2 units),weigh_bridge,alt_Kishangarh_Beawar_Udaipur,Rajasthan,NH58,Negadiya toll plaza,235002,NHAI concessionaire,operational,2026-10-29,yes
+C27,27,Tatiyawas weigh bridge,weigh_bridge,nearby_Jaipur_ring_and_Sikar,Rajasthan,NH52,Tatiyawas toll plaza,47001,NHAI concessionaire,operational,2026-10-29,yes
+C28,28,Barkheda weigh bridge (2 units),weigh_bridge,nearby_Jaipur_Kota_NH52,Rajasthan,NH52,Barkheda toll plaza,31001,NHAI concessionaire,operational,2026-10-29,yes
+C29,29,Sonwa weigh bridge (2 units),weigh_bridge,nearby_Jaipur_Kota_NH52,Rajasthan,NH52,Sonwa toll plaza,31002,NHAI concessionaire,operational,2026-10-29,yes
+C30,30,Kishorpura weigh bridge,weigh_bridge,nearby_Jaipur_Kota_NH52,Rajasthan,NH52,Kishorpura toll plaza,330104,NHAI concessionaire,operational,2026-10-29,yes
+C31,31,Khachrol weigh bridge,weigh_bridge,nearby_Bhilwara_links,Rajasthan,NH758,Khachrol toll plaza,330093,NHAI concessionaire,operational,2026-10-29,yes
+C32,32,Bassi weigh bridge,weigh_bridge,nearby_Chittorgarh_Kota_NH27,Rajasthan,NH27,km 929.629 Chittorgarh-Kota,330095,NHAI concessionaire,operational,2026-10-29,yes
+C33,33,Dhaneshwar weigh bridge,weigh_bridge,nearby_Chittorgarh_Kota_NH27,Rajasthan,NH27,km 1032.979 Chittorgarh-Kota,330097,NHAI concessionaire,operational,2026-10-29,yes
+C34,34,Gogunda weigh bridge (2 units),weigh_bridge,alt_Udaipur_Palanpur_NH27,Rajasthan,NH27,Gogunda toll plaza,330103,NHAI concessionaire,operational,2026-10-29,yes
+C35,35,Malera weigh bridge (2 units),weigh_bridge,alt_Udaipur_Palanpur_NH27,Rajasthan,NH27,Malera toll plaza,330102,NHAI concessionaire,operational,2026-10-29,yes
+C36,36,Khemana weigh bridge,weigh_bridge,alt_Udaipur_Palanpur_NH27,Gujarat,NH27,Khemana toll plaza,336005,NHAI concessionaire,under_construction,2026-10-29,no
+C37,37,Gujarat RTO border check post,rto_border,alt_Udaipur_Palanpur_NH27,Gujarat,NH27,Rajasthan-Gujarat border Abu Road-Palanpur,336005,Gujarat transport department,abolished_statewide,2019-11-20,no
+C38,38,Gujarat Police interstate check post,police_interstate,alt_Udaipur_Palanpur_NH27,Gujarat,NH27,Rajasthan-Gujarat border districts,336005,Gujarat Police,active_reported,2023-10-21,random_checks
+C39,39,Pithai weigh bridge (2 units),weigh_bridge,nearby_Ahmedabad_Indore_NH47,Gujarat,NH47,Pithai toll plaza,336016,NHAI concessionaire,operational,2026-10-29,yes
+C40,40,Vavadikhurd weigh bridge (2 units),weigh_bridge,nearby_Ahmedabad_Indore_NH47,Gujarat,NH47,Vavadikhurd toll plaza,336017,NHAI concessionaire,operational,2026-10-29,yes
+C41,41,Bhatwada weigh bridge,weigh_bridge,nearby_Ahmedabad_Indore_NH47,Gujarat,NH47,Bhatwada toll plaza,63001,NHAI concessionaire,operational,2026-10-29,yes
+C42,42,Gujarat RTO border check post,rto_border,nearby_Ahmedabad_Indore_NH47,Gujarat,NH47,Gujarat-Madhya Pradesh border,63001,Gujarat transport department,abolished_statewide,2019-11-20,no
+C43,43,Madhya Pradesh RTO border check post,rto_border,nearby_Ahmedabad_Indore_NH47,Madhya Pradesh,NH47,Gujarat-Madhya Pradesh border,63001,MP transport department,abolished_reopening_order_stayed,2026-05-11,no
+C44,44,Gujarat Police interstate check post,police_interstate,nearby_Ahmedabad_Indore_NH47,Gujarat,NH47,Gujarat-Madhya Pradesh border districts,63001,Gujarat Police,active_reported,2023-10-21,random_checks
+C45,45,Bhatia weigh bridge,weigh_bridge,nearby_Surat_Dhule_NH53,Gujarat,NH53,km 41.640 NH53,217001,NHAI concessionaire,operational,2026-10-29,yes
+C46,46,Gujarat RTO border check post,rto_border,nearby_Surat_Dhule_NH53,Gujarat,NH53,Gujarat-Maharashtra border,217002,Gujarat transport department,abolished_statewide,2019-11-20,no
+C47,47,Navapur border check post,rto_border,nearby_Surat_Dhule_NH53,Maharashtra,NH53,Navapur Nandurbar (Gujarat border),217002,Maharashtra transport department,closure_ordered_still_operating,2025-12-01,yes
+C48,48,Arjunali weigh bridge,weigh_bridge,nearby_Mumbai_Nashik_Dhule,Maharashtra,NH160,Arjunali toll plaza,142001,NHAI concessionaire,under_construction,2026-10-29,no
+C49,49,Ghoti weigh bridge,weigh_bridge,nearby_Mumbai_Nashik_Dhule,Maharashtra,NH160,Ghoti toll plaza,142002,NHAI concessionaire,under_construction,2026-10-29,no
+C50,50,Baswant weigh bridges,weigh_bridge,nearby_Mumbai_Nashik_Dhule,Maharashtra,NH160,km 390-450 both sides,340019,NHAI concessionaire,operational,2026-10-29,yes
+C51,51,Laling weigh bridge,weigh_bridge,nearby_Mumbai_Nashik_Dhule,Maharashtra,NH60,Laling toll plaza,140002,NHAI concessionaire,operational,2026-10-29,yes
+C52,52,Haddakhed border check post,rto_border,nearby_Mumbai_Nashik_Dhule,Maharashtra,NH52,Palasner Shirpur Dhule (Madhya Pradesh border),139002,Maharashtra transport department,closure_ordered_still_operating,2025-12-01,yes
+C53,53,Madhya Pradesh RTO border check post,rto_border,nearby_Mumbai_Nashik_Dhule,Madhya Pradesh,NH52,Maharashtra-Madhya Pradesh border,139002,MP transport department,abolished_reopening_order_stayed,2026-05-11,no
+C54,54,Borgaon border check post,rto_border,nearby_Mumbai_Nashik_Dhule,Maharashtra,state_road,Surgana Nashik (Gujarat border),none,Maharashtra transport department,closure_ordered_still_operating,2025-12-01,yes
+C55,55,Akkalkuva border check post,rto_border,nearby_Surat_Dhule_NH53,Maharashtra,SH4,Akkalkuva Nandurbar (Gujarat border),none,Maharashtra transport department,closure_ordered_still_operating,2025-12-01,yes
+C56,56,Gangaycha Jatt weigh bridge,weigh_bridge,nearby_Rewari_Rohtak_NH352,Haryana,NH352,Gangaycha Jatt toll plaza,103001,NHAI concessionaire,operational,2026-10-29,yes
+C57,57,Dighal weigh bridge,weigh_bridge,nearby_Rewari_Rohtak_NH352,Haryana,NH352,Dighal toll plaza,103002,NHAI concessionaire,operational,2026-10-29,yes
+C58,58,Ahmedabad expressway weigh bridge,weigh_bridge,alt_Ahmedabad_Vadodara_NE1,Gujarat,NE1,Ahmedabad toll plaza NE1,2005,NHAI concessionaire,operational,2026-10-29,yes
+C59,59,Nadiad expressway weigh bridge,weigh_bridge,alt_Ahmedabad_Vadodara_NE1,Gujarat,NE1,Nadiad toll plaza NE1,2007,NHAI concessionaire,operational,2026-10-29,yes

@@ -1,0 +1,20 @@
+rule_id,category,rule,value,unit,applies_to,legal_source
+R01,working_hours,Maximum working hours per day,8,hours,adult motor transport worker,Motor Transport Workers Act 1961 s13
+R02,working_hours,Maximum working hours per week,48,hours,adult motor transport worker,Motor Transport Workers Act 1961 s13
+R03,working_hours,Extended maximum per day for long-distance routes with authority approval,10,hours,adult motor transport worker,Motor Transport Workers Act 1961 s13
+R04,working_hours,Extended maximum per week for long-distance routes with authority approval,54,hours,adult motor transport worker,Motor Transport Workers Act 1961 s13
+R05,rest,Maximum continuous work before a rest break,5,hours,adult motor transport worker,Motor Transport Workers Act 1961 s15
+R06,rest,Minimum rest break after 5 hours of work,30,minutes,adult motor transport worker,Motor Transport Workers Act 1961 s15
+R07,rest,Minimum consecutive rest between two duty days,9,hours,adult motor transport worker,Motor Transport Workers Act 1961 s15
+R08,working_hours,Maximum spread-over of a duty day including breaks,12,hours,adult motor transport worker,Motor Transport Workers Act 1961 s16
+R09,working_hours,Maximum spells of duty per day,2,count,adult motor transport worker,Motor Transport Workers Act 1961 s17
+R10,rest,Maximum consecutive working days without a full day off,10,days,adult motor transport worker,Motor Transport Workers Act 1961 s19
+R11,pay,Overtime and rest-day work pay multiplier,2,times_ordinary_wage,adult motor transport worker,Motor Transport Workers Act 1961 s26
+R12,speed,Maximum speed on access-controlled expressway,80,km_per_hour,goods vehicles (N category),MoRTH S.O. 1522(E)
+R13,speed,Maximum speed on 4-lane or wider divided highway,80,km_per_hour,goods vehicles (N category),MoRTH S.O. 1522(E)
+R14,speed,Maximum speed on municipal or urban roads,60,km_per_hour,goods vehicles (N category),MoRTH S.O. 1522(E)
+R15,speed,Maximum speed on other roads,60,km_per_hour,goods vehicles (N category),MoRTH S.O. 1522(E)
+R16,speed,No speeding action if within this margin of the limit,5,percent,all vehicles,MoRTH S.O. 1522(E)
+R17,toll,Toll multiplier when paying by UPI without valid FASTag,1.25,times_fastag_rate,all vehicles at NHAI plazas,NHAI fee rules as reported by TollGuru
+R18,toll,Time to pay after a barrier-free toll e-notice,72,hours,all vehicles at MLFF plazas,MoRTH via All India Radio News
+R19,toll,Toll multiplier if e-notice unpaid after 72 hours,2,times_normal_rate,all vehicles at MLFF plazas,MoRTH via All India Radio News

@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+# Both agents append rows here; keep both sides on merge
+docs/DECISIONS.md merge=union

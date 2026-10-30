@@ -1,0 +1,43 @@
+price_id,seq,city_or_district,state,route_group,nearby_toll_plazas,diesel_inr_per_litre
+D01,1,Gurugram,Haryana,main_NH48,Manesar start point,95.64
+D02,2,Rewari,Haryana,main_NH48,Dharuhera stretch,95.26
+D03,3,Alwar,Rajasthan,main_NH48,Shahjahanpur,98.12
+D04,4,Jaipur,Rajasthan,main_NH48,Manoharpur; Daulatpura; Thikariya,98.25
+D05,5,Ajmer,Rajasthan,main_NH48,Kishangarh; Khedi,97.46
+D06,6,Bhilwara,Rajasthan,main_NH48,Lambia Kalan,98.38
+D07,7,Chittaurgarh,Rajasthan,main_NH48,Jojro Ka Kheda; Narayanpura,97.45
+D08,8,Udaipur,Rajasthan,main_NH48,Dakan Kotra; Khandi Obari,98.41
+D09,9,Dungarpur,Rajasthan,main_NH48,Ratanpur border stretch,99.3
+D10,10,Aravalli (Modasa),Gujarat,main_NH48,Vantada,99.09
+D11,11,Sabarkantha (Himmatnagar),Gujarat,main_NH48,Kathpur,98.63
+D12,12,Gandhinagar,Gujarat,main_NH48,Chiloda stretch,98.15
+D13,13,Ahmedabad,Gujarat,main_NH48,Ahmedabad bypass,98.27
+D14,14,Kheda (Nadiad),Gujarat,main_NH48,Radhvanaj,97.91
+D15,15,Anand,Gujarat,main_NH48,Vasad,97.89
+D16,16,Vadodara,Gujarat,main_NH48,Bharthana,97.57
+D17,17,Bharuch,Gujarat,main_NH48,Mandva,98.73
+D18,18,Surat,Gujarat,main_NH48,Choryasi,97.95
+D19,19,Navsari,Gujarat,main_NH48,Boriach,98.55
+D20,20,Valsad,Gujarat,main_NH48,Bhagwada,98.6
+D21,21,Palghar,Maharashtra,main_NH48,Charoti; Khaniwade,98.66
+D22,22,Thane,Maharashtra,main_NH48,Ghodbunder approach,98.02
+D23,23,Mumbai,Maharashtra,main_NH48,Dahisar end point,97.83
+D24,24,Jhajjar,Haryana,nearby_Rewari_Rohtak_NH352,Dighal,95.65
+D25,25,Rohtak,Haryana,nearby_Rewari_Rohtak_NH352,Dighal,95.75
+D26,26,Tonk,Rajasthan,nearby_Jaipur_Kota_NH52,Sonwa,98.59
+D27,27,Bundi,Rajasthan,nearby_Jaipur_Kota_NH52,Kishorpura,97.56
+D28,28,Kota,Rajasthan,nearby_Chittorgarh_Kota_NH27,Dhaneshwar,97.36
+D29,29,Rajsamand,Rajasthan,alt_Kishangarh_Beawar_Udaipur,Mandawada; Negadiya; Rupakheda,98.24
+D30,30,Pali,Rajasthan,alt_Kishangarh_Beawar_Udaipur,Bagaliya stretch,98.71
+D31,31,Sirohi,Rajasthan,alt_Udaipur_Palanpur_NH27,Malera; Undvariya,99.12
+D32,32,Banaskantha (Palanpur),Gujarat,alt_Udaipur_Palanpur_NH27,Khemana,97.94
+D33,33,Panchmahal (Godhra),Gujarat,nearby_Ahmedabad_Indore_NH47,Vavadikhurd,98.09
+D34,34,Dahod,Gujarat,nearby_Ahmedabad_Indore_NH47,Bhatwada stretch,98.61
+D35,35,Jhabua,Madhya Pradesh,nearby_Ahmedabad_Indore_NH47,MP border stretch,100.62
+D36,36,Dhar,Madhya Pradesh,nearby_Ahmedabad_Indore_NH47,Indore approach,100.47
+D37,37,Indore,Madhya Pradesh,nearby_Ahmedabad_Indore_NH47,Indore city,99.7
+D38,38,Tapi,Gujarat,nearby_Surat_Dhule_NH53,Mandal,98.47
+D39,39,Nandurbar,Maharashtra,nearby_Surat_Dhule_NH53,Navapur stretch,99.13
+D40,40,Nashik,Maharashtra,nearby_Mumbai_Nashik_Dhule,Ghoti; Baswant,99.05
+D41,41,Dhule,Maharashtra,nearby_Mumbai_Nashik_Dhule,Laling; Songir,98.84
+D42,42,Barwani,Madhya Pradesh,nearby_Mumbai_Nashik_Dhule,Sendhwa stretch,101.08

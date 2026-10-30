@@ -1,0 +1,21 @@
+halt_id,seq,name,halt_type,town,state,segment
+H01,1,Old Rao Hotel,dhaba,Sidhrawali,Haryana,Manesar-Jaipur
+H02,2,Mannat Dhaba,dhaba,Dharuhera,Haryana,Manesar-Jaipur
+H03,3,Haveli Restaurant,restaurant,Neemrana,Rajasthan,Manesar-Jaipur
+H04,4,Moti Mahal Dhaba,dhaba,Neemrana,Rajasthan,Manesar-Jaipur
+H05,5,Hotel Highway King,restaurant,Behror,Rajasthan,Manesar-Jaipur
+H06,6,Hotel Highway Xpress,restaurant,Behror,Rajasthan,Manesar-Jaipur
+H07,7,Hotel Highway Prince,restaurant,Kotputli,Rajasthan,Manesar-Jaipur
+H08,8,Just Desi,restaurant,Kotputli,Rajasthan,Manesar-Jaipur
+H09,9,Shri Neelkanth Punjabi Dhaba,dhaba,Kanwarpura,Rajasthan,Manesar-Jaipur
+H10,10,Aapni Ghumar,restaurant,Kishangarh,Rajasthan,Jaipur-Kishangarh
+H11,11,Hotel Lazeez & Restaurant,restaurant,Kishangarh,Rajasthan,Jaipur-Kishangarh
+H12,12,Shri Ram Bhakta Bhojnalaya & Juice Centre,restaurant,Bhilwara,Rajasthan,Kishangarh-Udaipur
+H13,13,Shreenath Kathiyawadi,dhaba,Udaipur,Rajasthan,Udaipur-Ahmedabad
+H14,14,Charan Kamal Dhaba,dhaba,Udaipur,Rajasthan,Udaipur-Ahmedabad
+H15,15,Honest Restaurant,restaurant,Shamlaji,Gujarat,Udaipur-Ahmedabad
+H16,16,Shamlaji Temple Halt,rest_stop,Shamlaji,Gujarat,Udaipur-Ahmedabad
+H17,17,Honest Restaurant,restaurant,Prantij,Gujarat,Udaipur-Ahmedabad
+H18,18,NHAI Rest Area km 246.650,rest_area,Bharuch-Surat section,Gujarat,Ahmedabad-Surat
+H19,19,Parsi Da Dhaba,dhaba,Talasari,Maharashtra,Surat-Mumbai
+H20,20,Vithal Kamat,restaurant,Manor,Maharashtra,Surat-Mumbai

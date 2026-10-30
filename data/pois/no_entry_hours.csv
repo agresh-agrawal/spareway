@@ -1,0 +1,16 @@
+rule_id,city,state,area,vehicle_class,direction,no_entry_start,no_entry_end,rule_type,valid_until,exemptions,rule_as_of,issued_by
+N01,Gurugram,Haryana,NH48 Pachgaon Chowk to IMT Manesar Chowk,heavy_vehicles,Jaipur_to_Delhi,09:00,21:00,temporary,until_manesar_flyover_complete,emergency services; police; government essential services,2026-05-16,Gurugram Traffic Police
+N02,Udaipur,Rajasthan,11 city entry routes incl Balicha and Bhuvana,goods_vehicles_above_10000kg_GVW,city_entry,07:00,22:00,temporary,2026-11-27,only with District Magistrate permission,2026-10-28,Udaipur District Collector
+N03,Ahmedabad,Gujarat,Ahmedabad city,goods_vehicles_above_7500kg_GVW,city_entry,08:00,23:00,standing,not_stated,not_stated,2026-10-09,Ahmedabad Police Commissionerate
+N04,Ahmedabad,Gujarat,Ahmedabad city,buses_above_33_seats,city_entry,08:00,22:00,standing,not_stated,not_stated,2026-10-09,Ahmedabad Police Commissionerate
+N05,Vadodara,Gujarat,Vadodara city,heavy_vehicles,city_entry,07:00,13:00,standing,not_stated,not_stated,2020-08-27,Vadodara Police Commissioner
+N06,Vadodara,Gujarat,Vadodara city,heavy_vehicles,city_entry,16:00,21:00,standing,not_stated,not_stated,2020-08-27,Vadodara Police Commissioner
+N07,Surat,Gujarat,Surat city,heavy_vehicles,city_entry,08:00,13:00,standing,not_stated,not_stated,2025-08-07,Surat City Police
+N08,Surat,Gujarat,Surat city,heavy_vehicles,city_entry,17:00,22:00,standing,not_stated,not_stated,2025-08-07,Surat City Police
+N09,Mira-Bhayandar Vasai-Virar,Maharashtra,NH48 and Ghodbunder Road in MBVV limits,trucks_10_wheels_or_more,Gujarat_to_Thane_Bhiwandi_Kalyan,06:00,10:00,standing,not_stated,perishables; ambulance; fire; oxygen; essential services,2025-10-03,MBVV Traffic Police
+N10,Mira-Bhayandar Vasai-Virar,Maharashtra,NH48 and Ghodbunder Road in MBVV limits,trucks_10_wheels_or_more,Gujarat_to_Thane_Bhiwandi_Kalyan,17:00,21:00,standing,not_stated,perishables; ambulance; fire; oxygen; essential services,2025-10-03,MBVV Traffic Police
+N11,Mumbai,Maharashtra,Mumbai city incl Dahisar entry,heavy_vehicles,city_entry,08:00,11:00,standing,not_stated,vegetables; milk; bread; drinking water; fuel; ambulance; school buses; government vehicles,2026-02-01,Mumbai Traffic Police
+N12,Mumbai,Maharashtra,Mumbai city incl Dahisar entry,heavy_vehicles,city_entry,17:00,21:00,standing,not_stated,vegetables; milk; bread; drinking water; fuel; ambulance; school buses; government vehicles,2026-02-01,Mumbai Traffic Police
+N13,Mumbai,Maharashtra,South Mumbai,heavy_vehicles,city_entry,07:00,00:00,standing,not_stated,essential goods only,2026-02-01,Mumbai Traffic Police
+N14,Indore,Madhya Pradesh,Indore city,heavy_vehicles,city_entry,09:00,12:00,standing,not_stated,fuel tankers; health; municipal; milk; fruit and vegetables; PDS goods,2025-09-23,Indore Traffic Police
+N15,Indore,Madhya Pradesh,Indore city,heavy_vehicles,city_entry,19:00,21:00,standing,not_stated,fuel tankers; health; municipal; milk; fruit and vegetables; PDS goods,2025-09-23,Indore Traffic Police
