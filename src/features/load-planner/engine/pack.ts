@@ -139,12 +139,15 @@ class Packer {
       if (!oy) continue
       const oz = overlap1(z, h, b.z, b.h) > e
       if (oz) {
+        // a box only blocks another while both are on the truck (loaded before the other leaves)
         if (b.x >= x + l - e) {
           // b is between the new box and the doors
-          if (b.unloadOrder > it.unloadOrder || b.loadOrder < load) return { ok: false, fail: 'order' }
+          if (b.unloadOrder > it.unloadOrder && b.loadOrder < it.unloadOrder) return { ok: false, fail: 'order' }
+          if (b.loadOrder < load && b.unloadOrder > load) return { ok: false, fail: 'order' }
         } else if (x >= b.x + b.l - e) {
           // the new box is between b and the doors
-          if (it.unloadOrder > b.unloadOrder || load < b.loadOrder) return { ok: false, fail: 'order' }
+          if (it.unloadOrder > b.unloadOrder && load < b.unloadOrder) return { ok: false, fail: 'order' }
+          if (load < b.loadOrder && it.unloadOrder > b.loadOrder) return { ok: false, fail: 'order' }
         }
       }
       if (overlap1(x, l, b.x, b.l) > e) {

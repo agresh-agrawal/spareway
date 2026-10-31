@@ -60,12 +60,15 @@ export function validatePlan(
       const oz = ov(a.z, a.h, b.z, b.h) > e
       const ox = ov(a.x, a.l, b.x, b.l) > e
       if (j > i && ox && oy && oz) errors.push(`${a.key} overlaps ${b.key}`)
-      // b between a and the doors while a leaves earlier → blocked
-      if (oy && oz && b.x >= a.x + a.l - e && b.unloadOrder > a.unloadOrder) errors.push(`${b.key} blocks ${a.key} at unloading`)
+      // b between a and the doors while a leaves earlier (and b is already on board then) → blocked
+      if (oy && oz && b.x >= a.x + a.l - e && b.unloadOrder > a.unloadOrder && loadB < a.unloadOrder)
+        errors.push(`${b.key} blocks ${a.key} at unloading`)
       // b sits on a while a leaves earlier
       if (ox && oy && Math.abs(a.z + a.h - b.z) <= e && b.unloadOrder > a.unloadOrder) errors.push(`${b.key} sits on ${a.key}, which leaves earlier`)
       // b loaded earlier and in a's way at loading
-      if (oy && oz && b.x >= a.x + a.l - e && loadB < loadA && !(a.fixed && b.fixed)) errors.push(`${b.key} blocks ${a.key} at loading`)
+      // (only while b is still on board when a is loaded)
+      if (oy && oz && b.x >= a.x + a.l - e && loadB < loadA && b.unloadOrder > loadA && !(a.fixed && b.fixed))
+        errors.push(`${b.key} blocks ${a.key} at loading`)
     }
 
     // support
