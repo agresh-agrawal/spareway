@@ -99,5 +99,65 @@
     "text": "{{profit}} extra on {{code}} · {{count}} loads on the way",
     "see": "See loads",
     "none": "No profitable loads on your next trip"
+  },
+  "decision": {
+    "ACCEPT": "Accept",
+    "REJECT": "Reject",
+    "NOT_PROFITABLE": "Not profitable",
+    "NEEDS_REVIEW": "Needs review"
+  },
+  "checks": {
+    "payload": "Payload",
+    "space": "Space",
+    "order": "Delivery order",
+    "PASS": "Pass",
+    "FAIL": "Fail",
+    "REVIEW": "Check"
+  },
+  "money": {
+    "offer": "Offer",
+    "extraKm": "Extra km",
+    "operating": "Fuel and running",
+    "tolls": "Tolls",
+    "tollsUnknown": "not known yet",
+    "handling": "Handling",
+    "waiting": "Waiting",
+    "total": "Total extra cost",
+    "earnings": "Expected extra earnings",
+    "more": "More details",
+    "less": "Fewer details"
+  },
+  "safety": "Fit is by box size only — check loading safety and axle load.",
+  "review": {
+    "MISSING_TRUCK": "The truck's inside size, payload or cost per km is missing — fill it in on the truck page.",
+    "MISSING_ROUTE": "The trip needs at least two stops.",
+    "MISSING_LOAD": "Every batch needs a size, weight and quantity.",
+    "MISSING_OFFER": "Enter the offered freight.",
+    "SPACE_UNKNOWN": "Needs manual verification — the fit could not be worked out."
+  },
+  "rejectReason": {
+    "TOO_LARGE": "Bigger than the inside of the truck"
+  },
+  "typed": {
+    "title": "Enter a load",
+    "help": "Check a load someone offered you on the phone",
+    "open": "Enter a load",
+    "yours": "Loads you checked",
+    "clear": "Remove",
+    "sheetTitle": "Check a load",
+    "batch": "Batch {{n}}",
+    "addBatch": "Add another batch",
+    "removeBatch": "Remove batch",
+    "name": "Cargo name",
+    "orientation": "Can it be turned?",
+    "anyWay": "Any way",
+    "upright": "Keep upright",
+    "nonStack": "Don't stack",
+    "nonStackHelp": "Nothing goes on top of it",
+    "handlingOpt": "Handling ₹ (optional)",
+    "waitingOpt": "Waiting ₹ (optional)",
+    "optHelp": "Empty = worked out from Settings",
+    "check": "Check this load",
+    "checking": "Checking…"
   }
 }

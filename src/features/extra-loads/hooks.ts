@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/queryKeys'
 import { useRealtime } from '@/lib/realtime'
@@ -22,6 +22,7 @@ import {
   type StepData,
 } from './api'
 import { corridorKm, evaluateCandidates, listingPackItems, type Candidate, type SpaceCheck } from './lib/candidates'
+import { evaluateLoad, loadPackItems, type Evaluation, type LoadInput, type TripContext } from './lib/evaluate'
 import { setTripHasExtra } from './lib/stepState'
 
 const placementsOf = (json: unknown) => (Array.isArray(json) ? (json as Placement[]) : [])
@@ -54,7 +55,8 @@ function basePlan(d: StepData, options: PackOptions): BasePlan {
 /** OK only if nothing new is left out — neither the load nor cargo that fitted before. */
 export function spaceVerdict(unplaced: PackResult['unplaced'], alreadyMissing = 0): SpaceCheck {
   if (unplaced.length <= alreadyMissing) return 'OK'
-  return unplaced.some((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
+  // only a pure stop-order problem is ORDER_CONFLICT; any box that simply has no room → NO_SPACE
+  return unplaced.every((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
 }
 
 /** Same rule as "Add to trip": pack everything again before loading starts, else fit around the loaded boxes. */
@@ -132,6 +134,45 @@ export function useExtraLoads(tripId: string) {
     })
   }, [d, booked, first, space.data])
 
+  // the same trip context for loads the owner types in
+  const ctx: TripContext | null = useMemo(() => {
+    if (!d) return null
+    const { line, approximate } = tripLine(d)
+    return {
+      line,
+      approximate,
+      stops: d.stops,
+      truck: {
+        lengthCm: Number(d.truck.internal_length_cm),
+        widthCm: Number(d.truck.internal_width_cm),
+        heightCm: Number(d.truck.internal_height_cm),
+        payloadKg: Number(d.truck.payload_kg),
+        costPerKmInr: Number(d.truck.cost_per_km_inr),
+      },
+      existingKg: booked,
+      settings: d.settings,
+    }
+  }, [d, booked])
+
+  /** "Enter a load": payload, order, size first; then the space check in the worker (same rule as Add to trip). */
+  const evaluateTyped = useCallback(
+    async (load: LoadInput): Promise<Evaluation> => {
+      if (!ctx || !base) throw new Error('Trip not loaded yet')
+      const pre = evaluateLoad(load, ctx, 'OK')
+      if (pre.decision === 'REJECT') return evaluateLoad(load, ctx, pre.reason === 'TOO_LARGE' ? 'OK' : undefined)
+      if (pre.decision === 'NEEDS_REVIEW') return evaluateLoad(load, ctx, undefined)
+      let verdict: SpaceCheck | undefined
+      try {
+        const r = await fitWithLoad(packer, base, loadPackItems(load, pre), options)
+        verdict = spaceVerdict(r.unplaced, baseMissing)
+      } catch {
+        verdict = undefined // placement could not be established → NEEDS REVIEW
+      }
+      return evaluateLoad(load, ctx, verdict)
+    },
+    [ctx, base, packer, options, baseMissing],
+  )
+
   const recommended = candidates.filter((c) => c.recommended)
   const status: 'loading' | 'error' | 'checking' | 'ready' = data.error
     ? 'error'
@@ -154,6 +195,7 @@ export function useExtraLoads(tripId: string) {
     remainingPayloadKg: d ? Number(d.truck.payload_kg) - booked : 0,
     corridorKm: d ? corridorKm(d.settings.corridor_km) : 0,
     approximate: d ? tripLine(d).approximate : false,
+    evaluateTyped,
     retry: () => void data.refetch(),
   }
 }

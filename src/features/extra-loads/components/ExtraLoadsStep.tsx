@@ -2,8 +2,8 @@
 // lime "Add to trip" (the best one), collapsed "Not suitable (n)" with plain reasons.
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { ChevronDown, Coins, Info, MoveHorizontal, PackageSearch, Scale, XCircle } from 'lucide-react'
-import { EmptyState, ErrorState, Skeleton } from '@/components/common'
+import { ChevronDown, ClipboardPen, Coins, Info, MoveHorizontal, PackageSearch, Scale, XCircle } from 'lucide-react'
+import { EmptyState, ErrorState, PlainButton, Skeleton } from '@/components/common'
 import { formatFt, formatInr, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
@@ -14,6 +14,8 @@ import { reasonText } from '../lib/text'
 import { LoadCard } from './LoadCard'
 import { RouteStrip } from './RouteStrip'
 import { PreviewSheet } from './PreviewSheet'
+import { ChecksRow, DecisionChip, SafetyNote, evaluationReason } from './DecisionBlock'
+import { TypedLoadSheet, TypedResultCard, type CheckedLoad } from './TypedLoad'
 
 /** Compact tile (3 per row also at 375 px in Hindi): icon, number, one-line label. */
 function Tile({ icon: Icon, value, label, ok }: { icon: typeof Coins; value: string; label: string; ok?: boolean }) {
@@ -33,6 +35,8 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
   const [selected, setSelected] = useState<string | undefined>()
   const [preview, setPreview] = useState<Candidate | null>(null)
   const [showRest, setShowRest] = useState(false)
+  const [typing, setTyping] = useState(false)
+  const [checked, setChecked] = useState<CheckedLoad[]>([])
   const cards = useRef(new Map<string, HTMLElement>())
 
   if (x.status === 'error') return <ErrorState error={x.error} onRetry={x.retry} />
@@ -90,6 +94,26 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
 
       <RouteStrip line={line} stops={d.stops} loads={x.recommended} selectedId={selected} onSelect={select} />
 
+      <section className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+        <div>
+          <h2 className="text-section-title font-semibold">{t('typed.title')}</h2>
+          <p className="text-ink-2">{t('typed.help')}</p>
+        </div>
+        <PlainButton icon={ClipboardPen} onClick={() => setTyping(true)} className="shrink-0">
+          {t('typed.open')}
+        </PlainButton>
+      </section>
+      {checked.length > 0 && (
+        <section aria-label={t('typed.yours')} className="flex flex-col gap-3">
+          <h2 className="text-section-title font-semibold">{t('typed.yours')}</h2>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {checked.map((c) => (
+              <TypedResultCard key={c.load.id} c={c} onRemove={() => setChecked((list) => list.filter((x) => x !== c))} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {x.recommended.length === 0 ? (
         <EmptyState icon={PackageSearch} text={t('empty')} />
       ) : (
@@ -112,6 +136,8 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
         </div>
       )}
 
+      {x.recommended.length > 0 && <SafetyNote />}
+
       {x.notSuitable.length > 0 && (
         <section className="rounded-card border border-line bg-surface">
           <button
@@ -128,13 +154,17 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
             <ul className="flex flex-col gap-2 border-t border-line p-4">
               {x.notSuitable.map((c) => (
                 <li key={c.listingId} className="rounded-tile border border-line bg-surface-2 p-3">
-                  <div className="font-semibold">
+                  <div className="flex flex-wrap items-center gap-2 font-semibold">
+                    <DecisionChip decision={c.decision} />
                     {td(c.listing.goods_type)} · {c.code}
                   </div>
                   <div className="text-label text-ink-2">
                     {t('card.fromTo', { from: td(c.listing.pickup_name), to: td(c.listing.drop_name) })}
                   </div>
-                  <div className="mt-1 text-warn">{reasonText(c, t, x.remainingPayloadKg)}</div>
+                  <div className="mt-1 text-warn">{evaluationReason(c.evaluation, t) || reasonText(c, t, x.remainingPayloadKg)}</div>
+                  <div className="mt-2">
+                    <ChecksRow ev={c.evaluation} />
+                  </div>
                 </li>
               ))}
             </ul>
@@ -142,6 +172,7 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
         </section>
       )}
 
+      <TypedLoadSheet open={typing} onOpenChange={setTyping} evaluate={x.evaluateTyped} onChecked={(c) => setChecked((list) => [c, ...list])} />
       <PreviewSheet candidate={preview} base={x.base} options={x.options} onClose={() => setPreview(null)} />
     </div>
   )

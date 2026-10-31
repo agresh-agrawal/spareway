@@ -12,11 +12,18 @@ import type { Placement } from '@/types/domain'
 import { fetchListings, postListing, removeListing } from '../api'
 import { addToTrip, bestTripFor, useExtraLoads } from '../hooks'
 import { evaluateCandidates, type Candidate } from '../lib/candidates'
+import type { LoadInput } from '../lib/evaluate'
 import { postLoadSchema } from '../schemas'
 import { ExtraLoadsStep } from '../components/ExtraLoadsStep'
 import { NH48_LINE } from '../__fixtures__/nh48'
 
 vi.mock('@/lib/realtime', () => ({ useRealtime: () => {} }))
+// jsdom has no ResizeObserver (used by the Switch in the "Enter a load" sheet)
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as unknown as typeof ResizeObserver
 
 const DEMO = '00000000-0000-4000-8000-000000000031'
 const auth = fakeAuth({ status: 'ready' })
@@ -100,6 +107,58 @@ describe('useExtraLoads (fixture mode)', () => {
     const { result } = renderHook(() => useExtraLoads(DEMO), { wrapper: wrapper() })
     await waitFor(() => expect(result.current.status).not.toBe('loading'), { timeout: 8000 })
     expect(result.current.approximate).toBe(true)
+  })
+})
+
+describe('Enter a load (owner addition, fixture mode)', () => {
+  const typed = (over: Partial<LoadInput> = {}): LoadInput => ({
+    id: 'typed-1',
+    label: 'Spice sacks',
+    batches: [{ label: 'Spice sacks', quantity: 40, lengthCm: 60, widthCm: 40, heightCm: 30, weightKg: 25 }],
+    pickup: { name: 'Vadodara', lat: 22.3072, lng: 73.1812 },
+    drop: { name: 'Mumbai (Bhiwandi)', lat: 19.2813, lng: 73.0483 },
+    offerInr: 15000,
+    ...over,
+  })
+
+  it('same engine + packer as listings: ACCEPT, payload REJECT, order REJECT, space REJECT', async () => {
+    chooseNh48()
+    const { result } = renderHook(() => useExtraLoads(DEMO), { wrapper: wrapper() })
+    await waitFor(() => expect(result.current.status).toBe('ready'), { timeout: 8000 })
+    const ok = await result.current.evaluateTyped(typed())
+    expect(ok).toMatchObject({ decision: 'ACCEPT', units: 40, kg: 1000, checks: { payload: 'PASS', space: 'PASS', order: 'PASS' } })
+    expect(ok.earningsInr).toBe(15000 - ok.costs.totalInr)
+    const heavy = await result.current.evaluateTyped(typed({ batches: [{ label: 'Coils', quantity: 4, lengthCm: 150, widthCm: 150, heightCm: 120, weightKg: 4000 }] }))
+    expect(heavy).toMatchObject({ decision: 'REJECT', reason: 'OVER_PAYLOAD', checks: { payload: 'FAIL', space: 'REVIEW' } })
+    const back = await result.current.evaluateTyped(typed({ pickup: typed().drop, drop: typed().pickup }))
+    expect(back).toMatchObject({ decision: 'REJECT', reason: 'WRONG_DIRECTION' })
+    const huge = await result.current.evaluateTyped(typed({ batches: [{ label: 'Boxes', quantity: 30, lengthCm: 200, widthCm: 200, heightCm: 200, weightKg: 100 }] }))
+    expect(huge).toMatchObject({ decision: 'REJECT', checks: { space: 'FAIL' } })
+  })
+
+  it('form → result card with the decision, checks and earnings', async () => {
+    chooseNh48()
+    renderAt(<ExtraLoadsStep tripId={DEMO} />, { path: '/', at: '/', auth })
+    await waitFor(() => expect(screen.queryByText('Checking space in the truck…')).not.toBeInTheDocument(), { timeout: 8000 })
+    fireEvent.click(await screen.findByRole('button', { name: 'Enter a load' }))
+    const dialog = await screen.findByRole('dialog')
+    const q = within(dialog)
+    fireEvent.change(q.getByLabelText('Cargo name'), { target: { value: 'Spice sacks' } })
+    fireEvent.change(q.getByLabelText('How many pieces'), { target: { value: '40' } })
+    fireEvent.change(q.getByLabelText('Weight of one piece'), { target: { value: '25' } })
+    fireEvent.change(q.getByLabelText('Length (cm)'), { target: { value: '60' } })
+    fireEvent.change(q.getByLabelText('Width (cm)'), { target: { value: '40' } })
+    fireEvent.change(q.getByLabelText('Height (cm)'), { target: { value: '30' } })
+    fireEvent.change(q.getByLabelText('Pickup'), { target: { value: 'vadodara' } })
+    fireEvent.change(q.getByLabelText('Drop'), { target: { value: 'mumbai-bhiwandi' } })
+    fireEvent.change(q.getByLabelText('Offer for all of it'), { target: { value: '15000' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Check this load' }))
+    const card = await screen.findByRole('article', { name: 'Spice sacks' }, { timeout: 8000 })
+    expect(within(card).getByText('Accept')).toBeInTheDocument()
+    expect(within(card).getByText('Payload')).toBeInTheDocument()
+    expect(within(card).getByText('Delivery order')).toBeInTheDocument()
+    expect(within(card).getByText('Total extra cost')).toBeInTheDocument()
+    expect(within(card).getByText(/Fit is by box size only/)).toBeInTheDocument()
   })
 })
 

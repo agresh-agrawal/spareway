@@ -6,6 +6,7 @@ import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
 import type { Candidate } from '../lib/candidates'
 import { takeText } from '../lib/text'
+import { ChecksRow, DecisionChip, MoneyDetails } from './DecisionBlock'
 
 /** Goods + from → to, size / weight, offer · cost, Profit big green, one plain reason, See in truck, Add to trip. */
 export const LoadCard = forwardRef<HTMLElement, {
@@ -27,7 +28,10 @@ export const LoadCard = forwardRef<HTMLElement, {
       className={cn('flex min-w-0 flex-col gap-3 rounded-card border bg-surface p-4 sm:p-5', selected ? 'border-accent/60' : 'border-line')}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-section-title font-semibold">{td(l.goods_type)}</h3>
+        <span className="flex flex-wrap items-center gap-2">
+          <DecisionChip decision={c.decision} />
+          <h3 className="text-section-title font-semibold">{td(l.goods_type)}</h3>
+        </span>
         <span className="flex gap-1.5">
           {l.is_sample && <Badge kind="demo" />}
           {l.visibility === 'public' && <Badge kind="public" />}
@@ -49,9 +53,11 @@ export const LoadCard = forwardRef<HTMLElement, {
           {t('card.offer')} {formatInr(l.offered_rate_inr)} · {t('card.cost')} {formatInr(c.cost.totalInr)}
         </div>
       </div>
+      <ChecksRow ev={c.evaluation} />
       <p className="flex flex-wrap items-center gap-2">
         {takeText(c, t)} <Badge kind="estimated" />
       </p>
+      <MoneyDetails ev={c.evaluation} offerInr={Number(l.offered_rate_inr)} />
       {l.deliver_by && <p className="text-label text-ink-2">{t('card.deliverBy', { date: formatDate(l.deliver_by, lang) })}</p>}
       <div className="mt-auto flex flex-wrap gap-2 pt-1">
         <PlainButton icon={Eye} onClick={onSee} className="flex-1">

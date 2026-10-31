@@ -16,6 +16,6 @@ export function checkSpace(
   // nothing may drop out — neither the new load nor cargo that was already planned
   const alreadyMissing = baseItems.length - base.length
   const check: SpaceCheck =
-    result.unplaced.length <= alreadyMissing ? 'OK' : result.unplaced.some((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
+    result.unplaced.length <= alreadyMissing ? 'OK' : result.unplaced.every((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
   return { check, result }
 }
