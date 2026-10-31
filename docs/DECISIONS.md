@@ -76,3 +76,4 @@
 | 2026-10-31 | 3·Code | Sizes outside 5–400 cm are a warning, outside 1–2,000 cm an error; values never changed by the app | Spec "never silently change values"; same hard limits as the cargo form |
 | 2026-10-31 | 3·Code | Drop stop preselected only when the trip has one drop stop; else "Drop all at" + per row | Spec: drop stop required — no silent default |
 | 2026-10-31 | 3·Code | Owner insert keeps the first photo path as `image_path` on every line of the scan | One scan = one set of photos; `ai_scans.input_paths` keeps all of them |
+| 2026-10-31 | 3·Code | A size the AI could not tell comes back as 0 + `SIZE_MISSING`; the voice flow asks for it like a missing spoken size | Never guess sizes (spec F17/F18) |
