@@ -57,7 +57,6 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     driver_name: string,
     driver_phone: string,
     [last_lat, last_lng]: [number, number],
-    fuel_level_pct: number,
   ): Tables<'trucks'> => ({
     id: id('t', n),
     company_id: c,
@@ -80,19 +79,18 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     driver_phone,
     last_lat,
     last_lng,
-    fuel_level_pct,
     is_sample: true,
     created_at: created,
     updated_at: created,
   })
 
   const trucks = [
-    truck(1, 'MP09 HG 4821', 'Tata Signa 3118.T · 32 ft MXL container', 'container', [975, 243, 243], 15000, 31000, 3, 3.6, 34, 'active', 'Indore', 'Ramesh Yadav', '+91 98270 00001', [28.354, 76.9366], 72),
-    truck(2, 'RJ14 GC 7735', 'Ashok Leyland 2820 · 24 ft closed body', 'closed', [732, 244, 244], 10000, 28000, 3, 4.2, 28, 'idle', 'Jaipur', 'Suresh Meena', '+91 98290 00002', [26.7787, 75.8306], 88),
-    truck(3, 'GJ01 KT 2208', 'Eicher Pro 3015 · 19 ft closed body', 'closed', [579, 214, 214], 9000, 16000, 2, 5.5, 22, 'active', 'Ahmedabad', 'Vikram Patel', '+91 98250 00003', [22.3072, 73.1812], 54),
-    truck(4, 'MH04 LQ 9913', 'BharatBenz 1617R · 22 ft container', 'container', [670, 244, 244], 9000, 16200, 2, 5.0, 25, 'maintenance', 'Mumbai', 'Anil Pawar', '+91 98200 00004', [19.2813, 73.0483], 40),
-    truck(5, 'MP09 KR 1147', 'Tata 1412 LPT · 17 ft closed body', 'closed', [518, 213, 213], 7000, 14000, 2, 6.0, 20, 'offline', 'Indore', 'Mahesh Chouhan', '+91 98260 00005', [22.7196, 75.8577], 12),
-    truck(6, 'RJ14 TB 3360', 'Tata Ultra 1918.T · 20 ft closed body', 'closed', [610, 229, 229], 9000, 18500, 2, 5.2, 24, 'active', 'Jaipur', 'Imran Khan', '+91 98290 00006', [23.5986, 72.9665], 61),
+    truck(1, 'MP09 HG 4821', 'Tata Signa 3118.T · 32 ft MXL container', 'container', [975, 243, 243], 15000, 31000, 3, 3.6, 34, 'active', 'Indore', 'Ramesh Yadav', '+91 98270 00001', [28.354, 76.9366]),
+    truck(2, 'RJ14 GC 7735', 'Ashok Leyland 2820 · 24 ft closed body', 'closed', [732, 244, 244], 10000, 28000, 3, 4.2, 28, 'idle', 'Jaipur', 'Suresh Meena', '+91 98290 00002', [26.7787, 75.8306]),
+    truck(3, 'GJ01 KT 2208', 'Eicher Pro 3015 · 19 ft closed body', 'closed', [579, 214, 214], 9000, 16000, 2, 5.5, 22, 'active', 'Ahmedabad', 'Vikram Patel', '+91 98250 00003', [22.3072, 73.1812]),
+    truck(4, 'MH04 LQ 9913', 'BharatBenz 1617R · 22 ft container', 'container', [670, 244, 244], 9000, 16200, 2, 5.0, 25, 'maintenance', 'Mumbai', 'Anil Pawar', '+91 98200 00004', [19.2813, 73.0483]),
+    truck(5, 'MP09 KR 1147', 'Tata 1412 LPT · 17 ft closed body', 'closed', [518, 213, 213], 7000, 14000, 2, 6.0, 20, 'offline', 'Indore', 'Mahesh Chouhan', '+91 98260 00005', [22.7196, 75.8577]),
+    truck(6, 'RJ14 TB 3360', 'Tata Ultra 1918.T · 20 ft closed body', 'closed', [610, 229, 229], 9000, 18500, 2, 5.2, 24, 'active', 'Jaipur', 'Imran Khan', '+91 98290 00006', [23.5986, 72.9665]),
   ]
   const truckId = (reg: string) => trucks.find((x) => x.reg_no === reg)!.id
 
@@ -330,35 +328,7 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     listing(1052, 'LD-1052', 'Jaipur Blue Pottery', 'Pottery', 'Low offer: likely negative net benefit', P.sitapura, P.udaipur, [50, 40, 40], 15, 6, true, true, false, 300, 3),
   ]
 
-  const alert = (
-    n: number,
-    reg: string,
-    kind: string,
-    severity: string,
-    title: string,
-    message: string,
-    agoMin: number,
-  ): Tables<'alerts'> => ({
-    id: id('e', n),
-    company_id: c,
-    truck_id: truckId(reg),
-    trip_id: null,
-    kind,
-    severity,
-    title,
-    message,
-    meta: {},
-    resolved: false,
-    resolved_at: null,
-    is_sample: true,
-    created_at: iso(t - agoMin * MIN),
-  })
-  const alerts = [
-    alert(1, 'RJ14 TB 3360', 'route_deviation', 'warning', 'Route deviation', 'RJ14 TB 3360 left the planned route on NH48 near Himmatnagar. Driver rerouted via SH.', 25),
-    alert(2, 'MP09 KR 1147', 'engine_warning', 'critical', 'Engine warning', 'MP09 KR 1147 reported a diagnostic warning. Inspection required before next trip.', 50),
-    alert(3, 'MP09 KR 1147', 'low_fuel', 'critical', 'Critical fuel level', 'MP09 KR 1147 fuel at 12%. Vehicle offline — refuel before dispatch.', 70),
-    alert(4, 'MP09 HG 4821', 'city_entry', 'info', 'Mumbai no-entry window', 'TRP-2026-0031 may reach Mumbai inside the 17:00–21:00 no-entry window. Check the route plan.', 5),
-  ]
+  const alerts: Tables<'alerts'>[] = [] // only loader reports remain; none in the sample
 
   const act = (n: number, kind: string, message: string, entity_type: string, entity_ref: string, agoMin: number): Tables<'activity_log'> => ({
     id: id('v', n),
@@ -374,9 +344,7 @@ export function buildSeed(now: Date = new Date()): FixtureData {
   const activity_log = [
     act(1, 'trip_departed', 'Trip departed Ahmedabad (Aslali)', 'truck', 'GJ01 KT 2208', 180),
     act(2, 'stop_done', 'Delivered at Vadodara (Makarpura)', 'trip', 'TRP-2026-0029', 20),
-    act(3, 'fuel', 'Fuelled at Himmatnagar — 180 L', 'truck', 'RJ14 TB 3360', 300),
     act(4, 'trip_completed', 'Trip completed at Himmatnagar', 'trip', 'TRP-2026-0030', 120),
-    act(5, 'alert_resolved', 'Geofence alert resolved', 'truck', 'RJ14 GC 7735', 360),
     act(6, 'trip_planned', 'Trip planned: Manesar → Jaipur → Ahmedabad → Mumbai', 'trip', 'TRP-2026-0031', 60),
   ]
 

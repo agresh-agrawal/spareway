@@ -21,6 +21,14 @@ export async function saveSettings(ids: { userId: string; companyId: string }, v
   for (const r of [p, c, s]) if (r.error) throw toAppError(r.error)
 }
 
+/** Sample data is only for the owner's own and the QA test accounts (Pre-Phase 4). */
+export async function canUseSampleData(): Promise<boolean> {
+  if (isFixtureMode()) return fixtureDelay(true)
+  const { data, error } = await getSupabase().rpc('sample_data_allowed')
+  if (error) throw toAppError(error)
+  return Boolean(data)
+}
+
 export async function resetSampleData(): Promise<void> {
   if (isFixtureMode()) {
     resetFixtureStore()

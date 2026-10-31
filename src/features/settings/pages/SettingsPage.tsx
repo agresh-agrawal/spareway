@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Building2, ChevronDown, ChevronUp, FlaskConical, IndianRupee, KeyRound, RotateCcw, Save, Undo2, UserRound } from 'lucide-react'
 import {
@@ -21,7 +21,7 @@ import { toAppError } from '@/lib/errors'
 import { cn } from '@/lib/cn'
 import { resetSchema, type ResetValues } from '@/features/auth'
 import type { CompanySettings, Lang } from '@/types/domain'
-import { resetSampleData, saveSettings } from '../api'
+import { canUseSampleData, resetSampleData, saveSettings } from '../api'
 import {
   COST_FIELDS,
   FIELD_RANGE,
@@ -130,6 +130,9 @@ export default function SettingsPage() {
     }
   })
 
+  // sample data only for the owner's own and the QA test accounts
+  const sampleAllowed = useQuery({ queryKey: ['me', 'sampleAllowed'], queryFn: canUseSampleData })
+
   const reset = async () => {
     setResetting(true)
     try {
@@ -207,13 +210,15 @@ export default function SettingsPage() {
         {more && <div className="mt-4 grid gap-4 sm:grid-cols-2">{MORE_FIELDS.map((f) => numberField(f, false))}</div>}
       </Card>
 
-      <Card>
-        <CardHeader icon={FlaskConical} title={t('demo')} />
-        <p className="mb-4 text-ink-2">{t('demoText')}</p>
-        <PlainButton type="button" icon={RotateCcw} onClick={() => setConfirmReset(true)}>
-          {t('reset')}
-        </PlainButton>
-      </Card>
+      {sampleAllowed.data && (
+        <Card>
+          <CardHeader icon={FlaskConical} title={t('demo')} />
+          <p className="mb-4 text-ink-2">{t('demoText')}</p>
+          <PlainButton type="button" icon={RotateCcw} onClick={() => setConfirmReset(true)}>
+            {t('reset')}
+          </PlainButton>
+        </Card>
+      )}
 
       <Slot name="settings.sections" props={{}} />
 

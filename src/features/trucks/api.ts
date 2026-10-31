@@ -84,7 +84,6 @@ export async function saveTruck(v: TruckValues, id?: string): Promise<Truck> {
       home_city: '',
       last_lat: null,
       last_lng: null,
-      fuel_level_pct: null,
       is_sample: false,
       created_at: now,
       updated_at: now,

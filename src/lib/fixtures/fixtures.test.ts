@@ -38,8 +38,8 @@ describe('fixture data = Engineering Reference 7 / SQL seed', () => {
     expect(d.trucks).toHaveLength(6)
     expect(d.trips.map((t) => t.status).sort()).toEqual(['completed', 'in_transit', 'planned'])
     expect(d.freight_listings.map((l) => l.code)).toEqual(Array.from({ length: 12 }, (_, i) => `LD-${1041 + i}`))
-    expect(d.alerts.filter((a) => !a.resolved)).toHaveLength(4)
-    expect(d.activity_log).toHaveLength(6)
+    expect(d.alerts).toHaveLength(0) // only loader reports exist; none in the sample
+    expect(d.activity_log).toHaveLength(4)
     expect(d.fleet_daily_stats).toHaveLength(30)
     expect(d.fleet_daily_stats.filter((s) => s.extra_load_revenue_inr > 0)).toHaveLength(6)
   })

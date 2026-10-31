@@ -63,8 +63,10 @@ describe('offline queue', () => {
     getModules()
     enqueue('cargo_add', { tripId: 't', values: {} })
     setOnline(false)
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Failed to fetch'))
     // offline: the sender fails with no internet → kept
     expect((await replayQueue()).left).toBe(1)
+    fetchSpy.mockRestore()
   })
 })
 

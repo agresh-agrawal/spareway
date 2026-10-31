@@ -1203,7 +1203,6 @@ export type Database = {
           door_position: string
           driver_name: string
           driver_phone: string
-          fuel_level_pct: number | null
           fuel_type: string
           gross_weight_kg: number | null
           home_city: string
@@ -1230,7 +1229,6 @@ export type Database = {
           door_position?: string
           driver_name?: string
           driver_phone?: string
-          fuel_level_pct?: number | null
           fuel_type?: string
           gross_weight_kg?: number | null
           home_city?: string
@@ -1257,7 +1255,6 @@ export type Database = {
           door_position?: string
           driver_name?: string
           driver_phone?: string
-          fuel_level_pct?: number | null
           fuel_type?: string
           gross_weight_kg?: number | null
           home_city?: string
@@ -1402,6 +1399,7 @@ export type Database = {
       next_listing_code: { Args: never; Returns: string }
       next_trip_code: { Args: never; Returns: string }
       reset_sample_data: { Args: never; Returns: Json }
+      sample_data_allowed: { Args: never; Returns: boolean }
       seed_sample_data: { Args: never; Returns: Json }
     }
     Enums: { [_ in never]: never }
