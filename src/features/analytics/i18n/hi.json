@@ -1,0 +1,49 @@
+{
+  "title": "कमाई",
+  "step": "कमाई",
+  "hero": "आपकी कमाई {{inr}}",
+  "gain": "अतिरिक्त लोड से +{{inr}}",
+  "noExtra": "इस ट्रिप पर अभी कोई अतिरिक्त लोड नहीं",
+  "noRoute": "खर्च देखने के लिए रूट चुनें",
+  "openRoute": "रूट खोलें",
+  "tiles": {
+    "space": "भरी जगह",
+    "spaceValue": "{{before}}% → {{after}}%",
+    "floor": "बचा ख़ाली फ़र्श",
+    "perTonneKm": "प्रति टन-km खर्च",
+    "perTonneKmValue": "{{before}} → {{after}}"
+  },
+  "list": {
+    "title": "हिसाब",
+    "freight": "भाड़ा",
+    "extra": "अतिरिक्त लोड",
+    "route": "रूट का खर्च",
+    "extraCost": "अतिरिक्त लोड का खर्च",
+    "total": "आपकी कमाई",
+    "notKnown": "अभी पता नहीं"
+  },
+  "share": "WhatsApp पर भेजें",
+  "shareText": "Spareway · {{code}}\nभाड़ा {{freight}} + अतिरिक्त लोड {{extra}} − रूट {{route}} − अतिरिक्त खर्च {{extraCost}}\nआपकी कमाई {{net}} (अतिरिक्त लोड से {{gain}})",
+  "page": {
+    "subtitle": "बेड़ा कैसा चल रहा है",
+    "days_7": "7 दिन",
+    "days_30": "30 दिन",
+    "earned": "कमाई",
+    "extra": "अतिरिक्त लोड से",
+    "space": "भरी जगह",
+    "moneyChart": "हर दिन की कमाई",
+    "spaceChart": "हर दिन भरी जगह",
+    "topTrips": "सबसे अच्छी ट्रिप",
+    "noRouteTrip": "खर्च पता नहीं — रूट नहीं चुना",
+    "empty": "अभी कोई आँकड़े नहीं",
+    "tripsNone": "अभी कोई ट्रिप नहीं"
+  },
+  "widget": {
+    "title": "इस हफ़्ते की कमाई",
+    "earned": "कमाई",
+    "extra": "अतिरिक्त लोड से {{inr}}",
+    "trips_one": "{{count}} ट्रिप पूरी",
+    "trips_other": "{{count}} ट्रिप पूरी",
+    "see": "कमाई देखें"
+  }
+}
