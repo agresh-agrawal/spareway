@@ -10,6 +10,9 @@ import MapGL, {
   type MapRef,
 } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { setWorkerUrl } from 'maplibre-gl'
+// MapLibre 6 builds its worker URL at runtime, so the bundler never ships the file: import it explicitly.
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { Navigation, Truck } from 'lucide-react'
 import { readEnv, OPENFREEMAP_STYLE } from '@/lib/env'
 import { boundsOf, INDIA_CENTER, type LngLat } from '@/lib/geo'
@@ -19,6 +22,8 @@ import type { GeoLineString } from '@/types/domain'
 import { stopColor } from './chips'
 
 const LITE_STYLE = '/map/spareway-lite.json'
+
+setWorkerUrl(maplibreWorkerUrl)
 
 function useStyleUrl(): string {
   const { lowData } = useLowData()
