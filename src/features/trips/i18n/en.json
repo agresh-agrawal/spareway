@@ -1,0 +1,83 @@
+{
+  "title": "Trips",
+  "count_one": "{{count}} trip",
+  "count_other": "{{count}} trips",
+  "newTrip": "New trip",
+  "filters": {
+    "label": "Show trips",
+    "planned": "Planned",
+    "loading": "Loading",
+    "in_transit": "On the road",
+    "completed": "Done"
+  },
+  "card": {
+    "route": "{{from}} → {{to}}",
+    "drops_one": "{{count}} drop",
+    "drops_other": "{{count}} drops",
+    "departs": "Leaves {{when}}",
+    "spaceUsed": "Space used"
+  },
+  "empty": "No trips yet — New trip",
+  "emptyFilter": "No trips here",
+  "wizard": {
+    "title": "New trip",
+    "step1": "Truck",
+    "step2": "Stops",
+    "step3": "Departure",
+    "chooseTruck": "Which truck goes?",
+    "noTrucks": "Add a truck first",
+    "addTruck": "Add truck",
+    "stopsTitle": "Where does it go?",
+    "stopsHelp": "Start point first, then each drop in order.",
+    "origin": "Start point",
+    "chooseOrigin": "Choose the start point",
+    "drop": "Drop {{n}}",
+    "addDrop": "Add a drop",
+    "search": "Search city or hub",
+    "searchLabel": "Search places",
+    "pickOnMap": "Or tap a place on the map",
+    "deliverBy": "Deliver by (optional)",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "remove": "Remove",
+    "departureTitle": "When does it leave?",
+    "departure": "Leaves at",
+    "freight": "Freight for this trip (₹)",
+    "freightHelp": "What the customers pay you in total",
+    "summary": "{{truck}} · {{from}} → {{to}} · {{drops}}",
+    "back": "Back",
+    "next": "Next",
+    "create": "Create trip",
+    "created": "Trip {{code}} created"
+  },
+  "page": {
+    "back": "Back to trips",
+    "startLoading": "Start loading",
+    "leave": "Leave",
+    "deliver": "Mark delivered",
+    "leaveTitle": "Leave now?",
+    "leaveText": "The truck leaves and the loader link stops working.",
+    "deliverTitle": "Mark the trip delivered?",
+    "deliverText": "All stops will be marked done.",
+    "statusSaved": "Trip is now: {{status}}",
+    "stops": "Stops",
+    "deliverBy": "by {{when}}",
+    "cargoStep": "Cargo",
+    "next": {
+      "addCargo": "Next: add the cargo",
+      "addCargoText": "Write down what goes on the truck.",
+      "step": "Next: {{step}}",
+      "startLoading": "Next: start loading",
+      "leave": "Next: leave",
+      "deliver": "Next: mark delivered",
+      "goToStep": "Open {{step}}"
+    }
+  },
+  "errors": {
+    "truck": "Choose a truck",
+    "origin": "Choose the start point",
+    "drops": "Add at least one drop",
+    "departure": "Choose when it leaves",
+    "freight": "Type the freight in ₹"
+  }
+}

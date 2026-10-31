@@ -1,0 +1,83 @@
+{
+  "title": "ट्रिप",
+  "count_one": "{{count}} ट्रिप",
+  "count_other": "{{count}} ट्रिप",
+  "newTrip": "नई ट्रिप",
+  "filters": {
+    "label": "ट्रिप दिखाएँ",
+    "planned": "प्लान हुई",
+    "loading": "लोडिंग",
+    "in_transit": "रास्ते में",
+    "completed": "पूरी"
+  },
+  "card": {
+    "route": "{{from}} → {{to}}",
+    "drops_one": "{{count}} उतराई",
+    "drops_other": "{{count}} उतराई",
+    "departs": "निकलेगी {{when}}",
+    "spaceUsed": "भरी जगह"
+  },
+  "empty": "अभी कोई ट्रिप नहीं — नई ट्रिप",
+  "emptyFilter": "यहाँ कोई ट्रिप नहीं",
+  "wizard": {
+    "title": "नई ट्रिप",
+    "step1": "ट्रक",
+    "step2": "स्टॉप",
+    "step3": "रवानगी",
+    "chooseTruck": "कौन सा ट्रक जाएगा?",
+    "noTrucks": "पहले ट्रक जोड़ें",
+    "addTruck": "ट्रक जोड़ें",
+    "stopsTitle": "ट्रक कहाँ जाएगा?",
+    "stopsHelp": "पहले शुरुआत की जगह, फिर हर उतराई क्रम से।",
+    "origin": "शुरुआत",
+    "chooseOrigin": "शुरुआत की जगह चुनें",
+    "drop": "उतराई {{n}}",
+    "addDrop": "उतराई जोड़ें",
+    "search": "शहर या हब खोजें",
+    "searchLabel": "जगह खोजें",
+    "pickOnMap": "या नक्शे पर जगह पर टैप करें",
+    "deliverBy": "कब तक पहुँचाना है (ज़रूरी नहीं)",
+    "moveUp": "ऊपर करें",
+    "moveDown": "नीचे करें",
+    "remove": "हटाएँ",
+    "departureTitle": "ट्रक कब निकलेगा?",
+    "departure": "निकलने का समय",
+    "freight": "इस ट्रिप का भाड़ा (₹)",
+    "freightHelp": "ग्राहक कुल कितना देंगे",
+    "summary": "{{truck}} · {{from}} → {{to}} · {{drops}}",
+    "back": "पीछे",
+    "next": "आगे",
+    "create": "ट्रिप बनाएँ",
+    "created": "ट्रिप {{code}} बन गई"
+  },
+  "page": {
+    "back": "ट्रिप की सूची पर वापस",
+    "startLoading": "लोडिंग शुरू करें",
+    "leave": "रवाना करें",
+    "deliver": "माल पहुँच गया",
+    "leaveTitle": "अभी रवाना करें?",
+    "leaveText": "ट्रक निकल जाएगा और लोडर लिंक बंद हो जाएगा।",
+    "deliverTitle": "ट्रिप पूरी करें?",
+    "deliverText": "सभी स्टॉप पूरे हो जाएँगे।",
+    "statusSaved": "ट्रिप अब: {{status}}",
+    "stops": "स्टॉप",
+    "deliverBy": "{{when}} तक",
+    "cargoStep": "माल",
+    "next": {
+      "addCargo": "अगला कदम: माल लिखें",
+      "addCargoText": "ट्रक पर क्या जाएगा, लिखें।",
+      "step": "अगला कदम: {{step}}",
+      "startLoading": "अगला कदम: लोडिंग शुरू करें",
+      "leave": "अगला कदम: रवाना करें",
+      "deliver": "अगला कदम: माल पहुँचा दें",
+      "goToStep": "{{step}} खोलें"
+    }
+  },
+  "errors": {
+    "truck": "ट्रक चुनें",
+    "origin": "शुरुआत की जगह चुनें",
+    "drops": "कम से कम एक उतराई जोड़ें",
+    "departure": "निकलने का समय चुनें",
+    "freight": "भाड़ा ₹ में लिखें"
+  }
+}
