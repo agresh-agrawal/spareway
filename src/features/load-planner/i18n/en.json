@@ -1,0 +1,95 @@
+{
+  "title": "Load plan",
+  "planLoad": "Plan load",
+  "fullScreen": "Open full screen",
+  "backToTrip": "Back to trip",
+  "summary": {
+    "spaceUsed": "Space used",
+    "weight": "Weight",
+    "freeFloor": "Free floor",
+    "weightLeft": "Weight left",
+    "balanceOk": "Balance OK",
+    "balanceCheck": "Check balance",
+    "cardTitle": "How full the truck is"
+  },
+  "warnings": {
+    "COG_LONGITUDINAL": "Too much weight at one end — spread heavy goods along the truck",
+    "COG_LATERAL": "More weight on one side — move heavy goods to the middle",
+    "HEAVY_HIGH": "Heavy goods are high up — keep them on the floor"
+  },
+  "view": {
+    "label": "Truck view",
+    "3d": "3D",
+    "top": "From top",
+    "side": "From side",
+    "play": "Play loading order",
+    "pause": "Pause",
+    "showAll": "Show all",
+    "stepOf": "Step {{step}} of {{total}}",
+    "stepSlider": "Loading step",
+    "lowData": "3D is off in low-data mode — showing drawings",
+    "noWebgl": "This device can't show 3D — showing drawings",
+    "loading3d": "Opening 3D…",
+    "selected": "Step {{step}} · {{label}}",
+    "clear": "Clear"
+  },
+  "packages": {
+    "title": "Packages by stop",
+    "steps": "Steps {{from}}–{{to}}",
+    "boxes_one": "{{count}} box",
+    "boxes_other": "{{count}} boxes",
+    "each": "{{kg}} each",
+    "client": "Client",
+    "drop": "Drop",
+    "showInTruck": "Show in truck",
+    "fragileNote": "Fragile — nothing goes on top",
+    "uprightNote": "Keep upright",
+    "noStackNote": "Don't stack anything on it"
+  },
+  "didntFit": {
+    "title": "Didn't fit",
+    "allFit": "Everything fits in the truck",
+    "group": "{{count}} × {{label}}",
+    "reason": {
+      "TOO_LARGE": "Too big for this truck in any position ({{size}})",
+      "OVER_PAYLOAD": "Too heavy: {{kg}} > {{left}} left",
+      "NO_SPACE": "No space left — {{need}} m³ needed, {{free}} m³ free",
+      "NO_SUPPORT": "Nothing strong enough to stack on",
+      "ORDER_CONFLICT": "Would block goods that leave earlier"
+    },
+    "advice": {
+      "TOO_LARGE": "Choose a bigger truck or check the size.",
+      "OVER_PAYLOAD": "Send it on another truck or take less cargo.",
+      "NO_SPACE": "Send it on another truck or the next trip.",
+      "NO_SUPPORT": "Keep floor space free for it, or allow stacking on the goods below.",
+      "ORDER_CONFLICT": "Check the drop stop, or load it at a later stop."
+    }
+  },
+  "use": {
+    "button": "Use this plan",
+    "inUse": "In use · v{{version}}",
+    "done": "Load plan in use",
+    "outdated": "The cargo changed after plan v{{version}} was made — use the new plan.",
+    "unplaced_one": "{{count}} item didn't fit — it stays off the truck.",
+    "unplaced_other": "{{count}} items didn't fit — they stay off the truck.",
+    "locked": "This trip has already left — the load plan can't change now.",
+    "packing": "Packing the truck…"
+  },
+  "progress": {
+    "loaded": "{{done}} of {{total}} loaded",
+    "problems_one": "{{count}} problem",
+    "problems_other": "{{count}} problems"
+  },
+  "empty": {
+    "noCargo": "Add cargo first",
+    "openCargo": "Open cargo"
+  },
+  "truckTab": {
+    "label": "Load layout",
+    "noTrip": "No trip planned for this truck",
+    "noPlan": "No load plan yet for {{code}}",
+    "noLayout": "This plan was saved without a layout",
+    "open": "Open load plan",
+    "trip": "Trip {{code}}"
+  }
+}

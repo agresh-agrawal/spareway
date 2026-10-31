@@ -131,8 +131,10 @@ export async function fetchPlannableTrips(truckId?: string): Promise<{ trip: Tri
   return trips.map((trip) => ({ trip, activePlanId: plans.find((p) => p.trip_id === trip.id)?.id ?? null }))
 }
 
-/** The truck's current trip (loading / on the road) or else its next planned trip, with its active plan. */
-export async function fetchTruckLayout(truckId: string): Promise<{ trip: TripRow; plan: PlanRow | null } | null> {
+/** The truck's current trip (loading / on the road) or else its next planned trip, with its active plan and stops. */
+export async function fetchTruckLayout(
+  truckId: string,
+): Promise<{ trip: TripRow; truck: TruckRow; plan: PlanRow | null; stops: StopRow[] } | null> {
   const rank: Record<string, number> = { loading: 0, in_transit: 1, planned: 2 }
   const pick = (trips: TripRow[]) =>
     trips
@@ -142,10 +144,12 @@ export async function fetchTruckLayout(truckId: string): Promise<{ trip: TripRow
       )[0]
   if (isFixtureMode()) {
     const d = fixtureStore()
+    const truck = d.trucks.find((t) => t.id === truckId)
     const trip = pick(d.trips.filter((t) => t.truck_id === truckId))
-    if (!trip) return fixtureDelay(null)
+    if (!trip || !truck) return fixtureDelay(null)
     const plan = d.load_plans.find((p) => p.trip_id === trip.id && p.status === 'active') ?? null
-    return fixtureDelay({ trip, plan })
+    const stops = d.trip_stops.filter((s) => s.trip_id === trip.id).sort((a, b) => a.seq - b.seq)
+    return fixtureDelay({ trip, truck, plan, stops })
   }
   const sb = getSupabase()
   const { data: trips, error } = await sb
@@ -156,14 +160,16 @@ export async function fetchTruckLayout(truckId: string): Promise<{ trip: TripRow
   if (error) throw toAppError(error)
   const trip = pick(trips)
   if (!trip) return null
-  const { data: plan, error: pErr } = await sb
-    .from('load_plans')
-    .select('*')
-    .eq('trip_id', trip.id)
-    .eq('status', 'active')
-    .maybeSingle()
-  if (pErr) throw toAppError(pErr)
-  return { trip, plan }
+  const [truck, plan, stops] = await Promise.all([
+    sb.from('trucks').select('*').eq('id', truckId).maybeSingle(),
+    sb.from('load_plans').select('*').eq('trip_id', trip.id).eq('status', 'active').maybeSingle(),
+    sb.from('trip_stops').select('*').eq('trip_id', trip.id).order('seq'),
+  ])
+  if (truck.error) throw toAppError(truck.error)
+  if (plan.error) throw toAppError(plan.error)
+  if (stops.error) throw toAppError(stops.error)
+  if (!truck.data) return null
+  return { trip, truck: truck.data, plan: plan.data, stops: stops.data }
 }
 
 /** Save a packed plan as the trip's next version (draft). Items that didn't fit → one plan_unplaced alert. */
