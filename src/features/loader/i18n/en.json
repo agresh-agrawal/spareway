@@ -1,0 +1,71 @@
+{
+  "step": "Loader",
+  "send": "Send to loader",
+  "sendText": "The loader opens the link on their phone — no app, no login — and loads the truck step by step.",
+  "planFirst": "Plan the load first, then send it to the loader.",
+  "openPlan": "Open load plan",
+  "validTill": "Valid till {{when}}",
+  "ended": "The link has ended or is turned off.",
+  "turnOff": "Turn off",
+  "newLink": "New link",
+  "turnOffTitle": "Turn off the loader link?",
+  "turnOffText": "The loader can't open the link any more. You can make a new one.",
+  "turnedOff": "Loader link turned off",
+  "created": "Loader link ready",
+  "whatsapp": "Spareway loading job {{code}}: {{link}} — valid till {{when}}",
+  "progress": "{{done}} of {{total}} loaded",
+  "progressLabel": "Loaded",
+  "problems_one": "{{count}} problem from the loader",
+  "problems_other": "{{count}} problems from the loader",
+  "noProblems": "No problems from the loader",
+  "stepProblem": "Step {{step}}: {{note}}",
+  "page": {
+    "title": "Loading job",
+    "stepOf": "Step {{step}} of {{total}}",
+    "loaded": "{{done}} of {{total}} loaded",
+    "where": "Where",
+    "along": {
+      "cab": "Cab side",
+      "middle": "Middle",
+      "door": "Door side"
+    },
+    "across": {
+      "left": "Left",
+      "centre": "Centre",
+      "right": "Right"
+    },
+    "layer": {
+      "1": "Floor",
+      "2": "2nd layer",
+      "3": "3rd layer",
+      "n": "Layer {{n}}"
+    },
+    "dropAt": "Drop at {{stop}}",
+    "sizeWeight": "{{size}} · {{kg}}",
+    "fragile": "Fragile — handle with care",
+    "upright": "Keep upright",
+    "done": "Done",
+    "problem": "Problem",
+    "back": "Back",
+    "fromTop": "From top",
+    "fromSide": "From side",
+    "problemTitle": "What is the problem?",
+    "reasons": {
+      "missing": "Missing",
+      "damaged": "Damaged",
+      "size": "Different size",
+      "other": "Other"
+    },
+    "note": "Note (optional)",
+    "sendProblem": "Send problem",
+    "problemSent": "Problem sent to the owner",
+    "planChanged": "The plan was updated — continuing",
+    "finishedTitle": "Truck loaded ✓",
+    "finishedText": "All {{total}} items are in. Thank you!",
+    "planning": "The owner is still planning the load",
+    "planningText": "This page checks again every few seconds.",
+    "endedTitle": "This link has ended",
+    "endedText": "Ask the owner for a new one.",
+    "issueMark": "Problem reported"
+  }
+}

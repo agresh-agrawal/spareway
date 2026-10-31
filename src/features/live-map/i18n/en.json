@@ -1,0 +1,37 @@
+{
+  "title": "Live map",
+  "nav": "Map",
+  "action": "Live map",
+  "filters": {
+    "label": "Show trucks",
+    "all": "All",
+    "active": "Working",
+    "idle": "Free",
+    "maintenance": "Repair",
+    "offline": "Off"
+  },
+  "showRoutes": "Show routes",
+  "showProblems": "Show problems",
+  "footer": "Simulated — updates every 3 s",
+  "footerLow": "Simulated — updates every 10 s",
+  "card": {
+    "progress": "Trip done",
+    "arrives": "Arrives {{time}} · {{km}} left",
+    "readings": "Speed {{speed}} km/h · Fuel {{fuel}}",
+    "readingsNoFuel": "Speed {{speed}} km/h",
+    "parked": "Parked · Fuel {{fuel}}",
+    "breakDue": "Break due in {{time}}",
+    "loading": "Loading at {{place}}",
+    "noTrip": "Not on a trip",
+    "openTrip": "Open trip",
+    "close": "Close",
+    "problem": "Has a problem — see Home",
+    "approximate": "Route not chosen yet — straight line between stops"
+  },
+  "noPosition": "No position yet",
+  "noPositionList": "Trucks without a position",
+  "empty": "No trucks yet — Add truck",
+  "tab": "Location",
+  "tabEmpty": "This truck has no position yet",
+  "openMap": "Open live map"
+}

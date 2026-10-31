@@ -47,3 +47,7 @@
 | 2026-10-31 | 1·Git | Load plan treats a missing `data-theme` as dark | The app is dark until the switch lands — no light canvas inside a dark page |
 | 2026-10-31 | Merge 1 | NextStepCard only on the Cargo step with cargo; "Add item" lime only while the list is empty | Design System 1.1 one lime button per view (Load plan has its own) |
 | 2026-10-31 | Merge 1 | Load plan step ✓ from `trip_overview.active_plan_id` as well as the slot's `done()` | ✓ was missing after a reload |
+| 2026-10-31 | 2·Code | `route-plan` deployed with `verify_jwt: false`; checks the owner session with `auth.getUser` and the trip with RLS | Project uses asymmetric JWT signing keys; the function authenticates itself |
+| 2026-10-31 | 2·Code | Route geometry simplified (Douglas–Peucker ~40 m) before caching / returning | ORS returns ~11,000 points for the demo trip; ~1,400 keep the road shape |
+| 2026-10-31 | 2·Code | Live map: real time since departure + ×60 since the page opened, capped at 98 %; straight line through stops until a route is chosen | Architecture F15 "speed ×60"; trucks stay on screen and visibly move |
+| 2026-10-31 | 2·Code | Loader step ✓ once the link exists or loading started | Step is about sending the job to the loader |

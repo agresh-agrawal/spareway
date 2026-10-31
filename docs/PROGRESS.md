@@ -111,7 +111,23 @@ Notes for the other agent:
 - Query keys: plans use `queryKeys.tripPlans(id)` (load_plans rows, newest first); my trip/stops/cargo reads are sub-keys of `trip(id)` / `tripStops(id)` / `tripCargo(id)`, so invalidating those refreshes the plan.
 - Loader page (2·Code): `TopView` / `SideView` take `highlightKey`, `states`, `bare`; no three.js in them.
 
-## Phase 2·Code — Loader link, route service, live map (branch code/phase2-loader-map) status: not started
+## Phase 2·Code — Loader link, route service, live map (branch code/phase2-loader-map) status: ready to merge
+
+Built (from `v1`; owner's answers: ORS key given, loader page Hindi by default, simulate trucks):
+- **F14 `route-plan` Edge Function** (`supabase/functions/route-plan`, deployed with the MCP, `verify_jwt: false` because it checks the owner session itself — works with the project's asymmetric JWT keys). Contract exactly Architecture 9.1: `{ tripId, coordinates (≤ 50), variants, truck }` → `{ ok, data: { routes: [{ variant, distanceKm, durationMin, geometry, restricted, cached }] } }`; errors `AUTH_REQUIRED` (401), `TRIP_NOT_FOUND`, `ORS_QUOTA`, `ORS_ERROR`. ORS driving-hgv, one variant after another, `no_tolls` avoids tollways, truck restrictions with retry without them, SHA-256 cache in `route_cache`, geometry simplified (~40 m) to ~1,300–1,500 points. Secret `ORS_API_KEY` set. Pure logic in `lib.ts` (14 tests).
+- **F13 Loader step** (`trip.steps` order 3): Send to loader → 48 h link (`create_loader_link`), QR 220 px, Copy, lime Send on WhatsApp ("Spareway loading job TRP-…: link — valid till …"), Valid till, Turn off (confirm), New link; live "38 of 104 loaded" + loader problems (realtime). No active plan → "Plan the load first" + Open load plan.
+- **F13 Loader page** `/load/:token` (no login, no shell, Hindi first on a new phone, Hindi button): truck + trip, "Step n of 104" + bar (sticky), one big card (item 26 px, drop stop chip + colour, size + kg, fragile, where in words "Cab side · Left · Floor", top / side drawing with the box highlighted — load-planner `TopView` / `SideView`, no three.js), Done ✓ (56 px lime), Problem (Missing / Damaged / Different size / Other + note → owner alert), Back; "Truck loaded ✓"; "This link has ended…"; "Owner is still planning"; PLAN_CHANGED → refetch, same step number. `loader_get_job` every 5 s while visible (10 s low-data), paused when hidden. Slot `loader.actions` rendered.
+- **F15 Live map** `/map` (nav Map, phone tab): chips with counts, Show routes / Show problems, truck markers (lime when selected), problem dot, selected-truck card (bottom on phone, top-left on laptop): route leg, trip done %, "Arrives … · … km left", "Speed … km/h · Fuel …%", amber "Break due in …", Call driver, Open trip; trucks without position listed; footer **Simulated — updates every 3 s** (10 s low-data, lite style). Simulation: real time since departure + ×60 since the page opened along the chosen route, or a straight line through the stops (marked). Slots: Home "Live map", truck tab "Location".
+- Fixture mode for every new `api.ts`. en + hi for every string.
+
+Verified 2026-10-31 (`npm run check` 191 tests, `npm run build` with and without `.env`; main bundle 127 KB gzip, LoaderPage 3.7 KB):
+- route-plan, real DB + ORS: demo trip → fastest 1,423 km / 1,099 min, shortest 1,323 km, no_tolls 1,496 km; 2nd call all `cached`; no session → 401. Key only in Supabase secrets + `.env.secrets`. ✓
+- Loader link: created (QR, valid 48 h, one lime button) → loader page step 1 "Refrigerator 260 L · Mumbai · Cab side · Left · Floor" → Done → step 2 → Problem "Different size" (via the same public RPC) → owner step live "1 of 104 loaded · 1 problem · Loader reported a problem — TRP-2026-0031 · step 2: …" (alert meta {code, step, note}); trip status → Loading. Turn off → loader page "This link has ended". Wrong token → LINK_INVALID. ✓
+- /map: 6 markers + 1 truck listed without position, chips, selected card (GJ01 KT 2208 "Vadodara → Surat · Arrives … · 16 km left · Speed 39 km/h · Fuel 42%", approximate line note), Simulated badge; low-data → `/map/spareway-lite.json`, 10 s. 375 px: loader page + map no sideways scroll. ✓
+
+Not verified end to end: re-plan while the loader page is open (code path: PLAN_CHANGED → refetch, covered by RPC behaviour); real Android phone over the hotspot (do at Merge 2). A signed-in owner opening the loader link keeps the owner's language (a loader's phone has no session → Hindi).
+
+**Code must verify at Merge 2 (with Agent Git's Route step):** choosing a route sets `trips.selected_route_id` → /map follows that route instead of the straight line; route step calls `route-plan` with the session token (`supabase.functions.invoke('route-plan', { body })`).
 
 ## Phase 2·Git — Route planning and trip cost (branch git/phase2-routes) status: not started
 
