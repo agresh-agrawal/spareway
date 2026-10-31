@@ -66,3 +66,5 @@
 | 2026-10-31 | 2·Git | Card shows up to 2 warnings (no-entry first) + "+N more in the journey"; late stops marked in the journey | Seed delivery windows are tight → a late warning per stop |
 | 2026-10-31 | 2·Git | POI names (tolls, dhabas, check posts) shown as stored in both languages; no-entry towns translated | Real place names, not demo data |
 | 2026-10-31 | 2·Git | Fixture mode reads the real POIs from `supabase/sql/phase0_pois_real.sql` (lazy chunk) | Fixture store has no POIs; one source of truth |
+| 2026-10-31 | Merge 2 | `tm('route_chosen')` translates `meta.variant` via `common:templates.variants` | Hindi Home showed the English variant word |
+| 2026-10-31 | Merge 2 | Phase 2 merged without the real-DB Route step check; owner checks it on the live site | Supabase MCP on the new account cannot reach the Spareway project; `route-plan` itself answers live |

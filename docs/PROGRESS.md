@@ -38,6 +38,15 @@ Code must verify (Phase 1·Git), real database, owner qa.owner2: ✓ step 2 Load
 Not run this time: steel-coil over-payload, realtime progress via SQL, support-ratio re-pack, real phone over the hotspot, low-data drawings — engine + hook tests cover them; re-check in Merge 2.
 Open: theme CONTRACT CHANGE REQUEST (light / dark, Phase 1·Git section) — not applied yet, owner to schedule.
 
+## Merge 2 — Phase 2 Code + Git into main (tag v2) — done 2026-10-31
+
+Merged `code/phase2-loader-map` then `git/phase2-routes` into `main` — no git conflicts, no `phase2git_*.sql` (nothing to apply, `database.ts` unchanged). `npm run check` + `npm run build` after each merge; final 224 tests, build passes also without `.env`, main bundle 129 KB gzip.
+Merge note: after the second merge 4 route tests failed only because Vitest's transform cache still held the `features/*/module.tsx` glob from before `routes` existed — clearing `node_modules/.vite*` / `.vitest-cache` fixed it; no code change.
+Change requests applied (from 2·Git): `templates.route_chosen` + `templates.variants` (en/hi) and `tm()` translates the variant; "Mira-Bhayandar Vasai-Virar" in the Hindi demo dictionary (Surat, Indore were already there). Tests added.
+Verified: `route-plan` live on `darwxazznvfocihderma` (no session → 401 `AUTH_REQUIRED`). Fixture mode, laptop + 375 px, English + Hindi: trip page steps Cargo · Load plan · Loader · Route; three costed routes, one Best, Choose → "Route chosen — ETAs saved", lime "Send on WhatsApp" with the Hindi driver message to +91 98270 00001; Home (Hindi) "TRP-2026-0031 का रूट चुना: सबसे तेज़, 1417 km" + no-entry alert in Hindi; /map in Hindi, Simulated badge; Loader step "Plan the load first"; no sideways scroll at 375 px. Live map reads `trips.selected_route_id` → `route_options.geometry` (code checked; trip 0031 is Planned so it does not move).
+Not verified this time (the Supabase MCP on the new Claude account cannot see project `darwxazznvfocihderma`, and the agent does not sign in with passwords): real-DB Route step (3 ORS routes, `route_options` rows, cache on reload, `trip_financials.route_cost_inr`), loader link end to end on a real phone, map following a chosen route for a trip on the road. Owner to run these on https://spareway.vercel.app as qa.owner2.
+Known: the `city_entry` alert's "(from–to)" shows arrival time → end of no-entry (e.g. 19:23–23:00), not the whole no-entry window — 2·Git's meta; fix in Phase 3 if wanted.
+
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
 Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):
@@ -61,7 +70,7 @@ Not built (noted for later): editing a trip's stops after creation (the "plan mu
 
 **Code must verify at the merge:** with Agent Git's load planner merged — trip page shows step 2 "Load plan" with ✓ after "Use this plan"; Home shows "Plan load" next to "New trip"; truck page shows the "Load layout" tab; demo trip packs 104 / 0 unplaced.
 
-## Phase 1·Git — Packing engine, 3D load plan, map style (branch git/phase1-load-plan) status: ready to merge
+## Phase 1·Git — Packing engine, 3D load plan, map style (branch git/phase1-load-plan) status: merged (v1)
 
 Started from tag `v0.1` (+ `origin/main` merged in). Only `src/features/load-planner`, `public/map`, `tools/` changed. No SQL file, no new packages.
 
@@ -111,7 +120,7 @@ Notes for the other agent:
 - Query keys: plans use `queryKeys.tripPlans(id)` (load_plans rows, newest first); my trip/stops/cargo reads are sub-keys of `trip(id)` / `tripStops(id)` / `tripCargo(id)`, so invalidating those refreshes the plan.
 - Loader page (2·Code): `TopView` / `SideView` take `highlightKey`, `states`, `bare`; no three.js in them.
 
-## Phase 2·Code — Loader link, route service, live map (branch code/phase2-loader-map) status: ready to merge
+## Phase 2·Code — Loader link, route service, live map (branch code/phase2-loader-map) status: merged (v2)
 
 Built (from `v1`; owner's answers: ORS key given, loader page Hindi by default, simulate trucks):
 - **F14 `route-plan` Edge Function** (`supabase/functions/route-plan`, deployed with the MCP, `verify_jwt: false` because it checks the owner session itself — works with the project's asymmetric JWT keys). Contract exactly Architecture 9.1: `{ tripId, coordinates (≤ 50), variants, truck }` → `{ ok, data: { routes: [{ variant, distanceKm, durationMin, geometry, restricted, cached }] } }`; errors `AUTH_REQUIRED` (401), `TRIP_NOT_FOUND`, `ORS_QUOTA`, `ORS_ERROR`. ORS driving-hgv, one variant after another, `no_tolls` avoids tollways, truck restrictions with retry without them, SHA-256 cache in `route_cache`, geometry simplified (~40 m) to ~1,300–1,500 points. Secret `ORS_API_KEY` set. Pure logic in `lib.ts` (14 tests).
@@ -129,7 +138,7 @@ Not verified end to end: re-plan while the loader page is open (code path: PLAN_
 
 **Code must verify at Merge 2 (with Agent Git's Route step):** choosing a route sets `trips.selected_route_id` → /map follows that route instead of the straight line; route step calls `route-plan` with the session token (`supabase.functions.invoke('route-plan', { body })`).
 
-## Phase 2·Git — Route planning and trip cost (branch git/phase2-routes) status: ready to merge
+## Phase 2·Git — Route planning and trip cost (branch git/phase2-routes) status: merged (v2)
 
 Started from tag `v1`. Only `src/features/routes` changed. No SQL file, no new packages. Owner's answers: **no departure entry** (uses the trip's departure, else tomorrow 6:00 am IST, shown read-only); Settings rest rules; driver message Hindi by default; driving time = route duration but never faster than Settings average speed; no unloading time; no-entry wait when a stop is inside a city's circle or the route passes a corridor zone whose rule names the stop's town.
 
