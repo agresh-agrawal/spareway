@@ -129,7 +129,46 @@ Not verified end to end: re-plan while the loader page is open (code path: PLAN_
 
 **Code must verify at Merge 2 (with Agent Git's Route step):** choosing a route sets `trips.selected_route_id` → /map follows that route instead of the straight line; route step calls `route-plan` with the session token (`supabase.functions.invoke('route-plan', { body })`).
 
-## Phase 2·Git — Route planning and trip cost (branch git/phase2-routes) status: not started
+## Phase 2·Git — Route planning and trip cost (branch git/phase2-routes) status: ready to merge
+
+Started from tag `v1`. Only `src/features/routes` changed. No SQL file, no new packages. Owner's answers: **no departure entry** (uses the trip's departure, else tomorrow 6:00 am IST, shown read-only); Settings rest rules; driver message Hindi by default; driving time = route duration but never faster than Settings average speed; no unloading time; no-entry wait when a stop is inside a city's circle or the route passes a corridor zone whose rule names the stop's town.
+
+Built (F16):
+- **Logic** `routes/lib` (pure, tested): chainage + projection (`line.ts`); tolls within 0.5 km × the truck's axle rate from `pois.data.rate_inr`; check posts within 1 km × `checkpoint_delay_min`; `planSchedule` — break every `break_after_drive_h` at a dhaba / parking within 3 km ahead (else "by the road"), night rest after `max_drive_h_per_day` (taken instead of a break when due within the hour), no-entry waits in IST before entering a city (`city_entry` POIs, windows from `data.no_entry`), stop ETAs, LATE warnings vs `window_end`; `costRoute` — diesel = km ÷ mileage × price, tolls, driver = all hours × wage, waiting = (no-entry + check post) hours × waiting cost; Best = lowest total + value of time.
+- **Data** `routes/api.ts`: reads trip, truck, stops, settings, `route_options`, POIs in the route's bbox (`queryKeys.pois`); calls `route-plan` (body exactly as Engineering Reference 6.1) only when the trip has no saved routes or the stops changed (saved lines no longer pass the stops) → saves the 3 rows; `ORS_QUOTA` / `ORS_ERROR` / non-2xx bodies mapped to AppError. **Choose** writes `route_options.is_selected` + costs + halts + warnings on the chosen row, `trips.selected_route_id` (+ `planned_departure` when it was empty), `trip_stops.eta`, activity `route_chosen` meta `{code, variant, km}`, and one `city_entry` alert meta `{code, city, from, to, wait}` when the route waits for no-entry hours.
+- **Route step** (slot `trip.steps`, order 4, ✓ when a route is chosen): "Leaves 1 Nov, 6:00 am" + "Tolls and times are estimates"; map (lime = route being looked at, grey = others, numbered stops, toll / dhaba / check post / no-entry icons from zoom 8; lazy MapLibre chunk); three cards — name + Best, km · time, total ₹ hero + Estimated, "Diesel · Tolls · Driver" (+ Waiting), "breaks · tolls", up to 2 plain warnings ("Reaches Mira-Bhayandar Vasai-Virar at 6:31 pm — no entry until 9:00 pm, wait 2 h 29 min"); one lime button: Choose on Best until a route is chosen, then "Send on WhatsApp". Journey list (start, stops with "After the delivery time", breaks, night rest, waits, check posts with times). Driver message with हिंदी / English switch → `wa.me/91<driver phone>?text=…`.
+- **Public API** `routes/index.ts`: `costRoute`, `planSchedule`, `tollsOnRoute`, `RouteLine`, `useSelectedRoute`, `useRoutePlanner`, `departureFor`, line helpers.
+- **Fixtures** (fixture mode + tests only): real POIs parsed from `supabase/sql/phase0_pois_real.sql` (lazy chunk, never loaded with a real database); mocked route-plan lines for the demo trip through the real NH48 toll plazas (fastest), a shorter cut past Udaipur (shortest) and a line off the plazas (no tolls).
+- Tests: 29 new (route logic, fixture-mode hook + screen + Hindi, route-plan contract and error mapping, driver message, slot). `npm run check` 195 tests + `npm run build` pass, also without `.env`. Main bundle 245 KB gzip.
+
+Demo numbers (fixture lines, Settings defaults, leaving 1 Nov 6:00 am): Fastest 1,417 km ₹54,282 (22 tolls, waits at Ahmedabad 3 h 37 min and Mira-Bhayandar 2 h 29 min) · Shortest 1,393 km ₹54,547 · No tolls 1,720 km ₹50,710 = Best. Real routes from ORS will differ.
+
+How to demo (fixture mode): `npm run dev` → `http://localhost:5173/trips/00000000-0000-4000-8000-000000000031?step=route&fixture=seed` → three routes → Show (map switches) → Choose on Best → toast, ✓ on the Route tab → driver message → हिंदी / English → Send on WhatsApp → tap हिंदी for the whole screen.
+
+CONTRACT CHANGE REQUEST — from 2·Git
+File/contract: `src/i18n/common/{en,hi}.json` templates (Engineering Reference 7.7)   Change: add `templates.route_chosen` — en "Route chosen for {{code}}: {{variant}}, {{km}} km", hi "{{code}} का रूट चुना: {{variant}}, {{km}} km" (variant words: fastest/shortest/no_tolls → "Fastest/Shortest/No tolls", "सबसे तेज़/सबसे छोटा/बिना टोल").
+Why: Choose writes activity `route_chosen` with meta `{code, variant, km}`; without a template the Hindi Home shows the stored English line. Workaround meanwhile: stored English message. Owner to apply: Agent Code at merge.
+
+CONTRACT CHANGE REQUEST — from 2·Git
+File/contract: `src/i18n/data/hi.json` (demo dictionary)   Change: add the no-entry towns from the POI data: "Mira-Bhayandar Vasai-Virar" → "मीरा-भायंदर वसई-विरार", "Surat" → "सूरत", "Indore" → "इंदौर" (others already there).
+Why: the `city_entry` alert passes `meta.city` through `td()`; Route step uses its own copy (`routes/i18n places`) meanwhile. Owner to apply: Agent Code at merge.
+
+Code must verify (Git only) — real database, after Agent Code's `route-plan` is deployed:
+- [ ] TRP-2026-0031 → step 4 "Route": loading line, then 3 cards from ORS (Fastest · Shortest · No tolls), one "Best", map shows the lines + numbered stops; zoom to 8+ → toll / dhaba icons. DB: 3 `route_options` rows (`provider` ors / ors-cache, geometry), no second call on reload (Edge Function logs: 1 call).
+- [ ] Tolls / costs look sane for MP09 HG 4821 (3 axles): diesel ≈ km ÷ 3.6 × ₹90, toll count 15–25 on NH48, driver = hours × ₹120.
+- [ ] A route that reaches Bhiwandi 6–10 am or 5–9 pm shows "Reaches Mira-Bhayandar Vasai-Virar at … — no entry until …, wait …"; same at Ahmedabad (Narol) 8 am–11 pm.
+- [ ] Choose → toast "Route chosen — ETAs saved", ✓ on the Route tab, trip header shows stop ETAs. DB: chosen row `is_selected = true` with total / tolls / halts, others false; `trips.selected_route_id`; `trip_stops.eta` filled; activity `route_chosen` meta {code, variant, km}; with a wait → `city_entry` alert on Home (template "… reaches … in no-entry hours (from–to) — wait …", also in Hindi). `trip_financials.route_cost_inr` = chosen total.
+- [ ] Driver message in Hindi by default, English switch; "Send on WhatsApp" opens WhatsApp to +91 98270 00001 (or asks whom to send to when no driver phone).
+- [ ] Settings → diesel ₹100 → reopen Route step → totals change without a new ORS call.
+- [ ] Edit / new trip with different stops → Route step fetches fresh routes (old rows replaced).
+- [ ] Route service off / quota → "Routes are unavailable right now…" with Retry; with saved routes the step still works.
+- [ ] 375 px in Hindi: no sideways scroll, warnings wrap; laptop 1280 px three cards side by side.
+
+Notes for the other agent:
+- **Departure:** the owner asked to drop departure entry ("too much data entry"). The Route step has none. If the New trip wizard should drop its departure step too, that's 1·Code's lane (`planned_departure` can stay empty — Route then uses tomorrow 6:00 am and saves it on Choose).
+- Trip page: the Route step owns its lime button (Choose / Send on WhatsApp) — keep NextStepCard off on this step as on Load plan. `done` via `lib/stepState.ts`; after a reload ✓ can also come from `trips.selected_route_id`.
+- `route-plan`: I send `weightT` = gross weight (t) and `axleloadT` = gross ÷ axles; routes are read from `data.routes`; non-2xx bodies `{ ok: false, error: { code } }` are read too.
+- Extra loads (3·Git) / earnings (4·Git): `useSelectedRoute(tripId)` gives the chosen route's geometry, plan (ETAs, halts, tolls) and cost.
 
 ## Phase 3·Code — Camera and Hindi voice (branch code/phase3-camera-voice) status: not started
 

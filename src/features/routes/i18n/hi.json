@@ -1,0 +1,71 @@
+{
+  "step": "रूट",
+  "leaves": "निकलेगी {{at}}",
+  "variant": {
+    "fastest": "सबसे तेज़",
+    "shortest": "सबसे छोटा",
+    "no_tolls": "बिना टोल",
+    "recommended": "सुझाया गया",
+    "with_extra": "अतिरिक्त लोड के साथ"
+  },
+  "card": {
+    "best": "सबसे अच्छा",
+    "chosen": "चुना गया",
+    "choose": "चुनें",
+    "time": "{{km}} · {{time}}",
+    "costLine": "डीज़ल {{fuel}} · टोल {{tolls}} · ड्राइवर {{driver}}",
+    "waiting": "रुकने का खर्च {{inr}}",
+    "counts_one": "{{breaks}} आराम · {{count}} टोल",
+    "counts_other": "{{breaks}} आराम · {{count}} टोल",
+    "total": "पूरी ट्रिप का खर्च",
+    "show": "दिखाएँ",
+    "moreWarnings": "+{{count}} और — सफ़र में देखें"
+  },
+  "warning": {
+    "noEntry": "{{city}} {{at}} पहुँचेगी — {{until}} तक नो-एंट्री, {{wait}} रुकें",
+    "late": "{{stop}} {{at}} पहुँचेगी — डिलीवरी समय {{by}} के बाद"
+  },
+  "journey": {
+    "title": "सफ़र",
+    "start": "{{place}} से निकलें",
+    "stop": "{{place}} पहुँचें",
+    "break": "सड़क किनारे आराम · {{dur}}",
+    "breakAt": "{{place}} पर आराम · {{dur}}",
+    "overnight": "सड़क किनारे रात का आराम · {{dur}}",
+    "overnightAt": "{{place}} पर रात का आराम · {{dur}}",
+    "wait": "{{city}} से पहले रुकें (नो-एंट्री समय) · {{dur}}",
+    "checkpoint": "{{place}} · लगभग {{dur}}",
+    "late": "डिलीवरी समय के बाद"
+  },
+  "driver": {
+    "title": "ड्राइवर के लिए संदेश",
+    "language": "संदेश की भाषा",
+    "hindi": "हिंदी",
+    "english": "English",
+    "send": "WhatsApp पर भेजें",
+    "chooseFirst": "ड्राइवर को भेजने के लिए पहले रूट चुनें",
+    "noPhone": "ड्राइवर का नंबर सेव नहीं — WhatsApp पूछेगा किसे भेजना है"
+  },
+  "message": {
+    "title": "Spareway · {{code}} · {{reg}}",
+    "hello": "नमस्ते {{name}},",
+    "leave": "निकलना: {{at}}",
+    "route": "रूट: {{name}} · {{km}} · {{time}}",
+    "tolls": "टोल: {{count}} · {{inr}} (अनुमान)",
+    "safe": "ध्यान से चलाएँ। कुछ भी बदले तो मालिक को फ़ोन करें।"
+  },
+  "done": "रूट चुन लिया — पहुँचने का समय सेव हुआ",
+  "loading": "ट्रक के तीन रूट ला रहे हैं…",
+  "fewStops": "रूट के लिए कम से कम एक स्टॉप जोड़ें",
+  "estimatedNote": "टोल और समय अनुमान हैं",
+  "places": {
+    "Mira-Bhayandar Vasai-Virar": "मीरा-भायंदर वसई-विरार",
+    "Surat": "सूरत",
+    "Vadodara": "वडोदरा",
+    "Ahmedabad": "अहमदाबाद",
+    "Mumbai": "मुंबई",
+    "Udaipur": "उदयपुर",
+    "Gurugram": "गुरुग्राम",
+    "Indore": "इंदौर"
+  }
+}

@@ -51,3 +51,18 @@
 | 2026-10-31 | 2·Code | Route geometry simplified (Douglas–Peucker ~40 m) before caching / returning | ORS returns ~11,000 points for the demo trip; ~1,400 keep the road shape |
 | 2026-10-31 | 2·Code | Live map: real time since departure + ×60 since the page opened, capped at 98 %; straight line through stops until a route is chosen | Architecture F15 "speed ×60"; trucks stay on screen and visibly move |
 | 2026-10-31 | 2·Code | Loader step ✓ once the link exists or loading started | Step is about sending the job to the loader |
+| 2026-10-31 | 2·Git | No departure entry on the Route step: trip's `planned_departure`, else tomorrow 6:00 am IST (saved on Choose) | Owner: too much data entry, keep it simple |
+| 2026-10-31 | 2·Git | Rest rules from Settings (5 h / 30 min, 10 h a day, 8 h night rest) | User answer Q2 (spec default) |
+| 2026-10-31 | 2·Git | Driver message Hindi by default, English switch | User answer Q3 (spec default) |
+| 2026-10-31 | 2·Git | Driving time = route duration, never faster than Settings average speed | User answer; ORS truck times are optimistic for India |
+| 2026-10-31 | 2·Git | No unloading time at stops | User answer |
+| 2026-10-31 | 2·Git | No-entry wait if a stop is inside a city's circle, or the route passes a corridor zone whose rule names the stop's town (Mira-Bhayandar → Bhiwandi); bypassed cities don't wait; departure inside a zone doesn't wait | User answer; Bhiwandi is outside the Mumbai circle in the POI data |
+| 2026-10-31 | 2·Git | Night rest taken instead of a break when it would be due within the next hour | Avoids "break, then night rest 30 min later" |
+| 2026-10-31 | 2·Git | Rest spots = dhaba / parking / hotel POIs within 3 km of the route and ≤ 3 km ahead; else "break by the road" | Spec "within 3 km ahead"; dhaba coordinates are town centres |
+| 2026-10-31 | 2·Git | Toll rate key = truck axles clamped to the table (2–7), nearest class if missing; weighbridges not counted as check posts | POI data has rate_inr per axle class |
+| 2026-10-31 | 2·Git | Driver cost = all hours from departure to the last stop (incl. breaks, rest, waits) × wage; waiting cost = no-entry + check post hours | Driver is paid for the whole trip |
+| 2026-10-31 | 2·Git | Routes saved once per stop set; costs recomputed live from Settings + departure; new ORS call only when saved lines no longer pass the stops (15 km) | ORS limits 40/min, 2,000/day |
+| 2026-10-31 | 2·Git | Choose writes several rows from the client (route_options, trips, stop ETAs, activity, alert) without a DB function | Lane is src/features/routes only; each write is idempotent on retry |
+| 2026-10-31 | 2·Git | Card shows up to 2 warnings (no-entry first) + "+N more in the journey"; late stops marked in the journey | Seed delivery windows are tight → a late warning per stop |
+| 2026-10-31 | 2·Git | POI names (tolls, dhabas, check posts) shown as stored in both languages; no-entry towns translated | Real place names, not demo data |
+| 2026-10-31 | 2·Git | Fixture mode reads the real POIs from `supabase/sql/phase0_pois_real.sql` (lazy chunk) | Fixture store has no POIs; one source of truth |
