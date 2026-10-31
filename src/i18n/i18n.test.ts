@@ -59,6 +59,8 @@ describe('tm() — alert / activity templates (Engineering Reference 7.7)', () =
     ['extra_load_accepted', { listing_code: 'LD-1045', trip_code: 'TRP-2026-0031', pickup: 'Vadodara', drop: 'Mumbai (Bhiwandi)' }, 'Extra load LD-1045 added to TRP-2026-0031: Vadodara → Mumbai (Bhiwandi)', 'अतिरिक्त लोड LD-1045 TRP-2026-0031 में जोड़ा: वडोदरा → मुंबई (भिवंडी)'],
     ['trip_created', { code: 'TRP-2026-0032' }, 'New trip TRP-2026-0032', 'नई ट्रिप TRP-2026-0032'],
     ['truck_status', { reg: 'MP09 KR 1147', status: 'maintenance' }, 'MP09 KR 1147 is now Repair', 'MP09 KR 1147 अब मरम्मत'],
+    ['route_chosen', { code: 'TRP-2026-0031', variant: 'no_tolls', km: 1496 }, 'Route chosen for TRP-2026-0031: No tolls, 1496 km', 'TRP-2026-0031 का रूट चुना: बिना टोल, 1496 km'],
+    ['city_entry', { code: 'TRP-2026-0031', city: 'Mira-Bhayandar Vasai-Virar', from: '17:00', to: '21:00', wait: '2 h 29 min' }, 'TRP-2026-0031 reaches Mira-Bhayandar Vasai-Virar in no-entry hours (17:00–21:00) — wait 2 h 29 min', 'TRP-2026-0031 मीरा-भायंदर वसई-विरार में नो-एंट्री समय (17:00–21:00) में पहुँचेगी — 2 h 29 min रुकें'],
   ]
   it.each(cases)('%s in both languages', (kind, meta, en, hi) => {
     expect(tm(kind, meta, '', 'en')).toBe(en)

@@ -172,6 +172,12 @@
     "sources": {
       "camera": "कैमरा",
       "voice": "आवाज़"
+    },
+    "route_chosen": "{{code}} का रूट चुना: {{variant}}, {{km}} km",
+    "variants": {
+      "fastest": "सबसे तेज़",
+      "shortest": "सबसे छोटा",
+      "no_tolls": "बिना टोल"
     }
   },
   "fixture": {

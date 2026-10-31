@@ -35,6 +35,9 @@ export function tm(kind: string, meta: Meta | null | undefined, fallback = '', l
   if (kind === 'loader_cargo' && typeof meta.source === 'string') {
     values.source = i18n.t(`common:templates.sources.${meta.source}`, { lng: lang, defaultValue: meta.source })
   }
+  if (kind === 'route_chosen' && typeof meta.variant === 'string') {
+    values.variant = i18n.t(`common:templates.variants.${meta.variant}`, { lng: lang, defaultValue: meta.variant })
+  }
   if (kind === 'truck_status' && typeof meta.status === 'string') {
     values.status = i18n.t(`common:truckStatus.${meta.status}`, { lng: lang, defaultValue: meta.status })
   }

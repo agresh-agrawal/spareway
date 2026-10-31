@@ -172,6 +172,12 @@
     "sources": {
       "camera": "camera",
       "voice": "voice"
+    },
+    "route_chosen": "Route chosen for {{code}}: {{variant}}, {{km}} km",
+    "variants": {
+      "fastest": "Fastest",
+      "shortest": "Shortest",
+      "no_tolls": "No tolls"
     }
   },
   "fixture": {
