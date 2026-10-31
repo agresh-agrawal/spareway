@@ -68,3 +68,17 @@
 | 2026-10-31 | 2·Git | Fixture mode reads the real POIs from `supabase/sql/phase0_pois_real.sql` (lazy chunk) | Fixture store has no POIs; one source of truth |
 | 2026-10-31 | Merge 2 | `tm('route_chosen')` translates `meta.variant` via `common:templates.variants` | Hindi Home showed the English variant word |
 | 2026-10-31 | Merge 2 | Phase 2 merged without the real-DB Route step check; owner checks it on the live site | Supabase MCP on the new account cannot reach the Spareway project; `route-plan` itself answers live |
+| 2026-10-31 | 3·Git | Look up to 40 km off route (old DB default 20 read as 40 until `corridor_km` default changes); minimum profit from Settings | Owner answer Q1 |
+| 2026-10-31 | 3·Git | Unsuitable loads in a collapsed "Not suitable (n)" list | Owner answer Q2 (spec default) |
+| 2026-10-31 | 3·Git | After Add to trip: re-pack all before loading starts, else keep loaded boxes fixed; the space check uses the same rule | Owner answer Q3; check = what Add to trip will do |
+| 2026-10-31 | 3·Git | Delivery deadlines don't decide (date shown on the card) | Owner answer: demo deadlines (2–4 days) are earlier than the truck reaches Mumbai |
+| 2026-10-31 | 3·Git | Packing engine: a box only blocks another while both are on the truck (change in load-planner/engine) | Owner-approved; mid-trip pickups were wrongly blocked |
+| 2026-10-31 | 3·Git | One evaluation engine (`lib/evaluate.ts`) for listings and typed loads: ACCEPT / REJECT / NOT PROFITABLE / NEEDS REVIEW; physical or order failure always REJECT; missing data or unknown placement NEEDS REVIEW | Owner addition |
+| 2026-10-31 | 3·Git | Extra cost = extra km × ₹/km + handling + waiting (typed, else Settings ₹/kg and 30 min per new stop × waiting ₹/h); no delay penalty; extra tolls shown as "not known yet" (0) | Owner addition: only what the load adds; tolls only if known |
+| 2026-10-31 | 3·Git | Space OK only if nothing new drops out (neither the load nor cargo that fitted before); "would block" only when every left-out box is a stop-order problem | A load could fit while pushing planned cargo out |
+| 2026-10-31 | 3·Git | Orientation choice in Enter a load = any way / keep upright (what the engine supports) | Engine rotates freely or keeps the height up |
+| 2026-10-31 | 3·Git | Money breakdown behind "More details" on listing cards, open on typed-load results; decision + checks + profit always visible | Owner's card content vs Design System "≤ 3 numbers per card" |
+| 2026-10-31 | 3·Git | Typed loads are checked only, not saved; accept_extra_load needs a listing | Contract of accept_extra_load |
+| 2026-10-31 | 3·Git | "Find a trip for this load" matches on straight lines between stops with 2 × corridor (80 km) | Straight lines cut corners; the step then checks on the real route |
+| 2026-10-31 | 3·Git | New load in "See in truck" drawn in stop colour 8 (pink) | Its own stop colour can equal planned boxes (e.g. cyan for Ahmedabad) |
+| 2026-10-31 | 3·Git | Extra loads step reads the chosen route directly from route_options (no `useSelectedRoute`) | That hook can start a route-plan call as a side effect |
