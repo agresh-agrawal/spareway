@@ -2,7 +2,16 @@
 // lime "Add to trip" (the best one), collapsed "Not suitable (n)" with plain reasons.
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { ChevronDown, ClipboardPen, Coins, Info, MoveHorizontal, PackageSearch, Scale, XCircle } from 'lucide-react'
+import {
+  ChevronDown,
+  ClipboardPen,
+  Coins,
+  Info,
+  MoveHorizontal,
+  PackageSearch,
+  Scale,
+  XCircle,
+} from 'lucide-react'
 import { EmptyState, ErrorState, PlainButton, Skeleton } from '@/components/common'
 import { formatFt, formatInr, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
@@ -14,15 +23,33 @@ import { reasonText } from '../lib/text'
 import { LoadCard } from './LoadCard'
 import { RouteStrip } from './RouteStrip'
 import { PreviewSheet } from './PreviewSheet'
-import { ChecksRow, DecisionChip, SafetyNote, evaluationReason } from './DecisionBlock'
+import { ChecksRow, DecisionChip, SafetyNote, evaluationFix, evaluationReason } from './DecisionBlock'
+import { CounterOfferSheet } from '@/features/provider'
 import { TypedLoadSheet, TypedResultCard, type CheckedLoad } from './TypedLoad'
 
 /** Compact tile (3 per row also at 375 px in Hindi): icon, number, one-line label. */
-function Tile({ icon: Icon, value, label, ok }: { icon: typeof Coins; value: string; label: string; ok?: boolean }) {
+function Tile({
+  icon: Icon,
+  value,
+  label,
+  ok,
+}: {
+  icon: typeof Coins
+  value: string
+  label: string
+  ok?: boolean
+}) {
   return (
     <div className="flex min-w-0 flex-col gap-1 rounded-tile border border-line bg-surface-2 p-3 sm:p-4">
       <Icon size={24} aria-hidden className={ok ? 'text-ok' : 'text-ink-2'} />
-      <span className={cn('text-[18px] leading-7 font-semibold break-words tabular sm:text-[24px]', ok && 'text-ok')}>{value}</span>
+      <span
+        className={cn(
+          'text-[18px] leading-7 font-semibold break-words tabular sm:text-[24px]',
+          ok && 'text-ok',
+        )}
+      >
+        {value}
+      </span>
       <span className="text-label text-ink-2">{label}</span>
     </div>
   )
@@ -37,6 +64,7 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
   const [showRest, setShowRest] = useState(false)
   const [typing, setTyping] = useState(false)
   const [checked, setChecked] = useState<CheckedLoad[]>([])
+  const [counter, setCounter] = useState<Candidate | null>(null)
   const cards = useRef(new Map<string, HTMLElement>())
 
   if (x.status === 'error') return <ErrorState error={x.error} onRetry={x.retry} />
@@ -56,7 +84,9 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
   const d = x.data
   const canAdd = d.trip.status === 'planned' || d.trip.status === 'loading'
   const top = x.recommended[0]
-  const usedLength = d.activePlan ? Number((d.activePlan.metrics as { usedLengthCm?: number }).usedLengthCm ?? 0) : Math.max(0, ...(x.base?.placements ?? []).map((p) => p.x + p.l))
+  const usedLength = d.activePlan
+    ? Number((d.activePlan.metrics as { usedLengthCm?: number }).usedLengthCm ?? 0)
+    : Math.max(0, ...(x.base?.placements ?? []).map((p) => p.x + p.l))
   const freeFloor = Math.max(0, Number(d.truck.internal_length_cm) - usedLength)
   const { line } = tripLine(d)
 
@@ -80,8 +110,17 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Tile icon={MoveHorizontal} value={formatFt(freeFloor)} label={t('tiles.freeFloor')} />
-        <Tile icon={Scale} value={formatWeight(Math.max(0, x.remainingPayloadKg))} label={t('tiles.weightLeft')} />
-        <Tile icon={Coins} value={top ? formatInr(top.netBenefitInr) : '—'} label={t('tiles.possible')} ok={Boolean(top)} />
+        <Tile
+          icon={Scale}
+          value={formatWeight(Math.max(0, x.remainingPayloadKg))}
+          label={t('tiles.weightLeft')}
+        />
+        <Tile
+          icon={Coins}
+          value={top ? formatInr(top.netBenefitInr) : '—'}
+          label={t('tiles.possible')}
+          ok={Boolean(top)}
+        />
       </div>
 
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-label text-ink-2">
@@ -108,7 +147,11 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
           <h2 className="text-section-title font-semibold">{t('typed.yours')}</h2>
           <div className="grid gap-3 lg:grid-cols-2">
             {checked.map((c) => (
-              <TypedResultCard key={c.load.id} c={c} onRemove={() => setChecked((list) => list.filter((x) => x !== c))} />
+              <TypedResultCard
+                key={c.load.id}
+                c={c}
+                onRemove={() => setChecked((list) => list.filter((x) => x !== c))}
+              />
             ))}
           </div>
         </section>
@@ -148,7 +191,11 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
           >
             <XCircle size={20} className="text-ink-2" aria-hidden />
             {t('notSuitable', { count: x.notSuitable.length })}
-            <ChevronDown size={20} aria-hidden className={cn('ml-auto text-ink-2 transition-transform duration-200', showRest && 'rotate-180')} />
+            <ChevronDown
+              size={20}
+              aria-hidden
+              className={cn('ml-auto text-ink-2 transition-transform duration-200', showRest && 'rotate-180')}
+            />
           </button>
           {showRest && (
             <ul className="flex flex-col gap-2 border-t border-line p-4">
@@ -161,7 +208,19 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
                   <div className="text-label text-ink-2">
                     {t('card.fromTo', { from: td(c.listing.pickup_name), to: td(c.listing.drop_name) })}
                   </div>
-                  <div className="mt-1 text-warn">{evaluationReason(c.evaluation, t) || reasonText(c, t, x.remainingPayloadKg)}</div>
+                  <div className="mt-1 text-warn">
+                    {evaluationReason(c.evaluation, t) || reasonText(c, t, x.remainingPayloadKg)}
+                  </div>
+                  {evaluationFix(c.evaluation, t) && (
+                    <div className="mt-1 font-medium">
+                      {t('fixPrefix')} {evaluationFix(c.evaluation, t)}
+                    </div>
+                  )}
+                  {c.evaluation.reason === 'LOW_MARGIN' && c.listing.status === 'open' && (
+                    <PlainButton icon={Coins} className="mt-2 h-11" onClick={() => setCounter(c)}>
+                      {t('counterNeed', { inr: formatInr(c.evaluation.minViableInr) })}
+                    </PlainButton>
+                  )}
                   <div className="mt-2">
                     <ChecksRow ev={c.evaluation} />
                   </div>
@@ -172,7 +231,20 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
         </section>
       )}
 
-      <TypedLoadSheet open={typing} onOpenChange={setTyping} evaluate={x.evaluateTyped} onChecked={(c) => setChecked((list) => [c, ...list])} />
+      <TypedLoadSheet
+        open={typing}
+        onOpenChange={setTyping}
+        evaluate={x.evaluateTyped}
+        onChecked={(c) => setChecked((list) => [c, ...list])}
+      />
+      {counter && (
+        <CounterOfferSheet
+          listing={counter.listing}
+          needInr={counter.evaluation.minViableInr}
+          open
+          onOpenChange={(o) => !o && setCounter(null)}
+        />
+      )}
       <PreviewSheet candidate={preview} base={x.base} options={x.options} onClose={() => setPreview(null)} />
     </div>
   )

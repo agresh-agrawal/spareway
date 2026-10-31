@@ -28,6 +28,8 @@ export interface FixtureData {
   trip_extra_loads: Tables<'trip_extra_loads'>[]
   alerts: Tables<'alerts'>[]
   trip_expenses: Tables<'trip_expenses'>[]
+  provider_links: Tables<'provider_links'>[]
+  listing_offers: Tables<'listing_offers'>[]
   activity_log: Tables<'activity_log'>[]
   fleet_daily_stats: Tables<'fleet_daily_stats'>[]
   pois: Tables<'pois'>[]
@@ -274,6 +276,8 @@ export function buildSeed(now: Date = new Date()): FixtureData {
   ): Tables<'freight_listings'> => ({
     id: id('l', n),
     company_id: c,
+    share_token: null,
+    provider_link_id: null,
     visibility: 'company',
     code,
     shipper_name,
@@ -417,6 +421,8 @@ export function buildSeed(now: Date = new Date()): FixtureData {
       // one challan on the finished trip so the challan corner and earnings show it
       { id: id('e', 9001), company_id: c, trip_id: done.id, kind: 'challan', amount_inr: 2000, note: 'No-entry time, Jaipur', added_by: 'driver', created_at: iso(t - 6 * HOUR) },
     ],
+    provider_links: [],
+    listing_offers: [],
     activity_log,
     fleet_daily_stats,
     pois: [],

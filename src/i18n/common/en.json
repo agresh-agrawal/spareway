@@ -201,7 +201,9 @@
     "stopStatus": {
       "arrived": "reached",
       "done": "delivered at"
-    }
+    },
+    "provider_load": "{{name}} sent {{count}} new load(s) — see Loads",
+    "offer_answer": "Your offer for {{code}} (₹{{amount}}) was answered"
   },
   "fixture": {
     "banner": "Fixture mode — sample data, nothing is saved",

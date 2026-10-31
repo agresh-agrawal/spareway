@@ -159,5 +159,16 @@
     "optHelp": "Empty = worked out from Settings",
     "check": "Check this load",
     "checking": "Checking…"
-  }
+  },
+  "fix": {
+    "OVER_PAYLOAD": "take only {{fit}} pieces, or carry it on a bigger truck.",
+    "NO_SPACE": "take fewer pieces, or carry it on another trip with more free space.",
+    "TOO_LARGE": "it needs a longer or taller truck.",
+    "OFF_CORRIDOR": "ask the shipper to bring it closer to your route — it is {{km}} km away.",
+    "WRONG_DIRECTION": "offer it to a trip going the other way.",
+    "ORDER_CONFLICT": "change the stop order so this load comes off before the goods behind it.",
+    "LOW_MARGIN": "ask for at least {{need}}."
+  },
+  "fixPrefix": "Fix:",
+  "counterNeed": "Counter-offer {{inr}}"
 }

@@ -8,7 +8,12 @@ import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
 import type { CheckState, Decision, Evaluation } from '../lib/evaluate'
 
-const DECISION_TONE: Record<Decision, Tone> = { ACCEPT: 'ok', REJECT: 'crit', NOT_PROFITABLE: 'warn', NEEDS_REVIEW: 'info' }
+const DECISION_TONE: Record<Decision, Tone> = {
+  ACCEPT: 'ok',
+  REJECT: 'crit',
+  NOT_PROFITABLE: 'warn',
+  NEEDS_REVIEW: 'info',
+}
 const CHECK_ICON = { PASS: CircleCheck, FAIL: CircleX, REVIEW: CircleHelp }
 const CHECK_CLASS: Record<CheckState, string> = { PASS: 'text-ok', FAIL: 'text-crit', REVIEW: 'text-info' }
 
@@ -25,6 +30,19 @@ export function evaluationReason(ev: Evaluation, t: T): string {
     left: formatWeight(Math.max(0, ev.remainingKg)),
     net: formatInr(ev.earningsInr),
     need: formatInr(ev.minViableInr),
+  })
+}
+
+/** What would make it work (rejection reason → suggested correction), or '' when nothing to fix. */
+export function evaluationFix(ev: Evaluation, t: T): string {
+  if (!ev.reason || ev.decision === 'NEEDS_REVIEW') return ''
+  const perPiece = ev.units > 0 ? ev.kg / ev.units : 0
+  const fit = perPiece > 0 ? Math.floor(Math.max(0, ev.remainingKg) / perPiece) : 0
+  return t(`fix.${ev.reason}`, {
+    fit,
+    need: formatInr(ev.minViableInr),
+    km: Math.round(ev.offKm),
+    defaultValue: '',
   })
 }
 
@@ -52,7 +70,15 @@ export function ChecksRow({ ev }: { ev: Evaluation }) {
   )
 }
 
-export function MoneyDetails({ ev, offerInr, open: openInitially = false }: { ev: Evaluation; offerInr: number; open?: boolean }) {
+export function MoneyDetails({
+  ev,
+  offerInr,
+  open: openInitially = false,
+}: {
+  ev: Evaluation
+  offerInr: number
+  open?: boolean
+}) {
   const { t } = useLang('extra-loads')
   const [open, setOpen] = useState(openInitially)
   const rows: [string, string, boolean?][] = [
@@ -66,18 +92,24 @@ export function MoneyDetails({ ev, offerInr, open: openInitially = false }: { ev
   ]
   return (
     <div>
-      <button type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="inline-flex min-h-10 items-center gap-1 font-semibold text-ink-2 hover:text-ink">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex min-h-10 items-center gap-1 font-semibold text-ink-2 hover:text-ink"
+      >
         {open ? t('money.less') : t('money.more')}
-        <ChevronDown size={18} aria-hidden className={cn('transition-transform duration-200', open && 'rotate-180')} />
+        <ChevronDown
+          size={18}
+          aria-hidden
+          className={cn('transition-transform duration-200', open && 'rotate-180')}
+        />
       </button>
       {open && (
         <dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 rounded-tile border border-line bg-surface-2 p-3 tabular">
           {rows.map(([label, value]) => (
             <div key={label} className="contents">
-              <dt className="flex items-center gap-1.5 text-ink-2">
-                {label}
-                
-              </dt>
+              <dt className="flex items-center gap-1.5 text-ink-2">{label}</dt>
               <dd className="text-right">{value}</dd>
             </div>
           ))}

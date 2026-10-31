@@ -111,3 +111,11 @@
 | 2026-10-31 | Pre-4 | No chips anywhere (Badge removed; status = text + dot) | Owner: chips look too AI |
 | 2026-10-31 | Pre-4 | Light theme default, saved per device (`spareway.theme`) | Owner request; replaces Design System "dark only" |
 | 2026-10-31 | Pre-4 | Driver and loader links are token links with security-definer read functions, no login | Owner: share by QR / WhatsApp |
+| 2026-10-31 | Pre-4 | Driver name + mobile belong to the trip; the truck keeps the latest driver | Owner request 1 |
+| 2026-10-31 | Pre-4 | Trip costs (challans etc.) in `trip_expenses`, subtracted in `trip_financials` | Owner request 4: real net per trip |
+| 2026-10-31 | Pre-4 | Fines shown are central MV Act 2019 / GST amounts, marked "about"; states differ | Honest numbers |
+| 2026-10-31 | Pre-4 | Loader layers = bands of the median floor-box height (30–90 cm), not every distinct start height | Distinct heights gave 12 "layers" on the demo trip |
+| 2026-10-31 | Pre-4 | Monthly report via Edge Function + pg_cron + Brevo; cron token kept in Vault | No secrets in SQL or the browser |
+| 2026-10-31 | Pre-4 | Providers post through a link per owner company; loads are public; one share link per load; accepting a counter-offer reserves the load | Owner: link only, no login |
+| 2026-10-31 | Pre-4 | Edited shared `src/lib/i18n.ts` (cost kind / stop status in templates) and `src/app/providers.tsx` (ReportNotifier) | Only Agent Code is working now; small additive changes |
+| 2026-10-31 | Pre-4 | GitHub history was rewritten earlier today; local commits were rebased onto it, never force-pushed | Keep the remote as the source of truth |

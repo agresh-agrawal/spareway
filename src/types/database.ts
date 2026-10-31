@@ -520,8 +520,10 @@ export type Database = {
           pickup_lng: number
           pickup_name: string
           posted_by: string | null
+          provider_link_id: string | null
           quantity: number
           ready_from: string | null
+          share_token: string | null
           shipper_name: string
           shipper_phone: string
           stackable: boolean
@@ -552,8 +554,10 @@ export type Database = {
           pickup_lng: number
           pickup_name: string
           posted_by?: string | null
+          provider_link_id?: string | null
           quantity?: number
           ready_from?: string | null
+          share_token?: string | null
           shipper_name: string
           shipper_phone?: string
           stackable?: boolean
@@ -584,8 +588,10 @@ export type Database = {
           pickup_lng?: number
           pickup_name?: string
           posted_by?: string | null
+          provider_link_id?: string | null
           quantity?: number
           ready_from?: string | null
+          share_token?: string | null
           shipper_name?: string
           shipper_phone?: string
           stackable?: boolean
@@ -608,6 +614,61 @@ export type Database = {
             columns: ['company_id']
             isOneToOne: false
             referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'freight_listings_provider_link_id_fkey'
+            columns: ['provider_link_id']
+            isOneToOne: false
+            referencedRelation: 'provider_links'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      listing_offers: {
+        Row: {
+          amount_inr: number
+          answered_at: string | null
+          company_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          note: string
+          status: string
+        }
+        Insert: {
+          amount_inr: number
+          answered_at?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          note?: string
+          status?: string
+        }
+        Update: {
+          amount_inr?: number
+          answered_at?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          note?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'listing_offers_company_id_fkey'
+            columns: ['company_id']
+            isOneToOne: false
+            referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'listing_offers_listing_id_fkey'
+            columns: ['listing_id']
+            isOneToOne: false
+            referencedRelation: 'freight_listings'
             referencedColumns: ['id']
           },
         ]
@@ -814,6 +875,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'profiles_company_id_fkey'
+            columns: ['company_id']
+            isOneToOne: false
+            referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      provider_links: {
+        Row: {
+          company_id: string
+          created_at: string
+          enabled: boolean
+          id: string
+          token: string
+        }
+        Insert: {
+          company_id?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          token: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'provider_links_company_id_fkey'
             columns: ['company_id']
             isOneToOne: false
             referencedRelation: 'companies'
@@ -1457,6 +1550,7 @@ export type Database = {
       }
     }
     Functions: {
+      _provider_load_fields: { Args: { p: Json }; Returns: Json }
       _seed_company: { Args: { p_company: string }; Returns: undefined }
       _seed_company_missing_trucks_guard: {
         Args: { p_company: string }
@@ -1471,6 +1565,7 @@ export type Database = {
         Returns: Json
       }
       activate_load_plan: { Args: { p_plan_id: string }; Returns: undefined }
+      check_report_token: { Args: { p_token: string }; Returns: boolean }
       create_driver_link: { Args: { p_trip_id: string }; Returns: Json }
       create_loader_link: { Args: { p_trip_id: string }; Returns: Json }
       create_trip_with_stops: {
@@ -1501,6 +1596,7 @@ export type Database = {
         Args: { p_status: string; p_stop_id: string; p_token: string }
         Returns: Json
       }
+      get_provider_link: { Args: { p_new?: boolean }; Returns: Json }
       km_between: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
@@ -1538,6 +1634,21 @@ export type Database = {
       }
       next_listing_code: { Args: never; Returns: string }
       next_trip_code: { Args: never; Returns: string }
+      provider_answer_offer: {
+        Args: { p_accept: boolean; p_offer_id: string; p_share: string }
+        Returns: Json
+      }
+      provider_cancel_load: { Args: { p_share: string }; Returns: Json }
+      provider_get_load: { Args: { p_share: string }; Returns: Json }
+      provider_link_info: { Args: { p_token: string }; Returns: Json }
+      provider_post_loads: {
+        Args: { p_loads: Json; p_shipper: Json; p_token: string }
+        Returns: Json
+      }
+      provider_update_load: {
+        Args: { p_load: Json; p_share: string }
+        Returns: Json
+      }
       reset_sample_data: { Args: never; Returns: Json }
       sample_data_allowed: { Args: never; Returns: boolean }
       seed_sample_data: { Args: never; Returns: Json }

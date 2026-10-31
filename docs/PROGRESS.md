@@ -61,7 +61,7 @@ Merged `code/phase4-offline-deploy` then `git/phase4-earnings` into `main` — n
 Verified together (fixture mode, Hindi): trip steps माल · लोड प्लान · लोडर · रूट · अतिरिक्त लोड · कमाई; Route → Choose → Extra loads → Add LD-1045 (34% → 43%) → Route asks again → Choose → Earnings "आपकी कमाई ₹19,960" = ₹62,000 + ₹14,000 − ₹54,547 − ₹1,493, "+₹12,507 from extra loads" (= LD-1045 card), tiles 34% → 43%, 2.6 ft floor saved, ₹14.84 → ₹11.67 per tonne-km; /earnings 7 / 30 days with Sample badges and top trips (TRP-2026-0031 ₹19,960); Home "इस हफ़्ते की कमाई" + "अतिरिक्त लोड खोजें" + "अतिरिक्त कमाई मिल सकती है" + LD-1045 activity; Settings "Save map for offline (NH48)"; camera / voice buttons on Cargo.
 Still for the owner on https://spareway.vercel.app (signed-in, real database, real phone): 4·Git "Code must verify" (Earnings = `trip_financials.net_earnings_inr`, WhatsApp share, /earnings from `fleet_daily_stats`), 3·Git list (Add to trip rows, "just taken", Post a load), Phase 2 Route on the real DB, phone camera + mic, install + airplane mode + queued taps, fresh signup gets the demo trucks.
 
-## Pre-Phase 4 fixes (branch code/prephase4-fixes → main) — stages 1–4 of 10 done 2026-10-31
+## Pre-Phase 4 fixes (branch code/prephase4-fixes → main) — stages 1–7 + owner requests done 2026-10-31
 
 Owner's answers: Problems → keep loader reports only · load providers use a link (no login) · sample data only on agresh@agreshagrawal.com + the two QA accounts · no chips anywhere · keep the free map (OpenFreeMap + ORS).
 - **1 Cleanup** (`supabase/sql/prephase4code_cleanup.sql`, applied): `sample_data_allowed()`; new sign-ups start empty; sample rows deleted from the 3 other accounts (their own rows kept); alerts only `loader_issue` / `loader_cargo` (constraint + code no longer writes overload / plan_unplaced / city_entry); `trucks.fuel_level_pct` dropped (live map, truck page); daily space chart removed; every Sample/Estimated/AI chip removed, status labels are plain text with a dot; Settings "Reset sample data" only for allowed accounts.
@@ -70,7 +70,20 @@ Owner's answers: Problems → keep loader reports only · load providers use a l
 - **4 Loader link**: 3D view (not in low-data); "Items you added" — change / remove (`prephase4code_loader_items.sql`, applied).
 Tests 355 pass, build passes. `database.ts` patched to exactly the generated diff.
 
-**Left (stages 5–10):** 5 load-provider link (post load with scan/say/type, price, public share link) + owner counter-offers; 6 automatic "pick best loads", offer calculator, rejection reasons with corrections; 7 save & resume new trip, trip history, data download; 8 map fixes (Hindi place names); 9 camera/voice phone test; 10 full test of all roles + docs. Company phone is needed for "Call owner" on the driver page (Settings).
+**Owner requests + stages 5–7 (2026-10-31, all applied and deployed):**
+- **Driver per trip** (`prephase4code_trip_driver_expenses.sql`): New trip step 1 asks driver name + 10-digit mobile (suggests the truck's last driver); `trips.driver_name/phone`; the truck keeps the latest driver for the fleet list. Truck form no longer asks for a driver.
+- **New trip draft** saved on the device (`spareway.newTripDraft`) — "carry on / start again"; field errors under the inputs.
+- **Truck form quick summary**: m³ / cft / floor sq ft, pallets and cartons that fit, weight-first density, 500 km cost and diesel, ₹ per tonne-km.
+- **Loader page**: truck drawn upright (cab top, doors bottom), one layer at a time with stacked layer buttons (floor at the bottom); layers = bands of the usual floor-box height (30–90 cm). Fixed a crash when opening Loader after Load plan (shared query key).
+- **Driver page** simpler: big next stop, Google Maps, "I reached" / "Delivered" (owner notified), Call owner, "Paid a challan or cost", challan warnings + papers and fines.
+- **Challan corner** (trip tab 7): overload / near-limit / no-entry / late risks, papers + habits with usual central fines, trip costs (challan, breakdown, police, parking, loading, other) added by owner or driver; they come off net earnings (`trip_financials` misc_cost_inr / challan_cost_inr). Owner gets a toast (and phone notification if allowed in Settings) for driver and loader reports and new provider loads.
+- **Trip history** (`/history`): finished/cancelled trips, month filter, totals, CSV "Download my data".
+- **Monthly email report**: Edge Function `monthly-report` (verify_jwt off, own checks) + pg_cron `spareway-monthly-report` 03:30 UTC on the 1st (token in Vault, `check_report_token`). Settings → preview / email me now. **Needs Supabase secrets `BREVO_API_KEY` and `BREVO_SENDER` ("Name <email>") — until set it answers EMAIL_NOT_SET_UP.**
+- **Stage 5 load providers** (`prephase4code_provider_offers.sql`): owner "Get loads from providers" link (QR / WhatsApp) → `/post/:token` no login, several loads in one go → each load gets `/offer/:share` (see, change, take off, accept / turn down counter-offers). Owners see full details on Loads, counter-offer, withdraw, copy load link. Verified on the real database in a rolled-back transaction.
+- **Stage 6**: "Is ₹X worth it?" calculator in the counter-offer sheet (trip's minimum price when known, else road km × usual ₹/km + handling + min margin); every not-suitable load shows a suggested fix; LOW_MARGIN loads get "Counter-offer ₹need".
+Tests 376 pass, build passes.
+
+**Left:** "Pick best loads for me" (automatic arrangement — manual add works); 8 map fixes (Hindi place names on the map); 9 camera / voice test on a real phone; 10 full test of all four roles signed in on the live site. Company phone is needed for "Call owner" (Settings).
 
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
