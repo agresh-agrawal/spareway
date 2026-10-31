@@ -2,6 +2,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: '14.18'
   }
@@ -821,9 +822,21 @@ export type Database = {
         ]
       }
       route_cache: {
-        Row: { created_at: string; key: string; response: Json }
-        Insert: { created_at?: string; key: string; response: Json }
-        Update: { created_at?: string; key?: string; response?: Json }
+        Row: {
+          created_at: string
+          key: string
+          response: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          response: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          response?: Json
+        }
         Relationships: []
       }
       route_options: {
@@ -920,6 +933,68 @@ export type Database = {
           },
           {
             foreignKeyName: 'route_options_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trips'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      trip_expenses: {
+        Row: {
+          added_by: string
+          amount_inr: number
+          company_id: string
+          created_at: string
+          id: string
+          kind: string
+          note: string
+          trip_id: string
+        }
+        Insert: {
+          added_by?: string
+          amount_inr: number
+          company_id?: string
+          created_at?: string
+          id?: string
+          kind: string
+          note?: string
+          trip_id: string
+        }
+        Update: {
+          added_by?: string
+          amount_inr?: number
+          company_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'trip_expenses_company_id_fkey'
+            columns: ['company_id']
+            isOneToOne: false
+            referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'trip_expenses_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trip_financials'
+            referencedColumns: ['trip_id']
+          },
+          {
+            foreignKeyName: 'trip_expenses_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trip_overview'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'trip_expenses_trip_id_fkey'
             columns: ['trip_id']
             isOneToOne: false
             referencedRelation: 'trips'
@@ -1120,6 +1195,8 @@ export type Database = {
           completed_at: string | null
           created_at: string
           driver_link_enabled: boolean
+          driver_name: string
+          driver_phone: string
           driver_token: string | null
           id: string
           is_sample: boolean
@@ -1141,6 +1218,8 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           driver_link_enabled?: boolean
+          driver_name?: string
+          driver_phone?: string
           driver_token?: string | null
           id?: string
           is_sample?: boolean
@@ -1162,6 +1241,8 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           driver_link_enabled?: boolean
+          driver_name?: string
+          driver_phone?: string
           driver_token?: string | null
           id?: string
           is_sample?: boolean
@@ -1305,11 +1386,15 @@ export type Database = {
       trip_financials: {
         Row: {
           base_freight_inr: number | null
+          challan_cost_inr: number | null
           code: string | null
           company_id: string | null
+          completed_at: string | null
           distance_km: number | null
+          driver_name: string | null
           extra_cost_inr: number | null
           extra_revenue_inr: number | null
+          misc_cost_inr: number | null
           net_earnings_inr: number | null
           planned_departure: string | null
           route_cost_inr: number | null
@@ -1373,9 +1458,16 @@ export type Database = {
     }
     Functions: {
       _seed_company: { Args: { p_company: string }; Returns: undefined }
-      _seed_company_missing_trucks_guard: { Args: { p_company: string }; Returns: undefined }
+      _seed_company_missing_trucks_guard: {
+        Args: { p_company: string }
+        Returns: undefined
+      }
       accept_extra_load: {
-        Args: { p_drop_after_seq: number; p_extra_load_id: string; p_pickup_after_seq: number }
+        Args: {
+          p_drop_after_seq: number
+          p_extra_load_id: string
+          p_pickup_after_seq: number
+        }
         Returns: Json
       }
       activate_load_plan: { Args: { p_plan_id: string }; Returns: undefined }
@@ -1384,6 +1476,8 @@ export type Database = {
       create_trip_with_stops: {
         Args: {
           p_base_freight_inr: number
+          p_driver_name?: string
+          p_driver_phone?: string
           p_planned_departure: string
           p_stops: Json
           p_truck_id: string
@@ -1393,22 +1487,53 @@ export type Database = {
       current_company_id: { Args: never; Returns: string }
       disable_driver_link: { Args: { p_trip_id: string }; Returns: undefined }
       disable_loader_link: { Args: { p_trip_id: string }; Returns: undefined }
+      driver_add_expense: {
+        Args: {
+          p_amount: number
+          p_kind: string
+          p_note?: string
+          p_token: string
+        }
+        Returns: Json
+      }
       driver_get_trip: { Args: { p_token: string }; Returns: Json }
-      km_between: { Args: { lat1: number; lat2: number; lng1: number; lng2: number }; Returns: number }
-      loader_add_cargo: { Args: { p_items: Json; p_source: string; p_token: string }; Returns: Json }
-      loader_delete_cargo: { Args: { p_id: string; p_token: string }; Returns: Json }
+      driver_mark_stop: {
+        Args: { p_status: string; p_stop_id: string; p_token: string }
+        Returns: Json
+      }
+      km_between: {
+        Args: { lat1: number; lat2: number; lng1: number; lng2: number }
+        Returns: number
+      }
+      loader_add_cargo: {
+        Args: { p_items: Json; p_source: string; p_token: string }
+        Returns: Json
+      }
+      loader_delete_cargo: {
+        Args: { p_id: string; p_token: string }
+        Returns: Json
+      }
       loader_get_job: { Args: { p_token: string }; Returns: Json }
       loader_my_cargo: { Args: { p_token: string }; Returns: Json }
       loader_trip_for_token: {
         Args: { p_token: string }
-        Returns: { company_id: string; trip_id: string }[]
+        Returns: {
+          company_id: string
+          trip_id: string
+        }[]
       }
       loader_update_cargo: {
         Args: { p_id: string; p_item: Json; p_token: string }
         Returns: Json
       }
       loader_update_step: {
-        Args: { p_note?: string; p_plan_id: string; p_status: string; p_step: number; p_token: string }
+        Args: {
+          p_note?: string
+          p_plan_id: string
+          p_status: string
+          p_step: number
+          p_token: string
+        }
         Returns: Json
       }
       next_listing_code: { Args: never; Returns: string }
@@ -1417,15 +1542,127 @@ export type Database = {
       sample_data_allowed: { Args: never; Returns: boolean }
       seed_sample_data: { Args: never; Returns: Json }
     }
-    Enums: { [_ in never]: never }
-    CompositeTypes: { [_ in never]: never }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
 }
 
-type PublicSchema = Omit<Database, '__InternalSupabase'>['public']
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
 
-export type Tables<T extends keyof (PublicSchema['Tables'] & PublicSchema['Views'])> =
-  (PublicSchema['Tables'] & PublicSchema['Views'])[T] extends { Row: infer R } ? R : never
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
 
-export type TablesInsert<T extends keyof PublicSchema['Tables']> = PublicSchema['Tables'][T]['Insert']
-export type TablesUpdate<T extends keyof PublicSchema['Tables']> = PublicSchema['Tables'][T]['Update']
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    keyof (DefaultSchema['Tables'] & DefaultSchema['Views']) | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    keyof DefaultSchema['CompositeTypes'] | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const

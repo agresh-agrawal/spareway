@@ -14,6 +14,7 @@ import { TRUCK_PRESETS } from '../lib/presets'
 import { cmToDisplay, displayToCm, type SizeUnit } from '../lib/sizes'
 import { TRUCK_STATUSES, truckSchema, type TruckInput, type TruckValues } from '../schemas'
 import { BoxPreview } from './BoxPreview'
+import { TruckGistCard } from './TruckGistCard'
 
 const EMPTY: TruckInput = {
   reg_no: '',
@@ -26,8 +27,6 @@ const EMPTY: TruckInput = {
   axles: 2,
   mileage_kmpl: 4,
   cost_per_km_inr: 30,
-  driver_name: '',
-  driver_phone: '',
   status: 'idle',
 }
 
@@ -43,8 +42,6 @@ function fromTruck(t: Truck): TruckInput {
     axles: t.axles,
     mileage_kmpl: Number(t.mileage_kmpl),
     cost_per_km_inr: Number(t.cost_per_km_inr),
-    driver_name: t.driver_name,
-    driver_phone: t.driver_phone,
     status: t.status as TruckInput['status'],
   }
 }
@@ -118,7 +115,10 @@ export function TruckFormSheet({
   })
   const { errors, isDirty } = form.formState
   const err = (k?: string) => (k ? t(k) : undefined)
-  const [l, w, h] = useWatch({ control: form.control, name: ['internal_length_cm', 'internal_width_cm', 'internal_height_cm'] })
+  const [l, w, h, payload, mileage, perKm] = useWatch({
+    control: form.control,
+    name: ['internal_length_cm', 'internal_width_cm', 'internal_height_cm', 'payload_kg', 'mileage_kmpl', 'cost_per_km_inr'],
+  })
 
   useEffect(() => {
     if (open) {
@@ -222,10 +222,14 @@ export function TruckFormSheet({
           )}
         />
         <NumberField label={t('form.costPerKm')} help={t('form.costPerKmHelp')} unit="₹" error={err(errors.cost_per_km_inr?.message)} {...num('cost_per_km_inr')} />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextField label={t('form.driverName')} autoComplete="off" error={err(errors.driver_name?.message)} {...form.register('driver_name')} />
-          <TextField label={t('form.driverPhone')} type="tel" inputMode="tel" error={err(errors.driver_phone?.message)} {...form.register('driver_phone')} />
-        </div>
+        <TruckGistCard
+          lengthCm={Number(l)}
+          widthCm={Number(w)}
+          heightCm={Number(h)}
+          payloadKg={Number(payload)}
+          mileageKmpl={Number(mileage)}
+          costPerKmInr={Number(perKm)}
+        />
         <SelectField label={t('form.status')} options={statusOptions} {...form.register('status')} />
 
         <button

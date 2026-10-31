@@ -1,6 +1,6 @@
 import { places, searchPlaces } from './lib/places'
 import { moveItem, nextAction, unloadOrderForStops } from './lib/stops'
-import { wizardSchema } from './schemas'
+import { driverSchema, wizardSchema } from './schemas'
 import { buildSeed } from '@/lib/fixtures'
 
 describe('unloadOrderForStops', () => {
@@ -46,7 +46,7 @@ describe('trip helpers', () => {
 
 describe('new trip wizard schema', () => {
   const stop = (name: string, stop_type: 'origin' | 'drop') => ({ key: name, name, city: name, lat: 22, lng: 75, stop_type })
-  const base = { truckId: 't1', departure: '2026-11-01T06:00', freight: 45000 }
+  const base = { truckId: 't1', departure: '2026-11-01T06:00', freight: 45000, driverName: 'Ramesh Yadav', driverPhone: '98270 12345' }
   it('Indore → 2 drops is valid', () => {
     expect(wizardSchema.safeParse({ ...base, stops: [stop('Indore', 'origin'), stop('Nashik', 'drop'), stop('Pune', 'drop')] }).success).toBe(true)
   })
@@ -54,6 +54,13 @@ describe('new trip wizard schema', () => {
     expect(wizardSchema.safeParse({ ...base, truckId: '', stops: [stop('A', 'origin'), stop('B', 'drop')] }).success).toBe(false)
     expect(wizardSchema.safeParse({ ...base, stops: [stop('A', 'origin')] }).success).toBe(false)
     expect(wizardSchema.safeParse({ ...base, stops: [stop('B', 'drop'), stop('A', 'origin')] }).success).toBe(false)
+  })
+  it('needs the driver name and a 10-digit Indian mobile', () => {
+    for (const phone of ['98270 12345', '+91 98270 12345', '9827012345', '+91-9827012345'])
+      expect(driverSchema.safeParse({ driverName: 'Ramesh', driverPhone: phone }).success).toBe(true)
+    for (const phone of ['', '12345', '5827012345', '98270 1234', 'call me'])
+      expect(driverSchema.safeParse({ driverName: 'Ramesh', driverPhone: phone }).success).toBe(false)
+    expect(driverSchema.safeParse({ driverName: ' ', driverPhone: '9827012345' }).success).toBe(false)
   })
   it('needs a real departure and freight ≥ 0', () => {
     const stops = [stop('A', 'origin'), stop('B', 'drop')]

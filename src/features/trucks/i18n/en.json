@@ -37,8 +37,6 @@
     "payloadHelp": "Payload in tonnes (gross weight minus empty truck)",
     "costPerKm": "Cost per km (₹)",
     "costPerKmHelp": "Fuel, tyres, maintenance and driver, per km",
-    "driverName": "Driver name",
-    "driverPhone": "Driver phone",
     "status": "Status",
     "moreDetails": "More details",
     "axles": "Axles",
@@ -94,5 +92,18 @@
     "number": "Type a number",
     "range": "Out of range",
     "phone": "Only digits, spaces, + and -"
+  },
+  "gist": {
+    "title": "Quick summary",
+    "space": "Space inside",
+    "spaceValue": "{{m3}} m³ · {{cft}} cft · floor {{sqft}} sq ft",
+    "fits": "Fits about",
+    "fitsValue": "{{pallets}} pallets or {{cartons}} cartons (60×40×40 cm)",
+    "weightFirst": "Fills by weight first",
+    "weightFirstValue": "goods over {{kg}} kg per m³",
+    "cost500": "A 500 km trip costs",
+    "diesel500": "Diesel for 500 km",
+    "diesel500Value": "{{l}} L · {{inr}}",
+    "perTonneKm": "Cost per tonne-km when full"
   }
 }

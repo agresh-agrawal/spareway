@@ -76,6 +76,8 @@ export async function saveTruck(v: TruckValues, id?: string): Promise<Truck> {
     const now = new Date().toISOString()
     const t: Truck = {
       ...v,
+      driver_name: '',
+      driver_phone: '',
       id: crypto.randomUUID(),
       company_id: FIXTURE_COMPANY_ID,
       gross_weight_kg: null,

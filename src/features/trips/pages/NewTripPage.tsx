@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { toast } from 'sonner'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, MapPin, Plus, Search, Trash2, Truck as TruckIcon } from 'lucide-react'
@@ -13,6 +13,7 @@ import {
   Skeleton,
   StepTabs,
   StopChip,
+  TextField,
   TruckStatusChip,
 } from '@/components/common'
 import { useTrucks } from '@/features/trucks'
@@ -23,7 +24,7 @@ import { cn } from '@/lib/cn'
 import { useCreateTrip } from '../hooks'
 import { places, searchPlaces, type Place } from '../lib/places'
 import { moveItem } from '../lib/stops'
-import { wizardSchema, type WizardStop } from '../schemas'
+import { driverSchema, wizardSchema, type WizardStop } from '../schemas'
 
 const StopsMap = lazy(() => import('../components/StopsMap'))
 
@@ -34,6 +35,34 @@ function tomorrowSix(): string {
   d.setHours(6, 0, 0, 0)
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T06:00`
+}
+
+/** Unfinished new trip, kept on this device so the owner can close the app and carry on later. */
+const DRAFT_KEY = 'spareway.newTripDraft'
+interface Draft {
+  truckId: string
+  stops: WizardStop[]
+  departure: string
+  freight: number | null
+  driverName: string
+  driverPhone: string
+  step: number
+}
+function readDraft(): Draft | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    return raw ? (JSON.parse(raw) as Draft) : null
+  } catch {
+    return null
+  }
+}
+function writeDraft(d: Draft | null) {
+  try {
+    if (d) localStorage.setItem(DRAFT_KEY, JSON.stringify(d))
+    else localStorage.removeItem(DRAFT_KEY)
+  } catch {
+    /* private window: no draft */
+  }
 }
 
 let keySeq = 0
@@ -52,13 +81,36 @@ export default function NewTripPage() {
   const [params] = useSearchParams()
   const trucks = useTrucks()
   const create = useCreateTrip()
-  const [step, setStep] = useState(0)
-  const [truckId, setTruckId] = useState(params.get('truck') ?? '')
-  const [stops, setStops] = useState<WizardStop[]>([])
+  // a truck in the link starts a fresh trip; otherwise carry on with the saved draft
+  const [draft] = useState(() => (params.get('truck') ? null : readDraft()))
+  const [step, setStep] = useState(draft?.step ?? 0)
+  const [truckId, setTruckId] = useState(params.get('truck') ?? draft?.truckId ?? '')
+  const [stops, setStops] = useState<WizardStop[]>(draft?.stops ?? [])
   const [q, setQ] = useState('')
-  const [departure, setDeparture] = useState(tomorrowSix)
-  const [freight, setFreight] = useState<number>(Number.NaN)
+  const [departure, setDeparture] = useState(() => draft?.departure ?? tomorrowSix())
+  const [freight, setFreight] = useState<number>(draft?.freight ?? Number.NaN)
+  const [driverName, setDriverName] = useState(draft?.driverName ?? '')
+  const [driverPhone, setDriverPhone] = useState(draft?.driverPhone ?? '')
+  const [driverErrors, setDriverErrors] = useState<{ name?: string; phone?: string }>({})
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const empty = !truckId && stops.length === 0 && !driverName && !driverPhone
+    writeDraft(empty ? null : { truckId, stops, departure, freight: Number.isNaN(freight) ? null : freight, driverName, driverPhone, step })
+  }, [truckId, stops, departure, freight, driverName, driverPhone, step])
+
+  const clearDraft = () => {
+    writeDraft(null)
+    setStep(0)
+    setTruckId('')
+    setStops([])
+    setDeparture(tomorrowSix())
+    setFreight(Number.NaN)
+    setDriverName('')
+    setDriverPhone('')
+    setDriverErrors({})
+    setError(null)
+  }
 
   const truck = trucks.data?.find((x) => x.id === truckId)
   const results = useMemo(() => searchPlaces(q).slice(0, q ? 8 : 6), [q])
@@ -76,14 +128,30 @@ export default function NewTripPage() {
     setStops((s) => s.filter((_, j) => j !== i).map((x, j) => ({ ...x, stop_type: j === 0 ? 'origin' : x.stop_type === 'origin' ? 'drop' : x.stop_type })))
 
   const steps = [
-    { id: '0', label: t('wizard.step1'), done: Boolean(truck) },
+    { id: '0', label: t('wizard.step1'), done: Boolean(truck) && driverName.trim().length >= 2 },
     { id: '1', label: t('wizard.step2'), done: stops.length >= 2 },
     { id: '2', label: t('wizard.step3'), done: false },
   ]
 
   const canNext = step === 0 ? Boolean(truck) : step === 1 ? stops.length >= 2 : true
+  const checkDriver = () => {
+    const r = driverSchema.safeParse({ driverName, driverPhone })
+    if (r.success) {
+      setDriverErrors({})
+      return true
+    }
+    const errs: { name?: string; phone?: string } = {}
+    for (const i of r.error.issues) {
+      if (i.path[0] === 'driverName') errs.name = t(i.message)
+      if (i.path[0] === 'driverPhone') errs.phone = t(i.message)
+    }
+    setDriverErrors(errs)
+    return false
+  }
+
   const next = () => {
     if (step === 0 && !truck) return setError(t('errors.truck'))
+    if (step === 0 && !checkDriver()) return setError(null)
     if (step === 1 && stops.length < 1) return setError(t('errors.origin'))
     if (step === 1 && stops.length < 2) return setError(t('errors.drops'))
     setError(null)
@@ -91,7 +159,7 @@ export default function NewTripPage() {
   }
 
   const submit = async () => {
-    const parsed = wizardSchema.safeParse({ truckId, stops, departure, freight: Number.isNaN(freight) ? 0 : freight })
+    const parsed = wizardSchema.safeParse({ truckId, stops, departure, driverName, driverPhone, freight: Number.isNaN(freight) ? 0 : freight })
     if (!parsed.success) {
       setError(t(parsed.error.issues[0]?.message ?? 'errors.departure'))
       return
@@ -102,7 +170,10 @@ export default function NewTripPage() {
         stops,
         departure: new Date(departure).toISOString(),
         freight: parsed.data.freight,
+        driverName: parsed.data.driverName,
+        driverPhone: parsed.data.driverPhone,
       })
+      writeDraft(null)
       toast.success(t('wizard.created', { code: r.code }))
       nav(`/trips/${r.id}`, { replace: true })
     } catch (e) {
@@ -113,6 +184,14 @@ export default function NewTripPage() {
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4 pb-28">
       <PageHeader title={t('wizard.title')} />
+      {draft && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-tile border border-line bg-surface-2 p-3">
+          <span>{t('wizard.resumed')}</span>
+          <PlainButton icon={Trash2} onClick={clearDraft} className="h-11">
+            {t('wizard.startOver')}
+          </PlainButton>
+        </div>
+      )}
       <StepTabs steps={steps} current={String(step)} onChange={(id) => Number(id) <= step && setStep(Number(id))} />
 
       {step === 0 && (
@@ -148,6 +227,11 @@ export default function NewTripPage() {
                     aria-checked={on}
                     onClick={() => {
                       setTruckId(tr.id)
+                      // suggest the truck's last driver; the owner can change it for this trip
+                      if (!driverName && tr.driver_name) {
+                        setDriverName(tr.driver_name)
+                        setDriverPhone(tr.driver_phone)
+                      }
                       setError(null)
                     }}
                     className={cn(
@@ -167,6 +251,33 @@ export default function NewTripPage() {
               })}
             </div>
           )}
+        </Card>
+      )}
+
+      {step === 0 && (trucks.data?.length ?? 0) > 0 && (
+        <Card className="flex flex-col gap-4">
+          <div>
+            <h2 className="text-section-title font-semibold">{t('wizard.driverTitle')}</h2>
+            <p className="mt-1 text-ink-2">{t('wizard.driverHelp')}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label={t('wizard.driverName')}
+              autoComplete="off"
+              value={driverName}
+              error={driverErrors.name}
+              onChange={(e) => setDriverName(e.target.value)}
+            />
+            <TextField
+              label={t('wizard.driverPhone')}
+              type="tel"
+              inputMode="tel"
+              placeholder="98270 12345"
+              value={driverPhone}
+              error={driverErrors.phone}
+              onChange={(e) => setDriverPhone(e.target.value)}
+            />
+          </div>
         </Card>
       )}
 
@@ -251,7 +362,7 @@ export default function NewTripPage() {
           {truck && stops.length >= 2 && (
             <p className="rounded-tile bg-surface-2 p-3 text-ink-2">
               {t('wizard.summary', {
-                truck: truck.reg_no,
+                truck: `${truck.reg_no} · ${driverName}`,
                 from: td(stops[0].name),
                 to: td(stops.at(-1)!.name),
                 drops: t('card.drops', { count: drops.length }),

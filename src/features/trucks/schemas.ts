@@ -20,12 +20,6 @@ export const truckSchema = z.object({
   axles: num(2, 8).int('trucks:errors.number'),
   mileage_kmpl: num(1, 15),
   cost_per_km_inr: num(0, 200),
-  driver_name: z.string().trim().max(60),
-  driver_phone: z
-    .string()
-    .trim()
-    .max(20)
-    .regex(/^[+\d\s-]*$/, 'trucks:errors.phone'),
   status: z.enum(['active', 'idle', 'maintenance', 'offline']),
 })
 

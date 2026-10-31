@@ -48,7 +48,13 @@
     "back": "Back",
     "next": "Next",
     "create": "Create trip",
-    "created": "Trip {{code}} created"
+    "created": "Trip {{code}} created",
+    "driverTitle": "Who drives this trip?",
+    "driverHelp": "The driver gets the route, stops and challan tips on WhatsApp.",
+    "driverName": "Driver name",
+    "driverPhone": "Driver mobile",
+    "resumed": "We kept the trip you were making. Carry on, or start again.",
+    "startOver": "Start again"
   },
   "page": {
     "back": "Back to trips",
@@ -78,6 +84,8 @@
     "origin": "Choose the start point",
     "drops": "Add at least one drop",
     "departure": "Choose when it leaves",
-    "freight": "Type the freight in ₹"
+    "freight": "Type the freight in ₹",
+    "driverName": "Type the driver's name",
+    "driverPhone": "Type a 10-digit mobile number, like 98270 12345"
   }
 }

@@ -37,8 +37,6 @@
     "payloadHelp": "टन में (कुल वज़न में से ख़ाली ट्रक का वज़न घटाकर)",
     "costPerKm": "प्रति km ख़र्च (₹)",
     "costPerKmHelp": "डीज़ल, टायर, मरम्मत और ड्राइवर, प्रति km",
-    "driverName": "ड्राइवर का नाम",
-    "driverPhone": "ड्राइवर का फ़ोन",
     "status": "हालत",
     "moreDetails": "और जानकारी",
     "axles": "एक्सल",
@@ -94,5 +92,18 @@
     "number": "नंबर लिखें",
     "range": "सीमा से बाहर",
     "phone": "सिर्फ़ अंक, स्पेस, + और -"
+  },
+  "gist": {
+    "title": "झटपट हिसाब",
+    "space": "अंदर की जगह",
+    "spaceValue": "{{m3}} m³ · {{cft}} cft · फ़र्श {{sqft}} sq ft",
+    "fits": "लगभग इतना आएगा",
+    "fitsValue": "{{pallets}} पैलेट या {{cartons}} कार्टन (60×40×40 cm)",
+    "weightFirst": "पहले वज़न भरेगा",
+    "weightFirstValue": "अगर माल {{kg}} kg प्रति m³ से भारी हो",
+    "cost500": "500 km ट्रिप का खर्च",
+    "diesel500": "500 km का डीज़ल",
+    "diesel500Value": "{{l}} लीटर · {{inr}}",
+    "perTonneKm": "पूरा भरा हो तो प्रति टन-km खर्च"
   }
 }

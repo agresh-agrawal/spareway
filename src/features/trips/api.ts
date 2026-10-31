@@ -51,6 +51,8 @@ export interface NewTrip {
   departure: string // ISO
   freight: number
   stops: WizardStop[]
+  driverName: string
+  driverPhone: string
 }
 
 function toStopJson(s: WizardStop) {
@@ -89,10 +91,13 @@ export async function createTrip(input: NewTrip): Promise<{ id: string; code: st
       loader_link_enabled: false,
       driver_token: null,
       driver_link_enabled: false,
+      driver_name: input.driverName,
+      driver_phone: input.driverPhone,
       is_sample: false,
       created_at: now,
       updated_at: now,
     })
+    if (input.driverName) Object.assign(d.trucks.find((x) => x.id === input.truckId)!, { driver_name: input.driverName, driver_phone: input.driverPhone })
     input.stops.forEach((s, seq) => {
       const j = toStopJson(s)
       d.trip_stops.push({
@@ -130,6 +135,8 @@ export async function createTrip(input: NewTrip): Promise<{ id: string; code: st
     p_planned_departure: input.departure,
     p_base_freight_inr: input.freight,
     p_stops: input.stops.map(toStopJson),
+    p_driver_name: input.driverName,
+    p_driver_phone: input.driverPhone,
   })
   if (error) throw toAppError(error)
   return throwIfDataError(data) as { id: string; code: string }

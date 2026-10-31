@@ -27,6 +27,7 @@ export interface FixtureData {
   freight_listings: Tables<'freight_listings'>[]
   trip_extra_loads: Tables<'trip_extra_loads'>[]
   alerts: Tables<'alerts'>[]
+  trip_expenses: Tables<'trip_expenses'>[]
   activity_log: Tables<'activity_log'>[]
   fleet_daily_stats: Tables<'fleet_daily_stats'>[]
   pois: Tables<'pois'>[]
@@ -121,6 +122,8 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     loader_link_enabled: false,
     driver_token: null,
     driver_link_enabled: false,
+    driver_name: trucks.find((x) => x.reg_no === reg)!.driver_name,
+    driver_phone: trucks.find((x) => x.reg_no === reg)!.driver_phone,
     is_sample: true,
     created_at: created,
     updated_at: created,
@@ -410,6 +413,10 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     freight_listings,
     trip_extra_loads: [],
     alerts,
+    trip_expenses: [
+      // one challan on the finished trip so the challan corner and earnings show it
+      { id: id('e', 9001), company_id: c, trip_id: done.id, kind: 'challan', amount_inr: 2000, note: 'No-entry time, Jaipur', added_by: 'driver', created_at: iso(t - 6 * HOUR) },
+    ],
     activity_log,
     fleet_daily_stats,
     pois: [],

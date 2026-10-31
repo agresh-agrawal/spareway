@@ -113,6 +113,8 @@ export function fixtureTripFinancials(d: FixtureData = fixtureStore()): Tables<'
     )
     const extraCost = accepted.reduce((a, e) => a + (e.incremental_cost_inr ?? 0), 0)
     const routeCost = route?.total_cost_inr ?? 0
+    const costs = d.trip_expenses.filter((e) => e.trip_id === t.id)
+    const misc = costs.reduce((a, e) => a + e.amount_inr, 0)
     return {
       trip_id: t.id,
       company_id: t.company_id,
@@ -124,7 +126,11 @@ export function fixtureTripFinancials(d: FixtureData = fixtureStore()): Tables<'
       extra_cost_inr: extraCost,
       route_cost_inr: routeCost,
       distance_km: route?.distance_km ?? 0,
-      net_earnings_inr: t.base_freight_inr + extraRevenue - routeCost - extraCost,
+      net_earnings_inr: t.base_freight_inr + extraRevenue - routeCost - extraCost - misc,
+      misc_cost_inr: misc,
+      challan_cost_inr: costs.filter((e) => e.kind === 'challan').reduce((a, e) => a + e.amount_inr, 0),
+      completed_at: t.completed_at,
+      driver_name: t.driver_name,
     }
   })
 }

@@ -1,6 +1,7 @@
 import { cmToDisplay, displayToCm } from './lib/sizes'
 import { TRUCK_PRESETS } from './lib/presets'
 import { truckSchema } from './schemas'
+import { truckGist } from './lib/gist'
 
 const valid = {
   reg_no: 'mp09  hg 4821',
@@ -13,8 +14,6 @@ const valid = {
   axles: 3,
   mileage_kmpl: 3.6,
   cost_per_km_inr: 34,
-  driver_name: 'Ramesh Yadav',
-  driver_phone: '+91 98270 00001',
   status: 'active' as const,
 }
 
@@ -51,12 +50,28 @@ describe('truck schema', () => {
     ['payload_kg', 100],
     ['axles', 9],
     ['mileage_kmpl', 0],
-    ['driver_phone', 'call me'],
     ['reg_no', 'ab'],
   ])('rejects %s = %s', (k, v) => {
     expect(truckSchema.safeParse({ ...valid, [k]: v }).success).toBe(false)
   })
   it('rejects an empty size (NaN)', () => {
     expect(truckSchema.safeParse({ ...valid, internal_height_cm: Number.NaN }).success).toBe(false)
+  })
+})
+
+describe('truck form summary', () => {
+  it('works out the 32 ft MXL truck', () => {
+    const g = truckGist({ lengthCm: 975, widthCm: 243, heightCm: 243, payloadKg: 15000, mileageKmpl: 3.6, costPerKmInr: 34, dieselInrPerL: 90 })!
+    expect(g.volumeM3).toBe(57.6)
+    expect(g.volumeCft).toBe(2033)
+    expect(g.pallets).toBe(24) // 8 × 3 with the pallets turned
+    expect(g.cartons).toBe(16 * 6 * 6)
+    expect(g.densityKgPerM3).toBe(261)
+    expect(g.cost500Inr).toBe(17000)
+    expect(g.diesel500L).toBe(139)
+    expect(g.perTonneKmInr).toBe(2.27)
+  })
+  it('waits for the inside size', () => {
+    expect(truckGist({ lengthCm: Number.NaN, widthCm: 243, heightCm: 243, payloadKg: 0, mileageKmpl: 4, costPerKmInr: 30, dieselInrPerL: 90 })).toBeNull()
   })
 })
