@@ -1,0 +1,27 @@
+{
+  "title": "Trip history",
+  "download": "Download my data",
+  "empty": "No finished trips yet. They show here once a trip is delivered.",
+  "month": "Month",
+  "allMonths": "All months",
+  "tiles": {
+    "trips": "Trips done",
+    "km": "Distance",
+    "net": "Net earnings",
+    "challans": "Challans paid"
+  },
+  "cancelled": "Cancelled",
+  "costs": "Challans and trip costs {{inr}}",
+  "net": "net",
+  "report": {
+    "title": "Monthly email report",
+    "text": "On the 1st of every month we email {{email}} last month's trips, net earnings and tips to cut costs.",
+    "preview": "See last month's report",
+    "sendNow": "Email it to me now",
+    "previewTitle": "Last month's report",
+    "sent": "Report sent to {{email}}",
+    "notSetUp": "Email sending isn't set up on the server yet.",
+    "failed": "Couldn't make the report — try again",
+    "demo": "Not available in the demo."
+  }
+}
