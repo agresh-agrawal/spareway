@@ -1,0 +1,71 @@
+{
+  "step": "Route",
+  "leaves": "Leaves {{at}}",
+  "variant": {
+    "fastest": "Fastest",
+    "shortest": "Shortest",
+    "no_tolls": "No tolls",
+    "recommended": "Recommended",
+    "with_extra": "With extra loads"
+  },
+  "card": {
+    "best": "Best",
+    "chosen": "Chosen",
+    "choose": "Choose",
+    "time": "{{km}} · {{time}}",
+    "costLine": "Diesel {{fuel}} · Tolls {{tolls}} · Driver {{driver}}",
+    "waiting": "Waiting {{inr}}",
+    "counts_one": "{{breaks}} breaks · {{count}} toll",
+    "counts_other": "{{breaks}} breaks · {{count}} tolls",
+    "total": "Full trip cost",
+    "show": "Show",
+    "moreWarnings": "+{{count}} more in the journey"
+  },
+  "warning": {
+    "noEntry": "Reaches {{city}} at {{at}} — no entry until {{until}}, wait {{wait}}",
+    "late": "Reaches {{stop}} {{at}} — after the delivery time {{by}}"
+  },
+  "journey": {
+    "title": "Journey",
+    "start": "Leave {{place}}",
+    "stop": "Reach {{place}}",
+    "break": "Break by the road · {{dur}}",
+    "breakAt": "Break at {{place}} · {{dur}}",
+    "overnight": "Night rest by the road · {{dur}}",
+    "overnightAt": "Night rest at {{place}} · {{dur}}",
+    "wait": "Wait before {{city}} (no-entry hours) · {{dur}}",
+    "checkpoint": "{{place}} · about {{dur}}",
+    "late": "After the delivery time"
+  },
+  "driver": {
+    "title": "Message for the driver",
+    "language": "Message language",
+    "hindi": "हिंदी",
+    "english": "English",
+    "send": "Send on WhatsApp",
+    "chooseFirst": "Choose a route to send it to the driver",
+    "noPhone": "No driver number saved — WhatsApp will ask who to send it to"
+  },
+  "message": {
+    "title": "Spareway · {{code}} · {{reg}}",
+    "hello": "Namaste {{name}},",
+    "leave": "Leave: {{at}}",
+    "route": "Route: {{name}} · {{km}} · {{time}}",
+    "tolls": "Tolls: {{count}} · {{inr}} (estimated)",
+    "safe": "Drive safe. Call the owner if anything changes."
+  },
+  "done": "Route chosen — ETAs saved",
+  "loading": "Getting three truck routes…",
+  "fewStops": "Add at least one stop to plan a route",
+  "estimatedNote": "Tolls and times are estimates",
+  "places": {
+    "Mira-Bhayandar Vasai-Virar": "Mira-Bhayandar Vasai-Virar",
+    "Surat": "Surat",
+    "Vadodara": "Vadodara",
+    "Ahmedabad": "Ahmedabad",
+    "Mumbai": "Mumbai",
+    "Udaipur": "Udaipur",
+    "Gurugram": "Gurugram",
+    "Indore": "Indore"
+  }
+}

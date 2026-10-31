@@ -46,7 +46,7 @@ export interface TollHit {
 }
 
 export interface RoutePlan {
-  schedule: Schedule & { warnings: RouteWarning[] }
+  schedule: Omit<Schedule, 'warnings'> & { warnings: RouteWarning[] }
   departure: string
   /** driving only */
   driveMin: number
