@@ -1,0 +1,103 @@
+{
+  "step": "Extra loads",
+  "findExtra": "Find extra loads",
+  "tiles": {
+    "freeFloor": "Free floor",
+    "weightLeft": "Weight left",
+    "possible": "Possible extra earning",
+    "none": "No profitable load"
+  },
+  "approximate": "No route chosen yet — distances are approximate. Choose a route for exact ones.",
+  "corridor": "Loads up to {{km}} km off your route",
+  "checking": "Checking space in the truck…",
+  "strip": {
+    "label": "Route with stops and loads",
+    "km": "{{km}} km"
+  },
+  "card": {
+    "fromTo": "{{from}} → {{to}}",
+    "size": "{{count}} × {{size}} · {{kg}}",
+    "offer": "Offer",
+    "cost": "Cost",
+    "profit": "Profit",
+    "take": "Take it: {{profit}} extra after {{cost}} costs — {{detour}} detour",
+    "seeInTruck": "See in truck",
+    "add": "Add to trip",
+    "deliverBy": "Shipper wants it by {{date}}"
+  },
+  "reason": {
+    "OFF_CORRIDOR": "{{km}} km off your route",
+    "WRONG_DIRECTION": "Goes the opposite way",
+    "OVER_PAYLOAD": "Too heavy: {{kg}} > {{left}} left",
+    "NO_SPACE": "No space left in the truck",
+    "ORDER_CONFLICT": "Would block goods that leave earlier",
+    "TOO_LATE": "Can't reach on time",
+    "LOW_MARGIN": "Earns only {{net}} after costs — needs ≥ {{need}}"
+  },
+  "notSuitable": "Not suitable ({{count}})",
+  "empty": "No loads on your way right now",
+  "preview": {
+    "title": "{{code}} in the truck",
+    "new": "New load is solid, planned boxes are faded",
+    "close": "Close"
+  },
+  "added": "Added {{code}} — space used {{before}}% → {{after}}%",
+  "addedRoute": "Stops changed — choose the route again",
+  "loads": {
+    "title": "Loads",
+    "count_one": "{{count}} load",
+    "count_other": "{{count}} loads",
+    "post": "Post a load",
+    "filter": {
+      "open": "Open",
+      "taken": "Taken",
+      "all": "All"
+    },
+    "card": "{{from}} → {{to}}",
+    "line": "{{goods}} · {{kg}} · {{offer}}",
+    "ready": "Ready {{date}}",
+    "readyNow": "Ready now",
+    "mine": "Mine",
+    "findTrip": "Find a trip for this load",
+    "noTrip": "No planned trip goes this way",
+    "remove": "Remove",
+    "removeTitle": "Remove {{code}}?",
+    "removeText": "Other owners won't see this load any more.",
+    "removed": "Load removed",
+    "empty": "No loads right now",
+    "taken": "Taken"
+  },
+  "form": {
+    "title": "Post a load",
+    "subtitle": "Every owner can see it and take it",
+    "who": "Shipper name",
+    "phone": "Shipper phone",
+    "what": "What goods",
+    "from": "Pickup",
+    "to": "Drop",
+    "choose": "Choose a place",
+    "length": "Length",
+    "width": "Width",
+    "height": "Height",
+    "kgEach": "Weight of one piece",
+    "qty": "How many pieces",
+    "fragile": "Fragile",
+    "fragileHelp": "Nothing is put on top of it",
+    "offer": "Offer for all of it",
+    "ready": "Ready from",
+    "submit": "Post for everyone",
+    "posted": "Posted as {{code}}",
+    "err": {
+      "required": "Fill this in",
+      "positive": "Must be more than 0",
+      "same": "Pickup and drop must differ",
+      "size": "Between 5 and 1,500 cm"
+    }
+  },
+  "widget": {
+    "title": "Extra earnings available",
+    "text": "{{profit}} extra on {{code}} · {{count}} loads on the way",
+    "see": "See loads",
+    "none": "No profitable loads on your next trip"
+  }
+}
