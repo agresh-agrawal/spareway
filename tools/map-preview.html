@@ -80,7 +80,9 @@
     <header>
       <strong>Spareway map</strong>
       <button id="dark" aria-pressed="true">Dark</button>
-      <button id="lite" aria-pressed="false">Lite (low-data)</button>
+      <button id="lite" aria-pressed="false">Dark lite (low-data)</button>
+      <button id="light" aria-pressed="false">Light</button>
+      <button id="light-lite" aria-pressed="false">Light lite</button>
     </header>
     <div class="legend" id="legend"></div>
     <div id="map"></div>
@@ -164,7 +166,7 @@
       }
       map.on('style.load', addOverlays)
 
-      for (const name of ['dark', 'lite']) {
+      for (const name of ['dark', 'lite', 'light', 'light-lite']) {
         document.getElementById(name).addEventListener('click', () => {
           for (const b of document.querySelectorAll('header button')) b.setAttribute('aria-pressed', String(b.id === name))
           map.setStyle(`/map/spareway-${name}.json`)

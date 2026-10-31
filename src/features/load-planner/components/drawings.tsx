@@ -6,6 +6,7 @@ import { stopColor } from '@/components/common/chips'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
 import type { BoxState } from '../lib/plan'
+import { usePlanPalette, type PlanPalette } from '../lib/theme'
 
 export interface DrawingProps {
   container: Pick<PackContainer, 'lengthCm' | 'widthCm' | 'heightCm'>
@@ -28,10 +29,10 @@ function fillOpacity(state: BoxState | undefined) {
   return state === 'waiting' ? 0.35 : 0.85
 }
 
-function stroke(p: Placement, highlight: boolean, state: BoxState | undefined) {
-  if (highlight) return '#e3f58c'
-  if (state === 'issue') return '#ef4444'
-  if (p.fragile) return '#f5a524'
+function stroke(p: Placement, highlight: boolean, state: BoxState | undefined, c: PlanPalette) {
+  if (highlight) return c.selected
+  if (state === 'issue') return c.issue
+  if (p.fragile) return c.fragile
   return 'rgba(0,0,0,0.55)'
 }
 
@@ -47,6 +48,7 @@ function Drawing({
   bare,
 }: DrawingProps & { axis: 'top' | 'side' }) {
   const { t, td } = useLang('load-planner')
+  const c = usePlanPalette()
   const L = container.lengthCm
   const D = axis === 'top' ? container.widthCm : container.heightCm
   // top: y down the drawing (left side of the truck on top); side: z up
@@ -80,15 +82,15 @@ function Drawing({
         role="img"
         aria-label={`${title}: ${placements.length}`}
       >
-        <rect x={0} y={0} width={L} height={D} rx={6} fill="#1b1b1e" stroke="#6b6b73" strokeWidth={2} />
+        <rect x={0} y={0} width={L} height={D} rx={6} fill={c.container} stroke={c.edge} strokeWidth={2} />
         {grid.map((x) => (
-          <line key={`gx${x}`} x1={x} x2={x} y1={0} y2={D} stroke="rgba(255,255,255,0.07)" strokeDasharray="6 6" strokeWidth={1.5} />
+          <line key={`gx${x}`} x1={x} x2={x} y1={0} y2={D} stroke={c.grid} strokeDasharray="6 6" strokeWidth={1.5} />
         ))}
         {gridD.map((d) => (
-          <line key={`gd${d}`} x1={0} x2={L} y1={d} y2={d} stroke="rgba(255,255,255,0.07)" strokeDasharray="6 6" strokeWidth={1.5} />
+          <line key={`gd${d}`} x1={0} x2={L} y1={d} y2={d} stroke={c.grid} strokeDasharray="6 6" strokeWidth={1.5} />
         ))}
         {/* doors */}
-        <line x1={L + 4} x2={L + 4} y1={0} y2={D} stroke="rgba(227,245,140,0.4)" strokeWidth={5} />
+        <line x1={L + 4} x2={L + 4} y1={0} y2={D} stroke={c.door} strokeOpacity={c.doorOpacity} strokeWidth={5} />
         {boxes.map((p) => {
           const hi = p.key === highlightKey
           const st = states?.get(p.key)
@@ -104,9 +106,9 @@ function Drawing({
               width={Math.max(0, w - 1.5)}
               height={Math.max(0, h - 1.5)}
               rx={2}
-              fill={st === 'issue' ? '#ef4444' : stopColor(p.unloadOrder)}
+              fill={st === 'issue' ? c.issue : stopColor(p.unloadOrder)}
               fillOpacity={highlightKey && !hi ? 0.3 : fillOpacity(st)}
-              stroke={stroke(p, hi, st)}
+              stroke={stroke(p, hi, st, c)}
               strokeWidth={hi ? 5 : 1.5}
               onClick={onSelect ? () => onSelect(p.key) : undefined}
               className={onSelect ? 'cursor-pointer' : undefined}

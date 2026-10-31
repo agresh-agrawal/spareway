@@ -13,6 +13,7 @@ import { cn } from '@/lib/cn'
 import { usePlanForTrip, type PlanForTrip } from '../hooks/usePlanForTrip'
 import { boxStates } from '../lib/plan'
 import { hasWebGL } from '../lib/webgl'
+import { usePlanPalette } from '../lib/theme'
 import { SideView, TopView } from './drawings'
 import { PlanSummary } from './PlanSummary'
 import { PackagesByStop } from './PackagesByStop'
@@ -31,7 +32,7 @@ function ViewButton({ active, icon: Icon, label, onClick }: { active: boolean; i
       onClick={onClick}
       className={cn(
         'inline-flex h-12 shrink-0 items-center gap-2 rounded-control border px-3 text-button font-semibold transition-colors duration-200',
-        active ? 'border-accent bg-accent-soft text-accent' : 'border-line-strong bg-surface-2 text-ink hover:bg-surface-3',
+        active ? 'border-accent bg-accent-soft text-ink' : 'border-line-strong bg-surface-2 text-ink hover:bg-surface-3',
       )}
     >
       <Icon size={20} aria-hidden />
@@ -94,6 +95,7 @@ function UsePlanCard({ plan }: { plan: PlanForTrip }) {
 export function LoadPlanView({ tripId, variant = 'step' }: { tripId: string; variant?: 'step' | 'page' }) {
   const { t, td } = useLang('load-planner')
   const plan = usePlanForTrip(tripId)
+  const palette = usePlanPalette()
   const { lowData } = useLowData()
   const reduced = useReducedMotion()
   const webgl = useMemo(() => hasWebGL(), [])
@@ -230,7 +232,7 @@ export function LoadPlanView({ tripId, variant = 'step' }: { tripId: string; var
             </p>
           )}
 
-          <div className="relative overflow-hidden rounded-card border border-line bg-[#0f0f11]">
+          <div className="relative overflow-hidden rounded-card border border-line" style={{ background: palette.canvas }}>
             {can3d ? (
               <Suspense
                 fallback={

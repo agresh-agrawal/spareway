@@ -1,5 +1,5 @@
-// Builds public/map/spareway-dark.json and spareway-lite.json from an OpenFreeMap base style with the
-// Design System 8 map colours. Re-run if the base style changes:
+// Builds public/map/spareway-{dark,lite,light,light-lite}.json from an OpenFreeMap base style: Design System 8
+// map colours for the dark theme, a matching light palette for the light theme (lite = low-data). Re-run if the base style changes:
 //   node tools/map-style.mjs [baseStyleUrl]     (default https://tiles.openfreemap.org/styles/dark;
 //                                                fallbacks: …/styles/positron, …/styles/liberty)
 // Behind a proxy (cloud session): NODE_USE_ENV_PROXY=1 node tools/map-style.mjs
@@ -9,20 +9,36 @@ import { fileURLToPath } from 'node:url'
 const BASE = process.argv[2] ?? 'https://tiles.openfreemap.org/styles/dark'
 const OUT = fileURLToPath(new URL('../public/map/', import.meta.url))
 
-// Design System 8
-const C = {
-  background: '#0b0d0f',
-  land: '#111315',
-  water: '#0d1b22',
-  roadMinor: '#1d2024',
-  roadMajor: '#2a2e33',
-  highway: '#3b3f45',
-  casing: '#16181b',
-  label: '#8a8f98',
-  halo: '#0a0a0b',
-  building: '#0f1113',
-  boundary: '#3b3f45',
+// Design System 8 (dark) + the light theme counterpart
+const PALETTES = {
+  dark: {
+    background: '#0b0d0f',
+    land: '#111315',
+    water: '#0d1b22',
+    roadMinor: '#1d2024',
+    roadMajor: '#2a2e33',
+    highway: '#3b3f45',
+    casing: '#16181b',
+    label: '#8a8f98',
+    halo: '#0a0a0b',
+    building: '#0f1113',
+    boundary: '#3b3f45',
+  },
+  light: {
+    background: '#f4f4f5',
+    land: '#ececee',
+    water: '#cfe3ea',
+    roadMinor: '#ffffff',
+    roadMajor: '#ffffff',
+    highway: '#c9c9d1',
+    casing: '#d4d4d8',
+    label: '#52525b',
+    halo: '#ffffff',
+    building: '#e4e4e7',
+    boundary: '#a1a1aa',
+  },
 }
+let C = PALETTES.dark
 
 const ATTRIBUTION =
   '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank">© OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
@@ -108,9 +124,14 @@ function style(base, name, layers) {
 const res = await fetch(BASE)
 if (!res.ok) throw new Error(`${BASE} → HTTP ${res.status}`)
 const base = await res.json()
-const dark = base.layers.map(darkLayer).filter(Boolean)
-const lite = dark.filter((l) => !LITE_DROP.some((re) => re.test(l.id)))
-
-await writeFile(`${OUT}spareway-dark.json`, JSON.stringify(style(base, 'Spareway dark', dark), null, 2) + '\n')
-await writeFile(`${OUT}spareway-lite.json`, JSON.stringify(style(base, 'Spareway lite', lite), null, 2) + '\n')
-console.log(`dark: ${dark.length} layers, lite: ${lite.length} layers → ${OUT}`)
+for (const [theme, palette] of Object.entries(PALETTES)) {
+  C = palette
+  const full = base.layers.map(darkLayer).filter(Boolean)
+  const lite = full.filter((l) => !LITE_DROP.some((re) => re.test(l.id)))
+  const title = theme === 'dark' ? 'Spareway dark' : 'Spareway light'
+  // file names: dark keeps spareway-dark / spareway-lite (used since Phase 0); light adds spareway-light / spareway-light-lite
+  const [fullFile, liteFile] = theme === 'dark' ? ['spareway-dark', 'spareway-lite'] : ['spareway-light', 'spareway-light-lite']
+  await writeFile(`${OUT}${fullFile}.json`, JSON.stringify(style(base, title, full), null, 2) + '\n')
+  await writeFile(`${OUT}${liteFile}.json`, JSON.stringify(style(base, `${title} (lite)`, lite), null, 2) + '\n')
+  console.log(`${theme}: ${full.length} layers, lite: ${lite.length} layers → ${OUT}`)
+}

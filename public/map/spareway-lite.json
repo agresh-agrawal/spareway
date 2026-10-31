@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Spareway lite",
+  "name": "Spareway dark (lite)",
   "metadata": {
     "spareway:base": "https://tiles.openfreemap.org/styles/dark",
     "spareway:generated-by": "tools/map-style.mjs"

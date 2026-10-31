@@ -37,3 +37,5 @@
 | 2026-10-31 | 1·Git | Map labels in Latin script (`name_en` / `name:latin`), no uppercase | MapLibre can't shape Devanagari without a plugin |
 | 2026-10-31 | 1·Git | Map style test validates with `@maplibre/maplibre-gl-style-spec` (installed with maplibre-gl) | No new package; WebGL map can't run in jsdom |
 | 2026-10-31 | 1·Git | `tools/map-style.mjs` kept as a re-runnable generator (needs `NODE_USE_ENV_PROXY=1` in the cloud) | Spec edge case "base style URL changes" |
+| 2026-10-31 | 1·Git | Light + dark theme, light by default (owner's request) via `<html data-theme>`; load plan + map styles ready in both; app tokens + switch = CONTRACT CHANGE REQUEST to Agent Code | Owner's request; overrides Design System 1.13 "dark only" |
+| 2026-10-31 | 1·Git | Load plan treats a missing `data-theme` as dark | The app is dark until the switch lands — no light canvas inside a dark page |

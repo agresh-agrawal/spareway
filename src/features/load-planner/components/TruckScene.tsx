@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import type { PackContainer, Placement } from '@/types/domain'
 import { stopColor } from '@/components/common/chips'
 import type { BoxState } from '../lib/plan'
+import { usePlanPalette, type PlanPalette } from '../lib/theme'
 
 export type SceneView = '3d' | 'top' | 'side'
 
@@ -23,13 +24,6 @@ export interface TruckSceneProps {
 }
 
 const M = 0.01 // cm → m
-const COLORS = {
-  edge: new THREE.Color('#6b6b73'),
-  dark: new THREE.Color('#0a0a0b'),
-  fragile: new THREE.Color('#f5a524'),
-  selected: new THREE.Color('#e3f58c'),
-  issue: new THREE.Color('#ef4444'),
-}
 
 interface BoxGroup {
   keys: string[]
@@ -86,7 +80,7 @@ function Boxes({
 }
 
 /** All box edges in one line geometry: darker edges, amber for fragile, lime for the selected box, red for problems. */
-function BoxEdges({ placements, L, W, highlightKey, states }: { placements: Placement[]; L: number; W: number; highlightKey?: string | null; states?: Map<string, BoxState> }) {
+function BoxEdges({ placements, L, W, highlightKey, states, c }: { placements: Placement[]; L: number; W: number; highlightKey?: string | null; states?: Map<string, BoxState>; c: PlanPalette }) {
   const geometry = useMemo(() => {
     const edges = new THREE.EdgesGeometry(unitBox)
     const base = edges.getAttribute('position')
@@ -96,18 +90,18 @@ function BoxEdges({ placements, L, W, highlightKey, states }: { placements: Plac
     for (const p of placements) {
       const m = boxMatrix(p, L, W)
       const st = states?.get(p.key)
-      const c =
+      const edge =
         p.key === highlightKey
-          ? COLORS.selected
+          ? new THREE.Color(c.selected)
           : st === 'issue'
-            ? COLORS.issue
+            ? new THREE.Color(c.issue)
             : p.fragile
-              ? COLORS.fragile
-              : new THREE.Color(stopColor(p.unloadOrder)).lerp(COLORS.dark, 0.55)
+              ? new THREE.Color(c.fragile)
+              : new THREE.Color(stopColor(p.unloadOrder)).lerp(new THREE.Color(c.boxEdgeMix), 0.55)
       for (let i = 0; i < base.count; i++) {
         v.fromBufferAttribute(base, i).applyMatrix4(m)
         pos.push(v.x, v.y, v.z)
-        col.push(c.r, c.g, c.b)
+        col.push(edge.r, edge.g, edge.b)
       }
     }
     const g = new THREE.BufferGeometry()
@@ -115,7 +109,7 @@ function BoxEdges({ placements, L, W, highlightKey, states }: { placements: Plac
     g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3))
     edges.dispose()
     return g
-  }, [placements, L, W, highlightKey, states])
+  }, [placements, L, W, highlightKey, states, c])
   return (
     <lineSegments geometry={geometry}>
       <lineBasicMaterial vertexColors />
@@ -123,7 +117,7 @@ function BoxEdges({ placements, L, W, highlightKey, states }: { placements: Plac
   )
 }
 
-function Truck({ L, W, H }: { L: number; W: number; H: number }) {
+function Truck({ L, W, H, c }: { L: number; W: number; H: number; c: PlanPalette }) {
   const l = L * M
   const w = W * M
   const h = H * M
@@ -163,28 +157,28 @@ function Truck({ L, W, H }: { L: number; W: number; H: number }) {
       {/* container: 6 % fill + edges */}
       <mesh position={[0, h / 2, 0]}>
         <boxGeometry args={[l, h, w]} />
-        <meshBasicMaterial color="#a1a1a8" transparent opacity={0.06} depthWrite={false} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={c.containerFill} transparent opacity={0.06} depthWrite={false} side={THREE.DoubleSide} />
       </mesh>
       <lineSegments geometry={shell} position={[0, h / 2, 0]}>
-        <lineBasicMaterial color="#6b6b73" />
+        <lineBasicMaterial color={c.edge} />
       </lineSegments>
       <lineSegments geometry={grid}>
-        <lineBasicMaterial color="#2a2a2f" />
+        <lineBasicMaterial color={c.grid3d} />
       </lineSegments>
       <lineSegments geometry={doors}>
-        <lineBasicMaterial color="#e3f58c" transparent opacity={0.4} />
+        <lineBasicMaterial color={c.door} transparent opacity={c.doorOpacity} />
       </lineSegments>
       {/* cab */}
       <mesh position={[-l / 2 - cabLen / 2 - 0.15, (h * 0.9) / 2, 0]}>
         <boxGeometry args={[cabLen, h * 0.9, w]} />
-        <meshLambertMaterial color="#3a3a42" />
+        <meshLambertMaterial color={c.cab} />
       </mesh>
       <lineSegments geometry={cabEdges} position={[-l / 2 - cabLen / 2 - 0.15, (h * 0.9) / 2, 0]}>
-        <lineBasicMaterial color="#6b6b73" />
+        <lineBasicMaterial color={c.edge} />
       </lineSegments>
       <mesh position={[-l / 2 - cabLen - 0.16, h * 0.62, 0]}>
         <boxGeometry args={[0.02, h * 0.3, w * 0.86]} />
-        <meshBasicMaterial color="#3a3f47" />
+        <meshBasicMaterial color={c.cabWindow} />
       </mesh>
     </group>
   )
@@ -236,6 +230,7 @@ export default function TruckScene({
   onSelect,
   className,
 }: TruckSceneProps) {
+  const c = usePlanPalette()
   const L = container.lengthCm
   const W = container.widthCm
   const H = container.heightCm
@@ -252,22 +247,22 @@ export default function TruckScene({
       const g = st === 'waiting' || (highlightKey && p.key !== highlightKey) ? b : a
       g.keys.push(p.key)
       g.matrices.push(boxMatrix(p, L, W))
-      g.colors.push(st === 'issue' ? COLORS.issue.clone() : new THREE.Color(stopColor(p.unloadOrder)))
+      g.colors.push(st === 'issue' ? new THREE.Color(c.issue) : new THREE.Color(stopColor(p.unloadOrder)))
     }
     return [a, b]
-  }, [visible, states, highlightKey, L, W])
+  }, [visible, states, highlightKey, L, W, c])
 
   return (
     <div className={className}>
       <Canvas frameloop="demand" dpr={[1, 1.5]} gl={{ antialias: true }}>
-        <color attach="background" args={['#0f0f11']} />
+        <color attach="background" args={[c.canvas]} />
         <ambientLight intensity={1.6} />
         <directionalLight position={[4, 8, 6]} intensity={1.4} />
         <Cameras view={view} L={L} W={W} H={H} />
-        <Truck L={L} W={W} H={H} />
+        <Truck L={L} W={W} H={H} c={c} />
         <Boxes group={solid} opacity={0.85} onSelect={onSelect} />
         <Boxes group={faded} opacity={0.35} onSelect={onSelect} />
-        <BoxEdges placements={visible} L={L} W={W} highlightKey={highlightKey} states={states} />
+        <BoxEdges placements={visible} L={L} W={W} highlightKey={highlightKey} states={states} c={c} />
       </Canvas>
     </div>
   )
