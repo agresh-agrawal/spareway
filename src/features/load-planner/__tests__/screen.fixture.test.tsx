@@ -29,7 +29,7 @@ describe('load plan screen (fixture mode)', () => {
     expect(screen.getByText('34%')).toBeInTheDocument()
     expect(screen.getByText('Balance OK')).toBeInTheDocument()
     expect(screen.getByText('Everything fits in the truck')).toBeInTheDocument()
-    expect(screen.getByText('Steps 1–32 · 32 boxes · 1,122 kg')).toBeInTheDocument()
+    expect(screen.getByText('Steps 1–32 · 1,122 kg')).toBeInTheDocument()
     // no WebGL in jsdom → drawings, no 3D button
     expect(screen.queryByRole('button', { name: '3D' })).not.toBeInTheDocument()
     expect(screen.getByRole('img', { name: /From top/ })).toBeInTheDocument()

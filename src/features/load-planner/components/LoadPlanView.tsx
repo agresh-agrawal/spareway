@@ -224,7 +224,7 @@ export function LoadPlanView({ tripId, variant = 'step' }: { tripId: string; var
           </div>
 
           {!can3d && (
-            <p className="flex items-center gap-2 text-label text-ink-3">
+            <p className="flex items-center gap-2 text-label text-ink-2">
               <Info size={16} aria-hidden />
               {lowData ? t('view.lowData') : t('view.noWebgl')}
             </p>

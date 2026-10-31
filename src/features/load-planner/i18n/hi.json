@@ -36,8 +36,6 @@
   "packages": {
     "title": "स्टॉप के हिसाब से सामान",
     "steps": "स्टेप {{from}}–{{to}}",
-    "boxes_one": "{{count}} डिब्बा",
-    "boxes_other": "{{count}} डिब्बे",
     "each": "{{kg}} हर एक",
     "client": "ग्राहक",
     "drop": "उतराई",

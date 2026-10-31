@@ -69,7 +69,7 @@ function Drawing({
   return (
     <figure className={cn('flex flex-col gap-1', className)}>
       {!bare && (
-        <div className="flex justify-between text-label text-ink-3">
+        <div className="flex justify-between text-label text-ink-2">
           <span>{t('common:words.cabSide')}</span>
           <span>{t('common:words.doorSide')}</span>
         </div>

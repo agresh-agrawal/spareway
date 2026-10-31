@@ -36,8 +36,6 @@
   "packages": {
     "title": "Packages by stop",
     "steps": "Steps {{from}}–{{to}}",
-    "boxes_one": "{{count}} box",
-    "boxes_other": "{{count}} boxes",
     "each": "{{kg}} each",
     "client": "Client",
     "drop": "Drop",

@@ -59,8 +59,7 @@ export function PackagesByStop({
               >
                 <StopChip seq={g.unloadOrder} name={stop?.name ?? ''} className="max-w-full" />
                 <span className="text-label text-ink-2 tabular">
-                  {t('packages.steps', { from: g.firstStep, to: g.lastStep })} · {t('packages.boxes', { count: g.placements.length })} ·{' '}
-                  {formatWeight(g.kg)}
+                  {t('packages.steps', { from: g.firstStep, to: g.lastStep })} · {formatWeight(g.kg)}
                 </span>
                 <ChevronDown size={20} aria-hidden className={cn('ml-auto shrink-0 text-ink-2 transition-transform duration-200', isOpen && 'rotate-180')} />
               </button>
