@@ -281,6 +281,22 @@ describe('fitAdditional', () => {
     expect(validatePlan(container, items, r)).toEqual([])
   })
 
+  it('a load picked up mid-trip is not blocked by boxes already unloaded before the pickup', () => {
+    const { container, items } = demoTripInput()
+    const first = pack(container, items)
+    // picked up after stop 2 (Ahmedabad), dropped at stop 3 (Mumbai): Jaipur + Ahmedabad boxes are gone by then
+    const extra = Array.from({ length: 18 }, (_, i) =>
+      box('vadodara-parts', 80, 60, 60, { key: `vadodara-parts#${i + 1}`, weightKg: 45, unloadOrder: 3, loadOrder: 2.5 }),
+    )
+    const r = fitAdditional(container, first.placements, [...items, ...extra])
+    expect(r.unplaced).toEqual([])
+    expect(validatePlan(container, [...items, ...extra], r)).toEqual([])
+    // picked up earlier (right after the origin): the plan must stay valid as well
+    const later = extra.map((x) => ({ ...x, key: x.key.replace('parts', 'late'), cargoItemId: 'vadodara-late', loadOrder: 0.5, unloadOrder: 3 }))
+    const r2 = fitAdditional(container, first.placements, [...items, ...later])
+    expect(validatePlan(container, [...items, ...later], r2)).toEqual([])
+  })
+
   it('adds an extra load around the fixed plan', () => {
     const { container, items } = demoTripInput()
     const first = pack(container, items)
