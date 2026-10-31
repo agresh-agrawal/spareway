@@ -31,7 +31,8 @@ export function useDisableLink(tripId: string) {
 /** Live loading progress of the active plan (owners get realtime; the loader page polls). */
 export function useLoadingProgress(planId: string | null | undefined) {
   useRealtime('loading_progress', [queryKeys.planProgress(planId ?? '')], planId ? `load_plan_id=eq.${planId}` : undefined, Boolean(planId))
-  return useQuery({ queryKey: queryKeys.planProgress(planId ?? ''), queryFn: () => getProgress(planId!), enabled: Boolean(planId) })
+  // own key under planProgress: the load planner keeps the raw rows at planProgress(id) itself
+  return useQuery({ queryKey: [...queryKeys.planProgress(planId ?? ''), 'summary'], queryFn: () => getProgress(planId!), enabled: Boolean(planId) })
 }
 
 export function useLoaderAlerts(tripId: string) {

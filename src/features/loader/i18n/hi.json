@@ -47,8 +47,6 @@
     "done": "हो गया",
     "problem": "समस्या",
     "back": "पीछे",
-    "fromTop": "ऊपर से",
-    "fromSide": "बगल से",
     "problemTitle": "क्या समस्या है?",
     "reasons": {
       "missing": "सामान नहीं है",
@@ -67,6 +65,8 @@
     "endedTitle": "यह लिंक ख़त्म हो गया",
     "endedText": "मालिक से नया लिंक माँगें।",
     "issueMark": "समस्या बताई गई",
-    "in3d": "3D"
+    "in3d": "3D",
+    "byLayer": "परत दर परत",
+    "layers": "परतें"
   }
 }

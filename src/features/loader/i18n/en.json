@@ -47,8 +47,6 @@
     "done": "Done",
     "problem": "Problem",
     "back": "Back",
-    "fromTop": "From top",
-    "fromSide": "From side",
     "problemTitle": "What is the problem?",
     "reasons": {
       "missing": "Missing",
@@ -67,6 +65,8 @@
     "endedTitle": "This link has ended",
     "endedText": "Ask the owner for a new one.",
     "issueMark": "Problem reported",
-    "in3d": "3D"
+    "in3d": "3D",
+    "byLayer": "Layer by layer",
+    "layers": "Layers"
   }
 }

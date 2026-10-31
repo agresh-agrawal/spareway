@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { AlertTriangle, ArrowLeft, Check, CheckCircle2, ClipboardList, Hourglass, LinkIcon, Send } from 'lucide-react'
 import { LanguageButton, Logo, MainButton, PlainButton, Sheet, Skeleton, StopChip, stopColor, ThemeButton } from '@/components/common'
 import { Slot } from '@/app/slots'
-import { SideView, TopView, TruckScene } from '@/features/load-planner'
+import { TruckScene } from '@/features/load-planner'
 import { useLowData } from '@/lib/lowData'
 import { LANG_KEY } from '@/i18n/setup'
 import { applyLang, useLang } from '@/lib/i18n'
@@ -14,6 +14,7 @@ import { cn } from '@/lib/cn'
 import type { LoaderJobOk, Placement } from '@/types/domain'
 import { useLoaderJob, useUpdateStep } from '../hooks'
 import { firstOpenStep, positionWords } from '../lib/position'
+import { LayerView } from '../components/LayerView'
 
 const REASONS = ['missing', 'damaged', 'size', 'other'] as const
 
@@ -76,7 +77,8 @@ export default function LoaderPage() {
   const job = useLoaderJob(token)
   const update = useUpdateStep(token)
   const [step, setStep] = useState<number | null>(null)
-  const [view, setView] = useState<'top' | 'side' | '3d'>('top')
+  const [view, setView] = useState<'layer' | '3d'>('layer')
+  const [layer, setLayer] = useState<number | null>(null)
   const { lowData } = useLowData()
   const [problemOpen, setProblemOpen] = useState(false)
   const [reason, setReason] = useState<(typeof REASONS)[number]>('missing')
@@ -142,6 +144,11 @@ export default function LoaderPage() {
     return open?.step ?? Math.min(after + 1, total)
   }
 
+  const goTo = (n: number) => {
+    setLayer(null) // show the layer of the next box
+    setStep(n)
+  }
+
   const send = async (s: 'done' | 'issue', text = '') => {
     if (!p) return
     try {
@@ -151,7 +158,7 @@ export default function LoaderPage() {
         setProblemOpen(false)
         setNote('')
       }
-      setStep(nextOpen(current))
+      goTo(nextOpen(current))
     } catch (e) {
       const code = toAppError(e).code
       if (code === 'PLAN_CHANGED') {
@@ -213,27 +220,35 @@ export default function LoaderPage() {
           )}
 
           <div className="mt-4">
-            <div className="mb-2 flex gap-1 rounded-control border border-line-strong bg-surface-2 p-1" role="group">
-              {(lowData ? (['top', 'side'] as const) : (['top', 'side', '3d'] as const)).map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  aria-pressed={view === v}
-                  onClick={() => setView(v)}
-                  className={cn('h-10 flex-1 rounded-[10px] font-semibold', view === v ? 'bg-surface-3 text-ink' : 'text-ink-2')}
-                >
-                  {v === 'top' ? t('page.fromTop') : v === 'side' ? t('page.fromSide') : t('page.in3d')}
-                </button>
-              ))}
-            </div>
+            {!lowData && (
+              <div className="mb-3 flex gap-1 rounded-control border border-line-strong bg-surface-2 p-1" role="group">
+                {(['layer', '3d'] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    aria-pressed={view === v}
+                    onClick={() => setView(v)}
+                    className={cn('h-12 flex-1 rounded-[10px] text-[17px] font-semibold', view === v ? 'bg-surface-3 text-ink' : 'text-ink-2')}
+                  >
+                    {v === 'layer' ? t('page.byLayer') : t('page.in3d')}
+                  </button>
+                ))}
+              </div>
+            )}
             {view === '3d' && !lowData ? (
               <Suspense fallback={<Skeleton className="h-80" />}>
                 <TruckScene container={container} placements={placements} highlightKey={p.key} states={states} visibleSteps={current} className="h-80" />
               </Suspense>
-            ) : view === 'top' ? (
-              <TopView container={container} placements={placements} highlightKey={p.key} states={states} visibleSteps={current} />
             ) : (
-              <SideView container={container} placements={placements} highlightKey={p.key} states={states} visibleSteps={current} />
+              <LayerView
+                container={container}
+                placements={placements}
+                highlightKey={p.key}
+                states={states}
+                visibleSteps={current}
+                layer={layer ?? words?.layer ?? 1}
+                onLayer={setLayer}
+              />
             )}
           </div>
         </section>
@@ -246,7 +261,7 @@ export default function LoaderPage() {
         <PlainButton icon={AlertTriangle} onClick={() => setProblemOpen(true)} className="h-14 text-[18px]">
           {t('page.problem')}
         </PlainButton>
-        <PlainButton icon={ArrowLeft} onClick={() => setStep(Math.max(1, current - 1))} disabled={current <= 1} className="h-14 text-[18px]">
+        <PlainButton icon={ArrowLeft} onClick={() => goTo(Math.max(1, current - 1))} disabled={current <= 1} className="h-14 text-[18px]">
           {t('page.back')}
         </PlainButton>
       </div>

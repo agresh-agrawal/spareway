@@ -21,11 +21,28 @@ export function positionWords(p: Placement, container: Pick<PackContainer, 'leng
   const cy = p.y + p.w / 2
   const along: Along = cx < container.lengthCm / 3 ? 'cab' : cx < (2 * container.lengthCm) / 3 ? 'middle' : 'door'
   const across: Across = cy < container.widthCm / 3 ? 'left' : cy < (2 * container.widthCm) / 3 ? 'centre' : 'right'
-  // layer = how many distinct box heights start below this one (+1)
-  const levels = [...new Set(all.map((q) => Math.round(q.z / EPS) * EPS))].sort((a, b) => a - b)
-  const z = Math.round(p.z / EPS) * EPS
-  const layer = Math.max(1, levels.filter((lv) => lv < z - EPS).length + 1)
-  return { along, across, layer }
+  return { along, across, layer: layerOf(p, layerBand(all)) }
+}
+
+/**
+ * Layer height for this load: the usual (median) height of the boxes on the floor, 30–90 cm. Loaders think in a
+ * few layers, not in every height a box happens to start at.
+ */
+export function layerBand(all: Placement[]): number {
+  const floor = all.filter((q) => q.z < EPS).map((q) => q.h).sort((a, b) => a - b)
+  const band = floor.length ? Math.min(90, Math.max(30, floor[Math.floor(floor.length / 2)])) : 60
+  return band
+}
+
+/** 1 = floor, then one layer per band height. */
+export function layerOf(p: Placement, band: number): number {
+  return Math.floor((p.z + EPS) / band) + 1
+}
+
+/** How many layers the load has. */
+export function layerCount(all: Placement[]): number {
+  const band = layerBand(all)
+  return Math.max(1, ...all.map((p) => layerOf(p, band)))
 }
 
 /** Poll every 5 s while visible (10 s in low-data mode); stop while the page is hidden. */
