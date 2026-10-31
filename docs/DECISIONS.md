@@ -93,3 +93,9 @@
 | 2026-10-31 | 3·Git | Extra loads step reads the chosen route directly from route_options (no `useSelectedRoute`) | That hook can start a route-plan call as a side effect |
 | 2026-10-31 | Merge 3 | `corridor_km` default 40 + existing 20 → 40 via `phase3code_corridor.sql` | Change request from 3·Git (owner's answer: look 40 km off route) |
 | 2026-10-31 | Merge 3 | Parser / AI cargo labels added to the Hindi demo dictionary | Change request from 3·Code: camera / voice rows showed English in Hindi |
+| 2026-10-31 | 4·Code | Phase 4 questions answered with the spec defaults (queue cargo adds + loader taps; NH48 map OK; Vercel already set up) | Owner: "don't ask, complete it" |
+| 2026-10-31 | 4·Code | Service worker registered with `workbox-window` in production only, not `virtual:pwa-register` | The virtual module does not resolve in `npm run dev` (broke every page) |
+| 2026-10-31 | 4·Code | Saved data in localStorage (sync persister, 7 days, oldest query dropped when full); never `loaderJob` / `search` | Persister package installed in Phase 0; spec: never cache loader job data |
+| 2026-10-31 | 4·Code | Only new owner cargo lines are queued offline; edits / deletes still need the internet | Spec names "owner cargo adds"; a queued edit could overwrite newer data |
+| 2026-10-31 | 4·Code | Offline map = corridor z4–8 + 3-tile band to z11 (~574 tiles, ~40 MB) | Close to the spec's ~30 MB; z11 is enough to read the highway and towns |
+| 2026-10-31 | 4·Code | Providers + TopBar edited directly (change request applied by the merge owner) | No slot for app-wide providers or the avatar menu |

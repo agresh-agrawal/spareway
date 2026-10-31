@@ -1,4 +1,3 @@
-/// <reference types="vite-plugin-pwa/client" />
 import { useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { WifiOff } from 'lucide-react'
@@ -49,14 +48,22 @@ export function OfflineLayer() {
   }, [])
 
   useEffect(() => {
-    if (!import.meta.env.PROD) return // the service worker is off while developing
-    let update: ((reload?: boolean) => Promise<void>) | undefined
-    void import('virtual:pwa-register').then(({ registerSW }) => {
-      update = registerSW({
-        onNeedRefresh() {
-          toast(t('update'), { duration: Infinity, action: { label: t('reload'), onClick: () => void update?.(true) } })
-        },
+    if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return // the service worker is off while developing
+    void import('workbox-window').then(({ Workbox }) => {
+      const wb = new Workbox('/sw.js')
+      wb.addEventListener('waiting', () => {
+        toast(t('update'), {
+          duration: Infinity,
+          action: {
+            label: t('reload'),
+            onClick: () => {
+              wb.addEventListener('controlling', () => window.location.reload())
+              wb.messageSkipWaiting()
+            },
+          },
+        })
       })
+      void wb.register()
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 

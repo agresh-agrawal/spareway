@@ -258,7 +258,28 @@ Notes for the other agent:
 - The `city_entry` "(from–to)" meta note from Merge 2 is unchanged (2·Git); can be done in Phase 4 if wanted.
 - Typed loads are checked only (not saved); to carry one on the trip, post it on /loads and add it from the Extra loads step.
 
-## Phase 4·Code — Offline, public link, final check (branch code/phase4-offline-deploy) status: not started
+## Phase 4·Code — Offline, public link, final check (branch code/phase4-offline-deploy) status: ready to merge (final merge waits for 4·Git)
+
+Built (from `v3`; owner said "don't ask, complete it" → spec defaults: queue owner cargo adds **and** loader taps; NH48 offline map OK; the Vercel project already exists and auto-deploys `main`). New code in `src/features/offline`, the PWA block in `vite.config.ts`, queue wiring in `cargo` / `loader` (my lanes). No SQL, no new packages.
+- **Installable PWA** (`vite-plugin-pwa`, `generateSW`): manifest Spareway (192 / 512 / maskable icons, standalone, dark), 129 app files precached (~5 MB incl. fonts, map styles, map worker), SPA fallback. Runtime cache `map-tiles` for `tiles.openfreemap.org` (tilejson network-first, tiles / sprites / glyphs cache-first). **Supabase is never cached** (auth, data, Edge Functions, loader job). Service worker off in `npm run dev`; registered with `workbox-window` in production; "A new version of Spareway is ready · Reload" toast (skip-waiting).
+- **Saved data**: React Query cache persisted to localStorage (`spareway.cache`, 7 days, oldest query dropped when full); never loader jobs, search or failed queries; fixture mode not persisted. **Sign-out clears** saved data and the queue.
+- **Offline queue** (`spareway.queue`): owner "Add item" without internet → line shown at once (id `queued-…`) + "Saved on this phone — it will be sent when you are online"; loader Done / Problem → counted on the phone at once. Sent in order when the internet is back (stops at the first network failure, keeps order; server refusals such as PLAN_CHANGED are dropped with a toast). Senders are registered in `cargo/module.tsx` and `loader/module.tsx`, so the loader page sends its own taps.
+- **Offline bar**: amber "No internet — showing saved data, changes will be sent later · n changes waiting" (shell and loader page).
+- **Install app** in the avatar menu when the browser offers it.
+- **Settings → "Save map for offline (NH48)"**: ~574 tiles (corridor z4–8 + a 3-tile band along NH48 to z11), the 4 map styles, sprites and Latin + Devanagari glyphs → about 40 MB; progress %, Stop, "Map saved {date} — n MB", Remove.
+- Low-data (already in place): lite map style, 3D off, no animations, loader polling 10 s.
+- en + hi for every string. Tests: 10 new (queue order / network stop / refusals / unknown kinds, saved-data filter, tile math, URLs, slot) → `npm run check` 334, build passes.
+
+Verified 2026-10-31: production preview — service worker active, manifest linked, precache filled; simulated offline → amber bar (and gone when back online). Dev, Hindi — Settings section, Save map 11 % in 5 s, Stop works (partial cache removed afterwards).
+Not verified: real airplane mode on a phone (installed app, last trip / plan / map, queued taps syncing), Install prompt (needs HTTPS on a phone — Vercel), a fresh signup on the public URL getting the demo trucks (the agent does not create accounts on the live site). Owner to check at the final merge.
+
+CHANGE REQUEST APPLIED (Agent Code, owner of the merge) — shared Phase 0 files touched minimally because there is no slot for them: `src/app/providers.tsx` (PersistQueryClientProvider unless fixture mode + `<OfflineLayer />`), `src/components/shell/TopBar.tsx` ("Install app" menu item via `useInstall`).
+
+### Demo-day runbook (Engineering Reference 14)
+- **Evening before:** on https://spareway.vercel.app sign up a fresh demo owner (gets the demo fleet), and a second account for the marketplace. Open TRP-2026-0031 → Route → choose a route once (routes cached). Settings → Save map for offline (NH48) on the demo phone. Install the app on the phone (avatar menu → Install app). Open the loader link once on the loader phone.
+- **Devices:** laptop on the hotspot; phone charged; loader phone with the link opened.
+- **Fallbacks:** typed voice ("Type instead"), manual cargo form, saved routes, Settings → Reset sample data, backup video. If signup emails are slow: Supabase → Auth → turn **Confirm email OFF** before judges sign up.
+- **5 minutes:** Home → हिंदी → English · Cargo (104 units, truck a third full) · Load plan → 3D → Play · Send to loader → phone scans QR → Done / Problem · Route → three routes → Choose · Extra loads → reasons → Add LD-1045 · Speak Hindi on the loader phone → owner alert · Earnings → before vs after.
 
 ## Phase 4·Git — Earnings and analytics (branch git/phase4-earnings) status: not started
 
