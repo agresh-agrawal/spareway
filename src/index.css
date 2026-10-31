@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/noto-sans-devanagari';
+
+/* Design System section 3 — exact tokens. Dark only. */
+@theme {
+  --color-canvas: #0a0a0b;
+  --color-rail: #121214;
+  --color-surface: #141416;
+  --color-surface-2: #1b1b1e;
+  --color-surface-3: #232327;
+  --color-line: rgb(255 255 255 / 0.07);
+  --color-line-strong: rgb(255 255 255 / 0.12);
+  --color-ink: #f2f2f3;
+  --color-ink-2: #a1a1a8;
+  --color-ink-3: #6b6b73;
+  --color-accent: #e3f58c;
+  --color-accent-ink: #121212;
+  --color-accent-soft: rgb(227 245 140 / 0.12);
+  --color-ok: #4ade80;
+  --color-warn: #f5a524;
+  --color-crit: #ef4444;
+  --color-info: #22d3ee;
+  --color-violet: #7c6cf0;
+  --color-stop-1: #e3f58c;
+  --color-stop-2: #22d3ee;
+  --color-stop-3: #f5a524;
+  --color-stop-4: #a78bfa;
+  --color-stop-5: #fb7185;
+  --color-stop-6: #34d399;
+  --color-stop-7: #60a5fa;
+  --color-stop-8: #f472b6;
+
+  --radius-card: 20px;
+  --radius-tile: 14px;
+  --radius-control: 14px;
+
+  --font-sans: 'Inter Variable', 'Noto Sans Devanagari Variable', 'Noto Sans Devanagari', system-ui, sans-serif;
+
+  --text-page-title: 26px;
+  --text-page-title--line-height: 32px;
+  --text-section-title: 18px;
+  --text-section-title--line-height: 24px;
+  --text-body: 15px;
+  --text-body--line-height: 22px;
+  --text-label: 13px;
+  --text-label--line-height: 18px;
+  --text-big-number: 32px;
+  --text-big-number--line-height: 38px;
+  --text-hero: 44px;
+  --text-hero--line-height: 48px;
+  --text-button: 16px;
+  --text-button--line-height: 20px;
+
+  --animate-pulse-soft: pulse-soft 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-canvas);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+  /* Hindi: +4 px line height, no uppercase, weight ≥ 500 under 15 px */
+  html[lang='hi'] body { line-height: 26px; }
+  html[lang='hi'] .uppercase { text-transform: none; letter-spacing: normal; }
+  html[lang='hi'] .text-label { font-weight: 500; line-height: 22px; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  ::selection { background: var(--color-accent-soft); }
+  button, [role='button'] { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
+
+@layer utilities {
+  .tabular { font-variant-numeric: tabular-nums; }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* Motion: 200 ms ease; instant with reduced motion or low-data */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
+html[data-low-data='on'] *, html[data-low-data='on'] *::before, html[data-low-data='on'] *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+}
+
+/* MapLibre controls on dark */
+.maplibregl-ctrl-attrib { background: rgb(10 10 11 / 0.7) !important; color: var(--color-ink-2) !important; }
+.maplibregl-ctrl-attrib a { color: var(--color-ink-2) !important; }

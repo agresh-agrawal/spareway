@@ -20,3 +20,6 @@
 | 2026-10-30 | Git | Phase 0 foundation and Phase 1 local tasks built by Agent Code; Agent Git starts a part only when the owner says, from the newest tag | Owner's answer; avoids both agents writing the shared foundation |
 | 2026-10-30 | Git | `docs/DECISIONS.md merge=union` in `.gitattributes`; foundation on `main` + tag before parallel phases | Simulated a parallel Phase 1 merge: DECISIONS rows and `domain.ts` conflicted |
 | 2026-10-30 | 0·Code | Public URL is `spareway.vercel.app` (production alias); team URLs `*-agresh.vercel.app` stay behind deployment protection | Checked with the Vercel tools |
+| 2026-10-31 | 0·Code | Foundation restored from `eb6ee88` and completed on `main`, tagged `v0.1` (start point for Phase 1 Code + Git) | Owner's request; start gate from Agent Git |
+| 2026-10-31 | 0·Code | Fixture mode in `src/lib/fixtures`: in-memory copy of the SQL seed + the 3 views; `AuthProvider` fakes the owner; features branch in their own `api.ts` | Cloud agent has no database (Architecture 4.6) |
+| 2026-10-31 | 0·Code | Problem cards show the alert title (one line) for seeded rows; meta templates for new rows | Design System 7.3 "one-line title" |

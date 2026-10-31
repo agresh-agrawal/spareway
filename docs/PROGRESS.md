@@ -1,34 +1,33 @@
 # Progress
 
-## Phase 0·Code — Setup (branch main) status: done (tag v0) — setup only, no app code
+## Phase 0·Code — Setup and foundation (branch main) status: done (tag v0.1)
 
-The owner asked for Phase 0 to be **setup only**: all app code and UI was removed on 2026-10-30
-(it stays in git history, commit `eb6ee88`). `src/` holds only an empty entry (`main.tsx`), the generated
-`types/database.ts` and the test setup.
+Built (restored from `eb6ee88` on the owner's request, then completed) — on `main`, tag **`v0.1`** = the start point for both Phase 1 parts:
+- Contracts `src/types/domain.ts` (Engineering Reference 1), module + slot system with all 8 slots (`home.actions`, `home.widgets`, `settings.sections`, `truck.tabs`, `trip.steps`, `trip.actions`, `cargo.addMethods`, `loader.actions`; empty slot → nothing), router with publicRoutes, query keys, `AppError` + error mapping.
+- `src/lib`: supabase (lazy env), env, queryKeys, errors, format, units, geo, lowData, realtime, i18n (`td()`, `tm()`), **fixtures** (dev fixture mode).
+- `src/i18n`: common en/hi (glossary, errors 5, templates 7.7), demo dictionary `data/hi.json` (7.6).
+- Design System: tokens in `src/index.css`, `components/ui` (radix), `components/common` (section 5), `components/shell` (rail / bottom tabs, top bar, search, bell, avatar menu, low-data, About, 404, fixture banner).
+- Features: auth (F2 — 5 pages, guards, first-login seeding), home (F5), settings (F6).
+- **Fixture mode** `?fixture=seed` (dev only): fake owner + the SQL seed's data (6 trucks, 3 trips, demo cargo 104 / 2,638 kg, 12 listings, 4 alerts, 6 activity, 30 days of stats) and the three views computed like SQL. See CLAUDE.md for how features use it.
+- Database, route data, Vercel, auth settings — as in v0 (see below).
 
-Ready:
-- Repo `agresh-agrawal/spareway` (private), `main` pushed; layout: `docs/`, `docs/phases/`, `supabase/`, `data/pois/`, `data/reference/`, `scripts/`, `public/brand`, `public/icons`.
-- Every package from Architecture 4.2 installed (Vite 8, React 19.3, TS 6.0, Tailwind 4, Supabase JS, React Query, i18next, three/R3F, MapLibre, …); configs for build, lint, test; `npm run check` + `npm run build` green without `.env`.
-- Supabase `darwxazznvfocihderma`: full schema + functions + views + storage + realtime (from `supabase/spareway_database.sql`), 120 real route POIs from Vansh's CSVs (`npm run pois`), security fixes `supabase/sql/phase0code_security.sql`. First-login seeding verified in SQL: Home numbers 3 of 6 / 1 / 4, demo trip 104 units / 2,638 kg, company isolation, reset.
-- `src/types/database.ts` matches the live database (incl. relationships).
-- Vercel project `spareway` (team agresh) linked to the repo; env `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MAP_STYLE_URL`; every push to `main` deploys to https://spareway-agresh.vercel.app.
-- Logo + favicon / PWA icons; `.env` (public values), `.env.secrets` (local only: AI, Brevo, Google keys, QA test owner).
+Verified 2026-10-31:
+- `npm run check` (84 tests) + `npm run build` pass, also with `.env` renamed. Main bundle 272 KB gzip.
+- Fresh sign-up through the real form (qa.owner2@spareway.test) → straight in → "Setting up your demo trucks…" → Home **3 of 6 / 1 / 4**, problems as one-line titles, activity 6 rows, chart with Sample badge.
+- हिंदी: every label + demo data + problems + activity in Hindi; kept after reload; saved in `profiles.preferred_lang`.
+- Second account sees only its own data (each company its own 6 trucks / 3 trips; RLS test from v0).
+- Settings: diesel 96.5 saved for that company only.
+- 375 px Hindi: no sideways scroll. Fixture mode on / off works, no console errors.
+- Design System 13 by review: one lime button per view, icon + word, ≤ 3 numbers per card, tokens only, badges, loading / empty / error states.
 
-Auth configured 2026-10-30 (Management API): Google sign-in ON (client 305717058870-…), Site URL https://spareway.vercel.app, redirect URLs localhost:5173/4173 (http + https), spareway.vercel.app and its preview URLs, password ≥ 8 with a letter and a number. Email: Supabase built-in mailer (owner's choice).
+Not checked here: Google sign-in end to end (needs a real Google login in the browser — the redirect to Google works); a real Android phone over the hotspot (do it in the Phase 1 merge).
 
 Open (owner):
-- [x] Supabase → Authentication → Sign In / Providers → Email: turn **Confirm email OFF** (built-in mailer sends 2 emails/hour, only to project team members — judges could not confirm). Spec fallback (Architecture 10).
-- [x] Edge Function secret `GEMINI_API_KEY` (set 2026-10-30).
-- [ ] Edge Function secret `GEMINI_MODEL=gemini-3.5-flash` (before Phase 3).
-- [ ] Edge Function secret `ORS_API_KEY` (before Phase 2 — key from openrouteservice.org).
-- [ ] Agent Git: claude.ai/code environment `spareway-cloud` + Claude GitHub App on the repo.
-- [ ] Revoke the Supabase access token used for setup after the hackathon.
+- [ ] Rotate keys pasted in chat on 2026-10-30 (OpenAI, both Gemini, Brevo, Google client secret; also the Supabase secret key and access token), put the new ones in `.env.secrets`.
+- [ ] Edge Function secrets `GEMINI_MODEL=gemini-3.5-flash` (before Phase 3) and `ORS_API_KEY` (before Phase 2; key from openrouteservice.org). `GEMINI_API_KEY` is set — replace it after rotation.
+- [ ] Cloud environment: allow `tiles.openfreemap.org`; setup script `[ -f package.json ] && npm ci || true`.
 
-Vercel URLs (checked 2026-10-30 with the Vercel tools, answer to Agent Git): `spareway.vercel.app` is a production alias of project `spareway` and is public (200) — the Supabase Site URL / redirect URLs are correct, no fix needed. `spareway-agresh.vercel.app` and `spareway-<hash>-agresh.vercel.app` are behind Vercel deployment protection (302 to Vercel login); give judges `spareway.vercel.app` only.
-
-Merged `claude/lucid-wright-jyyee3` (working agreement, `.gitattributes` union rule) into `main` on 2026-10-30. Foundation (`v0.1`) not built yet — waiting for the owner.
-
-Notes: dhaba / no-entry coordinates are town centres (`data.approx_location = true`). A QA owner `qa.owner@spareway.test` exists in Auth (password in `.env.secrets`).
+Infra (from v0): Supabase `darwxazznvfocihderma` — schema, functions, views, storage, realtime, 120 real POIs, `phase0code_security.sql`; Google sign-in ON; Confirm email OFF (built-in mailer); Site URL + redirects for localhost and `spareway.vercel.app`. Vercel project `spareway` auto-deploys `main` to https://spareway.vercel.app (public alias; `*-agresh.vercel.app` URLs are behind Vercel login). QA owners `qa.owner@spareway.test`, `qa.owner2@spareway.test` (passwords in `.env.secrets`). Dhaba / no-entry coordinates are town centres (`data.approx_location = true`).
 
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: not started
 

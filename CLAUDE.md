@@ -23,6 +23,6 @@
 
 ## Commands
 `npm run dev` · `npm run dev:https` (phone over LAN) · `npm run check` (typecheck + lint + test) · `npm run build` · `npm run pois` (regenerate POI SQL from `data/pois/*.csv`).
-Dev fixture mode: `?fixture=seed` (dev builds only).
+Dev fixture mode: open `http://localhost:5173/?fixture=seed` (dev builds only; `?fixture=off` ends it) → fake signed-in owner + Engineering Reference 7 sample data, no Supabase. In your feature's `api.ts`: `if (isFixtureMode()) return fixtureDelay(…fixtureStore()…)` with helpers from `@/lib/fixtures` (`fixtureStore`, `fixtureDelay`, `fixtureTripOverview`, `fixtureDashboardStats`, `fixtureTripFinancials`). Mutations change the in-memory store only.
 
 **Done** = check + build pass (also without `.env`), Verify list done, PROGRESS + DECISIONS updated, branch pushed.

@@ -1,0 +1,25 @@
+{
+  "title": "होम",
+  "greeting": {
+    "morning": "सुप्रभात, {{name}}",
+    "afternoon": "नमस्ते, {{name}}",
+    "evening": "शुभ संध्या, {{name}}"
+  },
+  "tiles": {
+    "trucksWorking": "चल रहे ट्रक",
+    "trucksOf": "{{total}} में से {{n}}",
+    "tripsOnRoad": "रास्ते में ट्रिप",
+    "problems": "समस्याएँ"
+  },
+  "quick": "जल्दी के काम",
+  "problems": "समस्याएँ",
+  "allGood": "आज सब ठीक है",
+  "seeAll": "सब देखें ({{count}})",
+  "showFewer": "कम दिखाएँ",
+  "activity": "हाल के काम",
+  "noActivity": "आज अभी कुछ नहीं हुआ",
+  "week": "यह हफ़्ता",
+  "spaceChart": "हर दिन ट्रक में भरी जगह",
+  "noStats": "इस हफ़्ते के नंबर अभी नहीं हैं",
+  "resolved": "हो गया"
+}

@@ -1,5 +1,13 @@
-// Entry point only — the app is built from Phase 0 onwards. Kept so `npm run build` and the Vercel deploy work.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import './index.css'
+import { setupI18n } from './i18n/setup'
+import { App } from './app/App'
 
-createRoot(document.getElementById('root')!).render(<StrictMode>{null}</StrictMode>)
+setupI18n()
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
