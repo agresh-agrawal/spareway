@@ -78,7 +78,7 @@ Tests 355 pass, build passes. `database.ts` patched to exactly the generated dif
 - **Driver page** simpler: big next stop, Google Maps, "I reached" / "Delivered" (owner notified), Call owner, "Paid a challan or cost", challan warnings + papers and fines.
 - **Challan corner** (trip tab 7): overload / near-limit / no-entry / late risks, papers + habits with usual central fines, trip costs (challan, breakdown, police, parking, loading, other) added by owner or driver; they come off net earnings (`trip_financials` misc_cost_inr / challan_cost_inr). Owner gets a toast (and phone notification if allowed in Settings) for driver and loader reports and new provider loads.
 - **Trip history** (`/history`): finished/cancelled trips, month filter, totals, CSV "Download my data".
-- **Monthly email report**: Edge Function `monthly-report` (verify_jwt off, own checks) + pg_cron `spareway-monthly-report` 03:30 UTC on the 1st (token in Vault, `check_report_token`). Settings → preview / email me now. **Needs Supabase secrets `BREVO_API_KEY` and `BREVO_SENDER` ("Name <email>") — until set it answers EMAIL_NOT_SET_UP.**
+- **Monthly email report**: Edge Function `monthly-report` (verify_jwt off, own checks) + pg_cron `spareway-monthly-report` 03:30 UTC on the 1st (token in Vault, `check_report_token`). Settings → preview / email me now. Brevo key + sender (`Spareway <agresh@agreshagrawal.com>`, active in Brevo) kept in Vault (`brevo_api_key`, `brevo_sender`), read by `report_email_config()` (service role only); Edge Function secrets of the same names would win.
 - **Stage 5 load providers** (`prephase4code_provider_offers.sql`): owner "Get loads from providers" link (QR / WhatsApp) → `/post/:token` no login, several loads in one go → each load gets `/offer/:share` (see, change, take off, accept / turn down counter-offers). Owners see full details on Loads, counter-offer, withdraw, copy load link. Verified on the real database in a rolled-back transaction.
 - **Stage 6**: "Is ₹X worth it?" calculator in the counter-offer sheet (trip's minimum price when known, else road km × usual ₹/km + handling + min margin); every not-suitable load shows a suggested fix; LOW_MARGIN loads get "Counter-offer ₹need".
 Tests 376 pass, build passes.
@@ -87,7 +87,7 @@ Tests 376 pass, build passes.
 - **Map in Hindi**: place and water labels use OpenStreetMap `name:hi` (else the usual name) when the app is in Hindi; switches live.
 - Checked with sample data: owner (new trip, challan corner, earnings, history, loads, auto-pick), driver link (Hindi, phone width, dark, reached / challan), loader link (layers, 3D), provider link (post page).
 
-**Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords); Brevo secrets for the monthly email. Company phone is needed for "Call owner" (Settings).
+**Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords). Company phone is needed for "Call owner" (Settings).
 
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 

@@ -1,7 +1,8 @@
 // monthly-report — owner request 6: on the 1st of each month every owner gets last month's trips, net earnings
 // and tips to cut costs by email (Brevo). pg_cron calls it with a token kept in Vault (mode "cron"); an owner can
 // also send / preview their own report from Settings (mode "me", user session).
-// Secrets: BREVO_API_KEY, BREVO_SENDER ("Name <email>"), optional APP_URL. Never logs secrets or emails.
+// Secrets: BREVO_API_KEY, BREVO_SENDER ("Name <email>") as Edge Function secrets or in Vault (brevo_api_key,
+// brevo_sender); optional APP_URL. Never logs secrets or emails.
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
 import { buildReport, monthRange, parseSender, previousMonth, renderEmail, type ReportTrip } from './lib.ts'
 
@@ -78,8 +79,16 @@ Deno.serve(async (req) => {
   const anon = Deno.env.get('SUPABASE_ANON_KEY')!
   const service = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const admin = createClient(url, service, { auth: { persistSession: false } })
-  const brevoKey = Deno.env.get('BREVO_API_KEY') ?? ''
-  const sender = parseSender(Deno.env.get('BREVO_SENDER') ?? '')
+  // Edge Function secrets first, else the values kept in Vault (report_email_config, service role only)
+  let brevoKey = Deno.env.get('BREVO_API_KEY') ?? ''
+  let senderRaw = Deno.env.get('BREVO_SENDER') ?? ''
+  if (!brevoKey || !senderRaw) {
+    const { data: cfg } = await admin.rpc('report_email_config')
+    const c = (cfg ?? {}) as { apiKey?: string | null; sender?: string | null }
+    brevoKey ||= c.apiKey ?? ''
+    senderRaw ||= c.sender ?? ''
+  }
+  const sender = parseSender(senderRaw)
   const appUrl = (Deno.env.get('APP_URL') ?? 'https://spareway.vercel.app').replace(/\/$/, '')
   const emailReady = Boolean(brevoKey && sender)
 
