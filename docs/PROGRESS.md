@@ -23,6 +23,7 @@ Verified 2026-10-31:
 Not checked here: Google sign-in end to end (needs a real Google login in the browser — the redirect to Google works); a real Android phone over the hotspot (do it in the Phase 1 merge).
 
 Open (owner):
+- [ ] Google Cloud Console → APIs & Services → Credentials → OAuth client (Web): add Authorized redirect URI `https://darwxazznvfocihderma.supabase.co/auth/v1/callback` (live test 2026-10-31 gave `redirect_uri_mismatch`); Authorized JavaScript origins `https://spareway.vercel.app`, `http://localhost:5173`.
 - [ ] Rotate keys pasted in chat on 2026-10-30 (OpenAI, both Gemini, Brevo, Google client secret; also the Supabase secret key and access token), put the new ones in `.env.secrets`.
 - [ ] Edge Function secrets `GEMINI_MODEL=gemini-3.5-flash` (before Phase 3) and `ORS_API_KEY` (before Phase 2; key from openrouteservice.org). `GEMINI_API_KEY` is set — replace it after rotation.
 - [ ] Cloud environment: allow `tiles.openfreemap.org`; setup script `[ -f package.json ] && npm ci || true`.

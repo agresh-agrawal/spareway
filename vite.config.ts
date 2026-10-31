@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
     server: { port: 5173 },
     preview: { port: 4173 },
     worker: { format: 'es' },
+    // pre-bundle the map libraries up front: discovering them on first use reloads the dev server and can
+    // leave two copies of React in the page ("Invalid hook call" in react-map-gl)
+    optimizeDeps: { include: ['react-map-gl/maplibre', 'maplibre-gl'] },
     build: {
       chunkSizeWarningLimit: 1200,
     },
