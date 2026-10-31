@@ -1,6 +1,6 @@
 // Trip step "Extra loads" (Design System 7.13): three tiles, route strip, load cards sorted by profit with one
 // lime "Add to trip" (the best one), collapsed "Not suitable (n)" with plain reasons.
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import {
   ChevronDown,
@@ -10,9 +10,10 @@ import {
   MoveHorizontal,
   PackageSearch,
   Scale,
+  Sparkles,
   XCircle,
 } from 'lucide-react'
-import { EmptyState, ErrorState, PlainButton, Skeleton } from '@/components/common'
+import { EmptyState, ErrorState, MainButton, PlainButton, Skeleton } from '@/components/common'
 import { formatFt, formatInr, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
@@ -66,6 +67,29 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
   const [checked, setChecked] = useState<CheckedLoad[]>([])
   const [counter, setCounter] = useState<Candidate | null>(null)
   const cards = useRef(new Map<string, HTMLElement>())
+  // "Pick the best loads for me": add the most profitable suitable load, wait for the step to re-check space and
+  // weight on the new plan, repeat — so every pick is checked against the loads already added.
+  const [auto, setAuto] = useState<{ added: { code: string; inr: number }[]; seen: unknown } | null>(null)
+  useEffect(() => {
+    if (!auto || x.status !== 'ready' || add.isPending || x.data === auto.seen) return
+    const next = x.recommended.find((c) => c.decision === 'ACCEPT' && !auto.added.some((a) => a.code === c.code))
+    if (!next || auto.added.length >= 8) {
+      const total = auto.added.reduce((a, b) => a + b.inr, 0)
+      if (auto.added.length) toast.success(t('auto.done', { count: auto.added.length, inr: formatInr(total) }))
+      else toast(t('auto.none'))
+      setAuto(null)
+      return
+    }
+    const seen = x.data
+    setAuto({ ...auto, seen })
+    add
+      .mutateAsync(next)
+      .then(() => setAuto((a) => a && { added: [...a.added, { code: next.code, inr: next.netBenefitInr }], seen }))
+      .catch((err) => {
+        toast.error(t(`common:errors.${toAppError(err).code}`))
+        setAuto(null)
+      })
+  }, [auto, x.status, x.data, x.recommended, add, t])
 
   if (x.status === 'error') return <ErrorState error={x.error} onRetry={x.retry} />
   if (x.status === 'loading' || !x.data)
@@ -131,6 +155,18 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
         {x.status === 'checking' && <span>{t('checking')}</span>}
       </p>
 
+      {canAdd && (auto || x.recommended.some((c) => c.decision === 'ACCEPT')) && (
+        <section className="flex flex-col gap-3 rounded-card border border-accent/40 bg-accent-soft p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div>
+            <h2 className="text-section-title font-semibold">{t('auto.title')}</h2>
+            <p className="text-ink-2">{auto ? t('auto.working', { count: auto.added.length }) : t('auto.help')}</p>
+          </div>
+          <MainButton icon={Sparkles} loading={Boolean(auto)} onClick={() => setAuto({ added: [], seen: null })} className="shrink-0">
+            {t('auto.button')}
+          </MainButton>
+        </section>
+      )}
+
       <RouteStrip line={line} stops={d.stops} loads={x.recommended} selectedId={selected} onSelect={select} />
 
       <section className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
@@ -168,7 +204,7 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
                 if (el) cards.current.set(c.listingId, el)
               }}
               c={c}
-              lime={c === top && canAdd}
+              lime={false}
               selected={c.listingId === selected}
               adding={add.isPending && add.variables?.listingId === c.listingId}
               disabled={!canAdd || add.isPending || x.status === 'checking'}

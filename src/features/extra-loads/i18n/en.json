@@ -170,5 +170,14 @@
     "LOW_MARGIN": "ask for at least {{need}}."
   },
   "fixPrefix": "Fix:",
-  "counterNeed": "Counter-offer {{inr}}"
+  "counterNeed": "Counter-offer {{inr}}",
+  "auto": {
+    "title": "Pick the best loads for me",
+    "help": "Adds the most profitable loads one by one, checking weight, space and stop order after each. Or add loads yourself below.",
+    "working": "Adding… {{count}} added so far",
+    "button": "Pick best loads",
+    "done_one": "Added {{count}} load · +{{inr}}",
+    "done_other": "Added {{count}} loads · +{{inr}}",
+    "none": "No suitable load to add"
+  }
 }

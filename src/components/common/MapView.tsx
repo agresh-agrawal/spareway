@@ -17,6 +17,7 @@ import { Navigation, Truck } from 'lucide-react'
 import { OPENFREEMAP_STYLE } from '@/lib/env'
 import { boundsOf, INDIA_CENTER, type LngLat } from '@/lib/geo'
 import { useLowData } from '@/lib/lowData'
+import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
 import { useTheme } from '@/lib/theme'
 import type { GeoLineString } from '@/types/domain'
@@ -28,6 +29,26 @@ const STYLES = {
 }
 
 setWorkerUrl(maplibreWorkerUrl)
+
+type MapInstance = ReturnType<MapRef['getMap']>
+// text-field values are passed through unchanged; only the Hindi wrapper is added or removed
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Expr = any
+
+const isHindiWrap = (v: unknown): v is [string, unknown, Expr] =>
+  Array.isArray(v) && v[0] === 'coalesce' && JSON.stringify(v[1]) === '["get","name:hi"]'
+
+/** Place and water labels in Hindi (OpenStreetMap name:hi, else the usual name) when the app is in Hindi. */
+function applyLabelLang(map: MapInstance, lang: string) {
+  for (const layer of map.getStyle()?.layers ?? []) {
+    if (layer.type !== 'symbol' || !(layer.id.startsWith('place_') || layer.id === 'water_name')) continue
+    const current = map.getLayoutProperty(layer.id, 'text-field') as Expr | undefined
+    if (current === undefined) continue
+    const original = isHindiWrap(current) ? current[2] : current
+    const wanted = lang === 'hi' ? (['coalesce', ['get', 'name:hi'], original] as Expr) : original
+    if (JSON.stringify(wanted) !== JSON.stringify(current)) map.setLayoutProperty(layer.id, 'text-field', wanted)
+  }
+}
 
 function useStyleUrl(): string {
   const { lowData } = useLowData()
@@ -68,6 +89,11 @@ export function MapView({
 }) {
   const ref = useRef<MapRef>(null)
   const styleUrl = useStyleUrl()
+  const { lang } = useLang()
+  useEffect(() => {
+    const map = ref.current?.getMap()
+    if (map?.isStyleLoaded()) applyLabelLang(map, lang)
+  }, [lang])
   const [failed, setFailed] = useState(false)
   const bounds = useMemo(() => boundsOf(fitTo), [fitTo])
 
@@ -86,7 +112,15 @@ export function MapView({
         mapStyle={styleUrl}
         initialViewState={{ longitude: INDIA_CENTER[0], latitude: INDIA_CENTER[1], zoom: 4 }}
         attributionControl={false}
-        onLoad={fit}
+        onLoad={() => {
+          fit()
+          const map = ref.current?.getMap()
+          if (map) applyLabelLang(map, lang)
+        }}
+        onStyleData={(e) => {
+          // a new style (theme / low data) brings the usual labels back
+          if (e.target.isStyleLoaded()) applyLabelLang(e.target, lang)
+        }}
         onError={() => setFailed(true)}
         style={{ width: '100%', height: '100%' }}
         maxPitch={0}

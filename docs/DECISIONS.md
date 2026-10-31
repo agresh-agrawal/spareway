@@ -119,3 +119,5 @@
 | 2026-10-31 | Pre-4 | Providers post through a link per owner company; loads are public; one share link per load; accepting a counter-offer reserves the load | Owner: link only, no login |
 | 2026-10-31 | Pre-4 | Edited shared `src/lib/i18n.ts` (cost kind / stop status in templates) and `src/app/providers.tsx` (ReportNotifier) | Only Agent Code is working now; small additive changes |
 | 2026-10-31 | Pre-4 | GitHub history was rewritten earlier today; local commits were rebased onto it, never force-pushed | Keep the remote as the source of truth |
+| 2026-10-31 | Pre-4 | Auto-pick adds one load at a time and re-evaluates on the new plan (no combined search) | Every pick is checked by the same engine; nothing can overfill |
+| 2026-10-31 | Pre-4 | Hindi map labels from OSM `name:hi` with fallback, set at runtime in MapView (`src/components/common`) | Same free OpenFreeMap tiles; no second style file |

@@ -83,7 +83,11 @@ Tests 355 pass, build passes. `database.ts` patched to exactly the generated dif
 - **Stage 6**: "Is ₹X worth it?" calculator in the counter-offer sheet (trip's minimum price when known, else road km × usual ₹/km + handling + min margin); every not-suitable load shows a suggested fix; LOW_MARGIN loads get "Counter-offer ₹need".
 Tests 376 pass, build passes.
 
-**Left:** "Pick best loads for me" (automatic arrangement — manual add works); 8 map fixes (Hindi place names on the map); 9 camera / voice test on a real phone; 10 full test of all four roles signed in on the live site. Company phone is needed for "Call owner" (Settings).
+- **Auto-pick** ("Pick best loads" on Extra loads): adds the most profitable ACCEPT load, waits for the step to re-check weight / space / stop order on the new plan, repeats (max 8). Demo trip: 3 loads, +₹20,002, space 34% → 59%.
+- **Map in Hindi**: place and water labels use OpenStreetMap `name:hi` (else the usual name) when the app is in Hindi; switches live.
+- Checked with sample data: owner (new trip, challan corner, earnings, history, loads, auto-pick), driver link (Hindi, phone width, dark, reached / challan), loader link (layers, 3D), provider link (post page).
+
+**Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords); Brevo secrets for the monthly email. Company phone is needed for "Call owner" (Settings).
 
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
