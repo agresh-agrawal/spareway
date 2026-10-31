@@ -55,6 +55,12 @@ Checked on the real project: `ai-cargo` live (see Phase 3·Code) · RPCs used by
 Verified together in the app (fixture mode, Hindi, laptop + 375 px): trip steps माल · लोड प्लान · लोडर · रूट · अतिरिक्त लोड; Route → Choose → Extra loads: 3 tiles, 5 स्वीकार करें cards (LD-1041 ₹14,392 first), Payload / Space / Delivery order ठीक, "सही नहीं (7)"; Add to trip LD-1045 → toasts "LD-1045 जोड़ा — भरी जगह 34% → 43%" + "स्टॉप बदल गए — रूट फिर से चुनें"; Cargo step 122 pieces / 3,448 kg with the Vadodara stop and the camera + voice buttons; Home "अतिरिक्त लोड खोजें", widget "अतिरिक्त कमाई मिल सकती है", activity "अतिरिक्त लोड LD-1045 TRP-2026-0031 में जोड़ा: वडोदरा → मुंबई (भिवंडी)"; /loads 11 open (LD-1045 taken); no sideways scroll at 375 px.
 Not verified (the agent does not sign in to the live site with passwords): Phase 3·Git "Code must verify" items on the real database (Add to trip rows / plan v-next, second company "just taken", loading-started re-plan, Enter a load decisions on real trucks, Post a load → LD-2001) and the Phase 2 real-DB Route step; real phone camera + mic. Owner to run them on https://spareway.vercel.app as qa.owner / qa.owner2.
 
+## Final merge — Phase 4 Code + Git into main (tag v4-final) — done 2026-10-31
+
+Merged `code/phase4-offline-deploy` then `git/phase4-earnings` into `main` — no git conflicts, no SQL, no change requests from 4·Git. `npm run check` + `npm run build` after each merge; final 350 tests, build passes also without `.env`, 137 files precached.
+Verified together (fixture mode, Hindi): trip steps माल · लोड प्लान · लोडर · रूट · अतिरिक्त लोड · कमाई; Route → Choose → Extra loads → Add LD-1045 (34% → 43%) → Route asks again → Choose → Earnings "आपकी कमाई ₹19,960" = ₹62,000 + ₹14,000 − ₹54,547 − ₹1,493, "+₹12,507 from extra loads" (= LD-1045 card), tiles 34% → 43%, 2.6 ft floor saved, ₹14.84 → ₹11.67 per tonne-km; /earnings 7 / 30 days with Sample badges and top trips (TRP-2026-0031 ₹19,960); Home "इस हफ़्ते की कमाई" + "अतिरिक्त लोड खोजें" + "अतिरिक्त कमाई मिल सकती है" + LD-1045 activity; Settings "Save map for offline (NH48)"; camera / voice buttons on Cargo.
+Still for the owner on https://spareway.vercel.app (signed-in, real database, real phone): 4·Git "Code must verify" (Earnings = `trip_financials.net_earnings_inr`, WhatsApp share, /earnings from `fleet_daily_stats`), 3·Git list (Add to trip rows, "just taken", Post a load), Phase 2 Route on the real DB, phone camera + mic, install + airplane mode + queued taps, fresh signup gets the demo trucks.
+
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
 Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):
@@ -258,7 +264,7 @@ Notes for the other agent:
 - The `city_entry` "(from–to)" meta note from Merge 2 is unchanged (2·Git); can be done in Phase 4 if wanted.
 - Typed loads are checked only (not saved); to carry one on the trip, post it on /loads and add it from the Extra loads step.
 
-## Phase 4·Code — Offline, public link, final check (branch code/phase4-offline-deploy) status: ready to merge (final merge waits for 4·Git)
+## Phase 4·Code — Offline, public link, final check (branch code/phase4-offline-deploy) status: merged (v4-final)
 
 Built (from `v3`; owner said "don't ask, complete it" → spec defaults: queue owner cargo adds **and** loader taps; NH48 offline map OK; the Vercel project already exists and auto-deploys `main`). New code in `src/features/offline`, the PWA block in `vite.config.ts`, queue wiring in `cargo` / `loader` (my lanes). No SQL, no new packages.
 - **Installable PWA** (`vite-plugin-pwa`, `generateSW`): manifest Spareway (192 / 512 / maskable icons, standalone, dark), 129 app files precached (~5 MB incl. fonts, map styles, map worker), SPA fallback. Runtime cache `map-tiles` for `tiles.openfreemap.org` (tilejson network-first, tiles / sprites / glyphs cache-first). **Supabase is never cached** (auth, data, Edge Functions, loader job). Service worker off in `npm run dev`; registered with `workbox-window` in production; "A new version of Spareway is ready · Reload" toast (skip-waiting).
@@ -281,7 +287,7 @@ CHANGE REQUEST APPLIED (Agent Code, owner of the merge) — shared Phase 0 files
 - **Fallbacks:** typed voice ("Type instead"), manual cargo form, saved routes, Settings → Reset sample data, backup video. If signup emails are slow: Supabase → Auth → turn **Confirm email OFF** before judges sign up.
 - **5 minutes:** Home → हिंदी → English · Cargo (104 units, truck a third full) · Load plan → 3D → Play · Send to loader → phone scans QR → Done / Problem · Route → three routes → Choose · Extra loads → reasons → Add LD-1045 · Speak Hindi on the loader phone → owner alert · Earnings → before vs after.
 
-## Phase 4·Git — Earnings and analytics (branch git/phase4-earnings) status: ready to merge
+## Phase 4·Git — Earnings and analytics (branch git/phase4-earnings) status: merged (v4-final)
 
 Started from tag `v3`. Only `src/features/analytics` changed. No SQL file, no new packages. Owner's answers: the /earnings big numbers are **Earned · From extra loads · Space used**; default period **7 days**; Home widget **"Money this week"** (doesn't repeat the Phase 0 space chart).
 
