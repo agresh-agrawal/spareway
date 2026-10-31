@@ -1,4 +1,7 @@
 import type { FeatureModule } from '@/types/domain'
+import { registerSender } from '@/features/offline'
+import { saveCargo } from './api'
+import type { CargoValues } from './schemas'
 import en from './i18n/en.json'
 import hi from './i18n/hi.json'
 
@@ -8,5 +11,10 @@ const cargo: FeatureModule = {
   order: 25,
   i18n: { en, hi },
 }
+
+// owner cargo lines added without internet (Phase 4·Code F21)
+registerSender<{ tripId: string; values: CargoValues }>('cargo_add', async ({ tripId, values }) => {
+  await saveCargo(tripId, values)
+})
 
 export default cargo
