@@ -41,7 +41,7 @@ export function parsePoisSql(sql: string): PoiInput[] {
     const v = splitTuple(body)
     if (v.length < 10) continue
     const [kind, name, lat, lng, , city, , data] = v
-    let parsed: unknown = {}
+    let parsed: unknown
     try {
       parsed = JSON.parse(data)
     } catch {
