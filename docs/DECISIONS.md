@@ -106,3 +106,8 @@
 | 2026-10-31 | 4·Git | Empty floor saved = used floor length with − without extra loads, both packed with load-planner `pack` | Real floor from the same engine, not a guess |
 | 2026-10-31 | 4·Git | Cost per tonne-km = route cost ÷ (t × route km) → (route + extra costs) ÷ (t incl. extra × km); shown only with a chosen route | Spec "₹2.41 → ₹1.73"; no route → costs not known |
 | 2026-10-31 | 4·Git | Without a chosen route the earning shows freight + extras with route cost "not known yet" (not ₹0) | trip_financials puts 0 when there is no route |
+| 2026-10-31 | Pre-4 | Problems kept only as loader reports; other warnings stay on their own step | Owner answer |
+| 2026-10-31 | Pre-4 | Sample data only for agresh@agreshagrawal.com and the 2 QA accounts (`sample_data_allowed()`) | Owner answer |
+| 2026-10-31 | Pre-4 | No chips anywhere (Badge removed; status = text + dot) | Owner: chips look too AI |
+| 2026-10-31 | Pre-4 | Light theme default, saved per device (`spareway.theme`) | Owner request; replaces Design System "dark only" |
+| 2026-10-31 | Pre-4 | Driver and loader links are token links with security-definer read functions, no login | Owner: share by QR / WhatsApp |

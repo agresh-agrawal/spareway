@@ -61,6 +61,17 @@ Merged `code/phase4-offline-deploy` then `git/phase4-earnings` into `main` — n
 Verified together (fixture mode, Hindi): trip steps माल · लोड प्लान · लोडर · रूट · अतिरिक्त लोड · कमाई; Route → Choose → Extra loads → Add LD-1045 (34% → 43%) → Route asks again → Choose → Earnings "आपकी कमाई ₹19,960" = ₹62,000 + ₹14,000 − ₹54,547 − ₹1,493, "+₹12,507 from extra loads" (= LD-1045 card), tiles 34% → 43%, 2.6 ft floor saved, ₹14.84 → ₹11.67 per tonne-km; /earnings 7 / 30 days with Sample badges and top trips (TRP-2026-0031 ₹19,960); Home "इस हफ़्ते की कमाई" + "अतिरिक्त लोड खोजें" + "अतिरिक्त कमाई मिल सकती है" + LD-1045 activity; Settings "Save map for offline (NH48)"; camera / voice buttons on Cargo.
 Still for the owner on https://spareway.vercel.app (signed-in, real database, real phone): 4·Git "Code must verify" (Earnings = `trip_financials.net_earnings_inr`, WhatsApp share, /earnings from `fleet_daily_stats`), 3·Git list (Add to trip rows, "just taken", Post a load), Phase 2 Route on the real DB, phone camera + mic, install + airplane mode + queued taps, fresh signup gets the demo trucks.
 
+## Pre-Phase 4 fixes (branch code/prephase4-fixes → main) — stages 1–4 of 10 done 2026-10-31
+
+Owner's answers: Problems → keep loader reports only · load providers use a link (no login) · sample data only on agresh@agreshagrawal.com + the two QA accounts · no chips anywhere · keep the free map (OpenFreeMap + ORS).
+- **1 Cleanup** (`supabase/sql/prephase4code_cleanup.sql`, applied): `sample_data_allowed()`; new sign-ups start empty; sample rows deleted from the 3 other accounts (their own rows kept); alerts only `loader_issue` / `loader_cargo` (constraint + code no longer writes overload / plan_unplaced / city_entry); `trucks.fuel_level_pct` dropped (live map, truck page); daily space chart removed; every Sample/Estimated/AI chip removed, status labels are plain text with a dot; Settings "Reset sample data" only for allowed accounts.
+- **2 Look**: Light theme default + Light/Dark switch (top bar, loader, sign-in), saved per device, no flash; larger type; sidebar with names; About with headings; live map card on Home.
+- **3 Driver link** (`prephase4code_driver_link.sql`, applied): trip action "Driver link" (QR / WhatsApp / new / turn off) → `/drive/:token` no login: next stop + Google Maps, route map, stops with times and what to drop, breaks/waits, call owner.
+- **4 Loader link**: 3D view (not in low-data); "Items you added" — change / remove (`prephase4code_loader_items.sql`, applied).
+Tests 355 pass, build passes. `database.ts` patched to exactly the generated diff.
+
+**Left (stages 5–10):** 5 load-provider link (post load with scan/say/type, price, public share link) + owner counter-offers; 6 automatic "pick best loads", offer calculator, rejection reasons with corrections; 7 save & resume new trip, trip history, data download; 8 map fixes (Hindi place names); 9 camera/voice phone test; 10 full test of all roles + docs. Company phone is needed for "Call owner" on the driver page (Settings).
+
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
 Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):
