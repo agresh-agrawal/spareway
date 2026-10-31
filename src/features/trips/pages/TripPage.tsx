@@ -56,7 +56,8 @@ export default function TripPage() {
       id: e.id,
       label: e.labelKey ? t(e.labelKey) : e.id,
       icon: e.icon,
-      done: e.done ? e.done({ tripId }) : false,
+      // the load plan step is done as soon as the trip has an active plan (known from the overview, also after a reload)
+      done: (e.done ? e.done({ tripId }) : false) || (e.id === 'load-plan' && Boolean(overview.active_plan_id)),
     })),
   ]
   const current = steps.some((s) => s.id === params.get('step')) ? params.get('step')! : 'cargo'
@@ -140,7 +141,9 @@ export default function TripPage() {
         )}
       </Card>
 
-      {next && <NextStepCard title={next.title} text={next.text} actionLabel={next.label} onAction={next.onAction} loading={advance.isPending} />}
+      {/* one lime button per view (Design System 1.1): other steps have their own main button, and an empty
+          cargo list has "Add item" as its main button */}
+      {next && current === 'cargo' && hasCargo && <NextStepCard title={next.title} text={next.text} actionLabel={next.label} onAction={next.onAction} loading={advance.isPending} />}
 
       <StepTabs steps={steps} current={current} onChange={go} />
 

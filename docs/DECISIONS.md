@@ -45,3 +45,5 @@
 | 2026-10-31 | 1·Git | `tools/map-style.mjs` kept as a re-runnable generator (needs `NODE_USE_ENV_PROXY=1` in the cloud) | Spec edge case "base style URL changes" |
 | 2026-10-31 | 1·Git | Light + dark theme, light by default (owner's request) via `<html data-theme>`; load plan + map styles ready in both; app tokens + switch = CONTRACT CHANGE REQUEST to Agent Code | Owner's request; overrides Design System 1.13 "dark only" |
 | 2026-10-31 | 1·Git | Load plan treats a missing `data-theme` as dark | The app is dark until the switch lands — no light canvas inside a dark page |
+| 2026-10-31 | Merge 1 | NextStepCard only on the Cargo step with cargo; "Add item" lime only while the list is empty | Design System 1.1 one lime button per view (Load plan has its own) |
+| 2026-10-31 | Merge 1 | Load plan step ✓ from `trip_overview.active_plan_id` as well as the slot's `done()` | ✓ was missing after a reload |

@@ -30,7 +30,15 @@ Open (owner):
 
 Infra (from v0): Supabase `darwxazznvfocihderma` — schema, functions, views, storage, realtime, 120 real POIs, `phase0code_security.sql`; Google sign-in ON; Confirm email OFF (built-in mailer); Site URL + redirects for localhost and `spareway.vercel.app`. Vercel project `spareway` auto-deploys `main` to https://spareway.vercel.app (public alias; `*-agresh.vercel.app` URLs are behind Vercel login). QA owners `qa.owner@spareway.test`, `qa.owner2@spareway.test` (passwords in `.env.secrets`). Dhaba / no-entry coordinates are town centres (`data.approx_location = true`).
 
-## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: ready to merge
+## Merge 1 — Phase 1 Code + Git into main (tag v1) — done 2026-10-31
+
+Merged `code/phase1-trucks-trips` then `git/phase1-load-plan` into `main` — no conflicts, no `phase1git_*.sql`. `npm run check` 166 tests + `npm run build` pass, also without `.env`. Main bundle 243 KB gzip (three.js only in the lazy TruckScene chunk).
+Integration fixes (trips + cargo, my lane): one lime button per view — NextStepCard shows only on the Cargo step when there is cargo ("Add item" is plain then, lime while the list is empty; other steps own their lime button); Load plan step ✓ also from `trip_overview.active_plan_id` (after a reload).
+Code must verify (Phase 1·Git), real database, owner qa.owner2: ✓ step 2 Load plan — 34 % / 18 %, free floor 10.5 ft, weight left 12.4 t, Balance OK, Jaipur 65–104, Ahmedabad 33–64, Mumbai 1–32, "Everything fits"; 3D canvas renders · ✓ Use this plan → toast, "In use · v1", ✓ tab; DB v1 `active`, `sw-pack-1`, 104 placements, 104 `pending` progress rows, `plan_activated` activity · ✓ reload → still 1 plan · ✓ Home "Plan load" · ✓ truck "Load layout" tab · ✓ trip on the road → "already left", no lime button · ✓ 375 px Hindi, no sideways scroll.
+Not run this time: steel-coil over-payload, realtime progress via SQL, support-ratio re-pack, real phone over the hotspot, low-data drawings — engine + hook tests cover them; re-check in Merge 2.
+Open: theme CONTRACT CHANGE REQUEST (light / dark, Phase 1·Git section) — not applied yet, owner to schedule.
+
+## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
 Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):
 - **DB:** `supabase/sql/phase1code_trips.sql` — `create_trip_with_stops(truck, departure, freight, stops jsonb)` (trip + ordered stops + `trip_created` activity in one transaction, next trip code, owners only). Applied with the MCP; `database.ts` has the new function.

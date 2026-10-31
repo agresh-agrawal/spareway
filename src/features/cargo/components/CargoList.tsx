@@ -9,6 +9,7 @@ import {
   EmptyState,
   ErrorState,
   MainButton,
+  PlainButton,
   SkeletonList,
   StopChip,
 } from '@/components/common'
@@ -146,9 +147,16 @@ export function CargoList({ tripId }: { tripId: string }) {
 
   const addButtons = (
     <div className="flex flex-wrap gap-2">
-      <MainButton icon={Plus} onClick={() => setSheet({})}>
-        {t('add')}
-      </MainButton>
+      {/* lime only while the list is empty; afterwards the trip's NextStepCard holds the main button */}
+      {items.length === 0 ? (
+        <MainButton icon={Plus} onClick={() => setSheet({})}>
+          {t('add')}
+        </MainButton>
+      ) : (
+        <PlainButton icon={Plus} onClick={() => setSheet({})}>
+          {t('add')}
+        </PlainButton>
+      )}
       <Slot name="cargo.addMethods" props={{ tripId, onAdded: () => cargo.refetch() }} />
     </div>
   )
