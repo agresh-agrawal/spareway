@@ -213,16 +213,17 @@ describe('Add to trip (fixture mode)', () => {
 })
 
 describe('Extra loads screen (fixture mode)', () => {
-  it('tiles, cards sorted by profit with one lime "Add to trip", Not suitable collapsed; Hindi', async () => {
+  it('tiles, cards sorted by profit, one lime "Pick best loads", Not suitable collapsed; Hindi', async () => {
     chooseNh48()
     renderAt(<ExtraLoadsStep tripId={DEMO} />, { path: '/', at: '/', auth })
     await waitFor(() => expect(screen.queryByText('Checking space in the truck…')).not.toBeInTheDocument(), { timeout: 8000 })
     const cards = await screen.findAllByRole('article')
     expect(cards.length).toBeGreaterThanOrEqual(3)
     expect(screen.getByText('Possible extra earning')).toBeInTheDocument()
-    const lime = screen.getAllByRole('button', { name: /Add to trip/ }).filter((b) => b.className.includes('bg-accent'))
-    expect(lime).toHaveLength(1)
-    expect(within(cards[0]).getByRole('button', { name: /Add to trip/ })).toBe(lime[0])
+    // one lime button: "Pick best loads"; every card's "Add to trip" is plain
+    const lime = screen.getAllByRole('button').filter((b) => b.className.includes('bg-accent') && b.className.includes('text-accent-ink'))
+    expect(lime.map((b) => b.textContent)).toEqual(['Pick best loads'])
+    expect(within(cards[0]).getByRole('button', { name: /Add to trip/ }).className).not.toContain('text-accent-ink')
     const toggle = screen.getByRole('button', { name: /Not suitable \(\d\)/ })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByText('Goes the opposite way')).not.toBeInTheDocument()
