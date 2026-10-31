@@ -20,10 +20,11 @@
     "route": "रूट का खर्च",
     "extraCost": "अतिरिक्त लोड का खर्च",
     "total": "आपकी कमाई",
-    "notKnown": "अभी पता नहीं"
+    "notKnown": "अभी पता नहीं",
+    "misc": "चालान और ट्रिप के खर्च"
   },
   "share": "WhatsApp पर भेजें",
-  "shareText": "Spareway · {{code}}\nभाड़ा {{freight}} + अतिरिक्त लोड {{extra}} − रूट {{route}} − अतिरिक्त खर्च {{extraCost}}\nआपकी कमाई {{net}} (अतिरिक्त लोड से {{gain}})",
+  "shareText": "Spareway · {{code}}\nभाड़ा {{freight}} + अतिरिक्त लोड {{extra}} − रूट {{route}} − अतिरिक्त खर्च {{extraCost}} − चालान और ट्रिप के खर्च {{misc}}\nआपकी कमाई {{net}} (अतिरिक्त लोड से {{gain}})",
   "page": {
     "subtitle": "बेड़ा कैसा चल रहा है",
     "days_7": "7 दिन",

@@ -18,6 +18,7 @@ export function useTripEarnings(tripId: string) {
       extraRevenueInr: Number(f.extra_revenue_inr),
       extraCostInr: Number(f.extra_cost_inr),
       routeCostInr: hasRoute ? Number(f.route_cost_inr) : null,
+      miscCostInr: Number(f.misc_cost_inr ?? 0),
     })
     const truckVol = Number(d.truck.internal_length_cm) * Number(d.truck.internal_width_cm) * Number(d.truck.internal_height_cm)
     const space = spaceBeforeAfter(d.cargo, truckVol)
@@ -39,6 +40,7 @@ export function useTripEarnings(tripId: string) {
       extraCostInr: Number(f.extra_cost_inr),
       routeCostInr: Number(f.route_cost_inr),
       baseFreightInr: Number(f.base_freight_inr),
+      miscCostInr: Number(f.misc_cost_inr ?? 0),
       space,
       floorSavedCm: emptyFloorSavedCm(usedBefore, usedAfter),
       perTonneKm: {

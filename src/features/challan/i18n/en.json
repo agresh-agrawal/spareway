@@ -1,0 +1,62 @@
+{
+  "step": "Challan corner",
+  "risks": {
+    "title": "Challan risks on this trip",
+    "none": "No challan risks found on this trip",
+    "driverSees": "The driver sees these warnings on the driver link.",
+    "OVERLOAD": "Overloaded by {{extra}} — fine about {{fine}}. Take some goods off before leaving.",
+    "NEAR_LIMIT": "Loaded to {{pct}}% of the weight limit — weigh at a kanta before leaving.",
+    "NO_ENTRY": "No-entry hours at {{city}} — wait {{h}} h {{m}} min outside the city. Entering early brings a challan.",
+    "LATE": "May reach {{stop}} after the delivery time — tell the customer early."
+  },
+  "costs": {
+    "title": "Trip costs",
+    "add": "Add cost",
+    "none": "No challans or extra costs yet.",
+    "byDriver": "Driver",
+    "byYou": "You",
+    "remove": "Remove cost",
+    "total": "Total",
+    "inEarnings": "These come off the trip's net earnings."
+  },
+  "guide": {
+    "title": "Avoid a challan",
+    "papers": "Papers to carry",
+    "habits": "On the road",
+    "fine": "about {{inr}}",
+    "note": "Usual central fines (Motor Vehicles Act 2019, GST e-way bill). Your state can charge a different amount."
+  },
+  "papers": {
+    "licence": "Driving licence",
+    "rc": "RC (registration)",
+    "insurance": "Insurance",
+    "puc": "Pollution (PUC) certificate",
+    "permit": "Goods permit",
+    "fitness": "Fitness certificate",
+    "ewaybill": "E-way bill and invoice / bilty"
+  },
+  "habits": {
+    "speed": "Over-speeding",
+    "seatbelt": "No seat belt",
+    "phone": "Phone while driving",
+    "redlight": "Jumping a red light"
+  },
+  "form": {
+    "title": "Add a cost",
+    "kind": "What was it for?",
+    "amount": "Amount",
+    "amountError": "Type the amount in ₹",
+    "note": "Note",
+    "noteHelp": "e.g. challan number or place",
+    "save": "Save cost",
+    "saved": "Cost saved"
+  },
+  "notify": {
+    "title": "Trip notifications",
+    "text": "Get a notification on this phone or computer when a driver reports a challan or a delivery, or a loader reports a problem.",
+    "turnOn": "Turn on notifications",
+    "on": "Notifications are on",
+    "blocked": "Notifications are blocked — allow them in the browser settings.",
+    "unsupported": "This browser can't show notifications."
+  }
+}

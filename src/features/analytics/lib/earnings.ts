@@ -1,5 +1,5 @@
 // Earnings maths (Architecture F23, Engineering Reference 7.8). Pure.
-// net = base freight + Σ accepted extra offers − route total cost − Σ extra-load costs.
+// net = base freight + Σ accepted extra offers − route total cost − Σ extra-load costs − trip costs (challans…).
 
 export interface TripMoney {
   baseFreightInr: number
@@ -7,6 +7,8 @@ export interface TripMoney {
   extraCostInr: number
   /** null = no route chosen yet (costs not known) */
   routeCostInr: number | null
+  /** challans, breakdowns, police, parking… (challan corner); 0 when none */
+  miscCostInr?: number
 }
 
 export interface TripEarnings {
@@ -21,7 +23,7 @@ export interface TripEarnings {
 export function tripEarnings(m: TripMoney): TripEarnings {
   const route = m.routeCostInr ?? 0
   const gain = m.extraRevenueInr - m.extraCostInr
-  const before = m.baseFreightInr - route
+  const before = m.baseFreightInr - route - (m.miscCostInr ?? 0)
   return { netInr: before + gain, beforeInr: before, gainInr: gain, hasRoute: m.routeCostInr !== null }
 }
 

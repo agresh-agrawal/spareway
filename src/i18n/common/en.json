@@ -47,7 +47,8 @@
     "loads": "Loads",
     "earnings": "Earnings",
     "settings": "Settings",
-    "more": "More"
+    "more": "More",
+    "history": "History"
   },
   "shell": {
     "search": "Search trucks or trips",
@@ -194,6 +195,12 @@
       "fastest": "Fastest",
       "shortest": "Shortest",
       "no_tolls": "No tolls"
+    },
+    "driver_challan": "Driver paid {{kind}} ₹{{amount}} — {{code}} {{note}}",
+    "driver_stop": "Driver {{status}} {{stop}} — {{code}}",
+    "stopStatus": {
+      "arrived": "reached",
+      "done": "delivered at"
     }
   },
   "fixture": {
@@ -207,5 +214,13 @@
       "light": "Switch to light",
       "dark": "Switch to dark"
     }
+  },
+  "costKinds": {
+    "challan": "Challan (fine)",
+    "breakdown": "Breakdown / repair",
+    "police": "Police / check post",
+    "parking": "Parking / waiting",
+    "loading": "Loading / unloading",
+    "other": "Other cost"
   }
 }

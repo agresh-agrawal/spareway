@@ -9,11 +9,11 @@
     "trucksWorking": "Trucks working",
     "trucksOf": "{{n}} of {{total}}",
     "tripsOnRoad": "Trips on the road",
-    "problems": "Loader reports"
+    "problems": "Reports"
   },
   "quick": "Quick actions",
-  "problems": "Reports from loaders",
-  "allGood": "No reports from loaders",
+  "problems": "Reports from loaders and drivers",
+  "allGood": "No reports from loaders or drivers",
   "seeAll": "See all ({{count}})",
   "showFewer": "Show fewer",
   "activity": "Recent activity",

@@ -21,7 +21,9 @@ export interface DriverStop {
 export interface DriverTrip {
   trip: { code: string; status: string; departure: string | null }
   company: { name: string; phone: string }
-  truck: { regNo: string; model: string; driverName: string }
+  truck: { regNo: string; model: string; driverName: string; payloadKg: number }
+  cargoKg: number
+  expenses: { kind: string; amount: number; note: string; at: string }[]
   stops: DriverStop[]
   drops: { stopId: string; lines: number; pieces: number; kg: number; fragile: boolean }[]
   route: null | {
@@ -85,7 +87,12 @@ function fixtureTrip(token: string): DriverTrip {
   return {
     trip: { code: t.code, status: t.status, departure: t.actual_departure ?? t.planned_departure },
     company: { name: d.company.name, phone: d.company.phone },
-    truck: { regNo: truck.reg_no, model: truck.model, driverName: truck.driver_name },
+    truck: { regNo: truck.reg_no, model: truck.model, driverName: t.driver_name || truck.driver_name, payloadKg: Number(truck.payload_kg) },
+    cargoKg: Math.round(cargo.reduce((n, c) => n + c.quantity * Number(c.weight_kg), 0)),
+    expenses: d.trip_expenses
+      .filter((e) => e.trip_id === t.id && e.added_by === 'driver')
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .map((e) => ({ kind: e.kind, amount: e.amount_inr, note: e.note, at: e.created_at })),
     stops: stops.map((s) => ({
       id: s.id,
       seq: s.seq,
@@ -127,4 +134,45 @@ export async function getDriverTrip(token: string): Promise<DriverTrip> {
   const { data, error } = await getSupabase().rpc('driver_get_trip', { p_token: token })
   if (error) throw toAppError(error)
   return throwIfDataError(data) as unknown as DriverTrip
+}
+
+function fixtureTripFor(token: string) {
+  const t = fixtureStore().trips.find((x) => x.driver_token === token && x.driver_link_enabled && x.status !== 'cancelled')
+  if (!t) throw new AppError('LINK_INVALID')
+  return t
+}
+
+/** Driver taps "I reached" / "Delivered" on a stop (driver_mark_stop) — the owner gets a notification. */
+export async function markDriverStop(token: string, stopId: string, status: 'arrived' | 'done'): Promise<void> {
+  if (isFixtureMode()) {
+    const t = fixtureTripFor(token)
+    const s = fixtureStore().trip_stops.find((x) => x.id === stopId && x.trip_id === t.id && x.stop_type !== 'origin')
+    if (!s) throw new AppError('BAD_ITEMS')
+    s.status = status
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('driver_mark_stop', { p_token: token, p_stop_id: stopId, p_status: status })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
+}
+
+/** Driver reports a challan or another cost (driver_add_expense) — counted in the trip's earnings, owner notified. */
+export async function addDriverExpense(token: string, kind: string, amountInr: number, note: string): Promise<void> {
+  if (isFixtureMode()) {
+    const t = fixtureTripFor(token)
+    fixtureStore().trip_expenses.push({
+      id: crypto.randomUUID(),
+      company_id: t.company_id,
+      trip_id: t.id,
+      kind,
+      amount_inr: Math.round(amountInr),
+      note: note.trim().slice(0, 200),
+      added_by: 'driver',
+      created_at: new Date().toISOString(),
+    })
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('driver_add_expense', { p_token: token, p_kind: kind, p_amount: amountInr, p_note: note })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
 }

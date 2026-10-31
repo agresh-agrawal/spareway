@@ -34,6 +34,7 @@ export function EarningsStep({ tripId }: { tripId: string }) {
     { label: t('list.extra'), value: formatInr(v.extraRevenueInr), sign: '+' },
     { label: t('list.route'), value: v.hasRoute ? formatInr(v.routeCostInr) : t('list.notKnown'), sign: '−', estimated: v.hasRoute },
     { label: t('list.extraCost'), value: formatInr(v.extraCostInr), sign: '−', estimated: v.extraCostInr > 0 },
+    { label: t('list.misc'), value: formatInr(v.miscCostInr), sign: '−' },
   ]
   const shareText = t('shareText', {
     code,
@@ -41,6 +42,7 @@ export function EarningsStep({ tripId }: { tripId: string }) {
     extra: formatInr(v.extraRevenueInr),
     route: v.hasRoute ? formatInr(v.routeCostInr) : t('list.notKnown'),
     extraCost: formatInr(v.extraCostInr),
+    misc: formatInr(v.miscCostInr),
     net: formatInr(v.money.netInr),
     gain: `${v.money.gainInr >= 0 ? '+' : ''}${formatInr(v.money.gainInr)}`,
   })

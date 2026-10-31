@@ -41,5 +41,15 @@
   "noPhone": "Owner's phone not added yet",
   "ended": "This link has ended",
   "endedText": "Ask the owner for a new driver link.",
-  "byTheRoad": "by the road"
+  "byTheRoad": "by the road",
+  "reached": "I reached",
+  "reachedDone": "Reached",
+  "delivered": "Delivered",
+  "reachedSaved": "Owner told: you reached",
+  "deliveredSaved": "Owner told: delivered",
+  "allDelivered": "All stops delivered. Well done!",
+  "paidChallan": "Paid a challan or cost",
+  "careful": "Be careful on this trip",
+  "avoidChallan": "Papers and fines — avoid a challan",
+  "myCosts": "Costs you reported"
 }

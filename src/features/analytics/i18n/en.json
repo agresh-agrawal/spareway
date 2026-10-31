@@ -20,10 +20,11 @@
     "route": "Route cost",
     "extraCost": "Extra-load costs",
     "total": "You earn",
-    "notKnown": "not known yet"
+    "notKnown": "not known yet",
+    "misc": "Challans and trip costs"
   },
   "share": "Share on WhatsApp",
-  "shareText": "Spareway · {{code}}\nFreight {{freight}} + extra loads {{extra}} − route {{route}} − extra costs {{extraCost}}\nYou earn {{net}} ({{gain}} from extra loads)",
+  "shareText": "Spareway · {{code}}\nFreight {{freight}} + extra loads {{extra}} − route {{route}} − extra costs {{extraCost}} − challans and trip costs {{misc}}\nYou earn {{net}} ({{gain}} from extra loads)",
   "page": {
     "subtitle": "How the fleet is doing",
     "days_7": "7 days",

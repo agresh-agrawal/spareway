@@ -9,6 +9,7 @@ import { STALE_TIME_MS } from '@/lib/queryKeys'
 import { isFixtureMode } from '@/lib/fixtures'
 import { useTheme } from '@/lib/theme'
 import { OfflineLayer, persistOptions } from '@/features/offline'
+import { ReportNotifier } from '@/features/challan'
 import { AuthProvider } from './auth/AuthProvider'
 
 export function makeQueryClient() {
@@ -47,7 +48,10 @@ export function Providers({ children }: { children: ReactNode }) {
   const inner = (
     <LowDataProvider>
       <TooltipProvider>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <ReportNotifier />
+        </AuthProvider>
         <OfflineLayer />
         <ThemedToaster />
       </TooltipProvider>

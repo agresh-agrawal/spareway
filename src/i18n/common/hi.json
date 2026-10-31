@@ -47,7 +47,8 @@
     "loads": "लोड",
     "earnings": "कमाई",
     "settings": "सेटिंग्स",
-    "more": "और"
+    "more": "और",
+    "history": "इतिहास"
   },
   "shell": {
     "search": "ट्रक या ट्रिप खोजें",
@@ -194,6 +195,12 @@
       "fastest": "सबसे तेज़",
       "shortest": "सबसे छोटा",
       "no_tolls": "बिना टोल"
+    },
+    "driver_challan": "ड्राइवर ने {{kind}} ₹{{amount}} दिया — {{code}} {{note}}",
+    "driver_stop": "ड्राइवर {{stop}} {{status}} — {{code}}",
+    "stopStatus": {
+      "arrived": "पहुँचा",
+      "done": "पर माल दे दिया"
     }
   },
   "fixture": {
@@ -207,5 +214,13 @@
       "light": "लाइट करें",
       "dark": "डार्क करें"
     }
+  },
+  "costKinds": {
+    "challan": "चालान (जुर्माना)",
+    "breakdown": "खराबी / मरम्मत",
+    "police": "पुलिस / चेक पोस्ट",
+    "parking": "पार्किंग / इंतज़ार",
+    "loading": "लोडिंग / अनलोडिंग",
+    "other": "दूसरा खर्च"
   }
 }
