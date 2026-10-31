@@ -1,0 +1,98 @@
+{
+  "title": "Trucks",
+  "count_one": "{{count}} truck",
+  "count_other": "{{count}} trucks",
+  "add": "Add truck",
+  "filters": {
+    "label": "Show trucks",
+    "all": "All",
+    "active": "Working",
+    "idle": "Free",
+    "maintenance": "Repair",
+    "offline": "Off"
+  },
+  "card": {
+    "size": "{{length}} · {{payload}}",
+    "noDriver": "No driver",
+    "callDriver": "Call {{name}}",
+    "trip": "On trip {{code}}"
+  },
+  "empty": "No trucks yet — Add truck",
+  "emptyFilter": "No trucks here",
+  "form": {
+    "addTitle": "Add a truck",
+    "editTitle": "Edit {{reg}}",
+    "regNo": "Truck number",
+    "regNoHelp": "As on the number plate, e.g. MP09 HG 4821",
+    "model": "Model",
+    "modelHelp": "e.g. Tata Signa 3118.T",
+    "preset": "Truck size",
+    "presetHelp": "Typical sizes — check your truck",
+    "presetNone": "My own size",
+    "inside": "Inside size",
+    "length": "Length",
+    "width": "Width",
+    "height": "Height",
+    "payload": "Weight it can carry",
+    "payloadHelp": "Payload in tonnes (gross weight minus empty truck)",
+    "costPerKm": "Cost per km (₹)",
+    "costPerKmHelp": "Fuel, tyres, maintenance and driver, per km",
+    "driverName": "Driver name",
+    "driverPhone": "Driver phone",
+    "status": "Status",
+    "moreDetails": "More details",
+    "axles": "Axles",
+    "mileage": "Mileage (km per litre)",
+    "bodyType": "Body",
+    "body": {
+      "closed": "Closed body",
+      "container": "Container",
+      "open": "Open body"
+    },
+    "preview": "Inside: {{size}}",
+    "save": "Save truck",
+    "saved": "Truck saved"
+  },
+  "page": {
+    "back": "Back to trucks",
+    "repair": "Repair",
+    "off": "Off",
+    "backToWork": "Free to work",
+    "edit": "Edit",
+    "newTrip": "New trip for this truck",
+    "delete": "Delete truck",
+    "deleteTitle": "Delete {{reg}}?",
+    "deleteText": "The truck is removed for good.",
+    "deleted": "Truck deleted",
+    "hasTrips": "This truck has trips, so it can't be deleted. Set it to Off instead.",
+    "setOff": "Set to Off",
+    "statusSaved": "{{reg}} is now {{status}}",
+    "notFound": "This truck no longer exists"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "trips": "Trips",
+    "problems": "Problems"
+  },
+  "overview": {
+    "size": "Inside size",
+    "payload": "Weight it can carry",
+    "costPerKm": "Cost per km",
+    "driver": "Driver",
+    "fuel": "Fuel",
+    "model": "Model"
+  },
+  "trips": {
+    "empty": "No trips for this truck yet"
+  },
+  "problems": {
+    "empty": "No problems for this truck"
+  },
+  "errors": {
+    "regNo": "Type the truck number",
+    "duplicate": "You already have a truck with this number",
+    "number": "Type a number",
+    "range": "Out of range",
+    "phone": "Only digits, spaces, + and -"
+  }
+}

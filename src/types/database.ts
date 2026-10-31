@@ -1377,6 +1377,15 @@ export type Database = {
       }
       activate_load_plan: { Args: { p_plan_id: string }; Returns: undefined }
       create_loader_link: { Args: { p_trip_id: string }; Returns: Json }
+      create_trip_with_stops: {
+        Args: {
+          p_base_freight_inr: number
+          p_planned_departure: string
+          p_stops: Json
+          p_truck_id: string
+        }
+        Returns: Json
+      }
       current_company_id: { Args: never; Returns: string }
       disable_loader_link: { Args: { p_trip_id: string }; Returns: undefined }
       km_between: { Args: { lat1: number; lat2: number; lng1: number; lng2: number }; Returns: number }
