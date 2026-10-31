@@ -23,3 +23,9 @@
 | 2026-10-31 | 0·Code | Foundation restored from `eb6ee88` and completed on `main`, tagged `v0.1` (start point for Phase 1 Code + Git) | Owner's request; start gate from Agent Git |
 | 2026-10-31 | 0·Code | Fixture mode in `src/lib/fixtures`: in-memory copy of the SQL seed + the 3 views; `AuthProvider` fakes the owner; features branch in their own `api.ts` | Cloud agent has no database (Architecture 4.6) |
 | 2026-10-31 | 0·Code | Problem cards show the alert title (one line) for seeded rows; meta templates for new rows | Design System 7.3 "one-line title" |
+| 2026-10-31 | 1·Code | New trip saved by SQL `create_trip_with_stops` (one transaction) | Owner's answer; no half-saved trips |
+| 2026-10-31 | 1·Code | Truck form keeps sizes in cm; ft shown with 2 decimals; only typed fields convert | Verify list: editing in feet must keep 975 / 243 / 243 (8.0 ft = 244 cm) |
+| 2026-10-31 | 1·Code | Stops reorder with up / down buttons, not drag-and-drop | Native drag doesn't work on touch phones; buttons are bigger and accessible |
+| 2026-10-31 | 1·Code | 40 hub names added to `src/i18n/data/hi.json` (additive) | Hindi mode showed new hub names in English |
+| 2026-10-31 | 1·Code | Trip status changes write no activity rows (only `trip_created`, `truck_status`) | Only those kinds have Hindi templates (Engineering Reference 7.7) |
+| 2026-10-31 | 0·Code | Hotfix on main: MapLibre worker via `setWorkerUrl(?url)`, `optimizeDeps.include` map libraries | Map was blank in dev and production (worker 404) |

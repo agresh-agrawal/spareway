@@ -30,7 +30,28 @@ Open (owner):
 
 Infra (from v0): Supabase `darwxazznvfocihderma` — schema, functions, views, storage, realtime, 120 real POIs, `phase0code_security.sql`; Google sign-in ON; Confirm email OFF (built-in mailer); Site URL + redirects for localhost and `spareway.vercel.app`. Vercel project `spareway` auto-deploys `main` to https://spareway.vercel.app (public alias; `*-agresh.vercel.app` URLs are behind Vercel login). QA owners `qa.owner@spareway.test`, `qa.owner2@spareway.test` (passwords in `.env.secrets`). Dhaba / no-entry coordinates are town centres (`data.approx_location = true`).
 
-## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: not started
+## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: ready to merge
+
+Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):
+- **DB:** `supabase/sql/phase1code_trips.sql` — `create_trip_with_stops(truck, departure, freight, stops jsonb)` (trip + ordered stops + `trip_created` activity in one transaction, next trip code, owners only). Applied with the MCP; `database.ts` has the new function.
+- **F7 Trucks** (`/trucks`, `/trucks/:truckId`): filter chips with counts, board by status on laptop / list on phone, truck cards (size · payload, driver + call, open-trip chip). Add / Edit sheet with 8 size presets ("typical — check your truck"), inside size in ft with a cm switch (cm kept exact: only typed fields are converted), payload in t, cost per km, driver, status, More details (axles, mileage, body), box preview. Truck page: Repair / Off / Free to work, Edit, lime "New trip for this truck", tabs Overview · Trips · Problems + slot `truck.tabs`. Duplicate number → field error; truck with trips can't be deleted → offer Off. Status change → `truck_status` activity (meta {reg, status}).
+- **F8 Trips** (`/trips`, `/trips/new`, `/trips/:tripId?step=`): chips Planned · Loading · On the road · Done, board on laptop, cards with route, drops, truck chip, departure, space used. 3-step wizard (Truck · Stops from 60 hubs or the map, up/down to reorder, optional deliver-by · Departure + freight) → one DB call. Trip page: header with stops, big status button (Start loading → Leave (confirm, ends the loader link) → Mark delivered), NextStepCard, StepTabs 1 Cargo + slot `trip.steps` (✓ via `done`), slot `trip.actions`. Home quick button "New trip" (`home.actions`).
+- **F9 Cargo** (trip step 1): bars "Weight x% / Space y% of truck" (booked), groups per drop stop, item cards (size, kg × qty, Fragile / Keep upright / Don't stack, Won't fit, Added by loader + AI badges), add / edit / copy / delete, cm ⇄ inch, slot `cargo.addMethods`, realtime on `cargo_items`, one `overload` alert (meta {code, kg, payloadKg}) when booked weight goes over payload.
+- Public APIs: trucks → `useTruck`, `useTrucks`, `TruckChip`; trips → `places`, `searchPlaces`, `StopChip`, `useTrip`, `useTripStops`, `useTrips`, `unloadOrderForStops`; cargo → `CargoList`, `useCargoItems`, `cargoTotals`.
+- Every `api.ts` works in fixture mode (`?fixture=seed`). en + hi for every string; 40 hub names added to the demo dictionary `src/i18n/data/hi.json` (additive).
+
+Verified 2026-10-31 (`npm run check` 117 tests, `npm run build` with and without `.env`):
+- Edit MP09 HG 4821 in feet (cost 34 → 35) → DB 975 / 243 / 243 cm unchanged. ✓
+- Add a truck from the 32 ft MXL preset → MH12 QA 0001, 975 / 243 / 243, 15 t, 3 axles. ✓
+- New trip Indore → Nashik → Pune (Chakan) (2 drops) → TRP-2026-0032 in Trips, `trip_overview` 2 drops, activity "New trip TRP-2026-0032". ✓
+- Demo trip Cargo: 104 units, 2,638 kg, bars 18% / 34%. ✓ Add item → bars update, NextStepCard moves on. ✓
+- 375 px in Hindi: trucks, trips, trip page — no sideways scroll. Production preview: map with worker + tiles. ✓
+
+Hotfix on `main` (Phase 0 shared files, commit `42e7238`, merged into this branch): MapLibre 6 worker was never shipped (blank map in dev + production) → `setWorkerUrl` with `?url` import in `MapView.tsx`; `optimizeDeps.include` for the map libraries in `vite.config.ts` (dev reload left two copies of React). **Agent Git: `git merge origin/main`** — and if you create a MapLibre map yourself (map preview page), call `setWorkerUrl` the same way.
+
+Not built (noted for later): editing a trip's stops after creation (the "plan must be redone" warning comes with it); real drag-and-drop (up / down buttons instead — works on touch).
+
+**Code must verify at the merge:** with Agent Git's load planner merged — trip page shows step 2 "Load plan" with ✓ after "Use this plan"; Home shows "Plan load" next to "New trip"; truck page shows the "Load layout" tab; demo trip packs 104 / 0 unplaced.
 
 ## Phase 1·Git — Packing engine, 3D load plan, map style (branch git/phase1-load-plan) status: not started
 

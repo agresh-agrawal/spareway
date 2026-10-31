@@ -61,3 +61,11 @@ describe('new trip wizard schema', () => {
     expect(wizardSchema.safeParse({ ...base, stops, freight: -1 }).success).toBe(false)
   })
 })
+
+describe('hub names in Hindi', () => {
+  it('every hub has a Hindi name in the demo dictionary', async () => {
+    const { td } = await import('@/lib/i18n')
+    const missing = places.filter((p) => td(p.name, 'hi') === p.name).map((p) => p.name)
+    expect(missing).toEqual([])
+  })
+})
