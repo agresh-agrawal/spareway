@@ -223,7 +223,7 @@ export default function SettingsPage() {
       <Slot name="settings.sections" props={{}} />
 
       {form.formState.isDirty && (
-        <div className="safe-bottom fixed inset-x-0 bottom-16 z-30 border-t border-line-strong bg-surface/95 backdrop-blur lg:bottom-0 lg:pl-[104px]">
+        <div className="safe-bottom fixed inset-x-0 bottom-16 z-30 border-t border-line-strong bg-surface/95 backdrop-blur lg:bottom-0 lg:pl-[124px]">
           <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3">
             <span className="hidden flex-1 text-ink-2 sm:block">{t('saveBar')}</span>
             <PlainButton type="button" icon={Undo2} onClick={() => form.reset(defaults)} className="flex-1 sm:flex-none">

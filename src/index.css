@@ -2,7 +2,7 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/noto-sans-devanagari';
 
-/* Design System section 3 — exact tokens. Dark only. */
+/* Design System section 3 — tokens. Dark values here; light values (the default) below under html[data-theme='light']. */
 @theme {
   --color-canvas: #0a0a0b;
   --color-rail: #121214;
@@ -37,16 +37,16 @@
 
   --font-sans: 'Inter Variable', 'Noto Sans Devanagari Variable', 'Noto Sans Devanagari', system-ui, sans-serif;
 
-  --text-page-title: 26px;
-  --text-page-title--line-height: 32px;
-  --text-section-title: 18px;
-  --text-section-title--line-height: 24px;
-  --text-body: 15px;
-  --text-body--line-height: 22px;
-  --text-label: 13px;
-  --text-label--line-height: 18px;
-  --text-big-number: 32px;
-  --text-big-number--line-height: 38px;
+  --text-page-title: 28px;
+  --text-page-title--line-height: 34px;
+  --text-section-title: 20px;
+  --text-section-title--line-height: 26px;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-label: 14px;
+  --text-label--line-height: 20px;
+  --text-big-number: 34px;
+  --text-big-number--line-height: 40px;
   --text-hero: 44px;
   --text-hero--line-height: 48px;
   --text-button: 16px;
@@ -59,6 +59,34 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
+
+/* Light theme (default). Lime stays the main-button colour; lime as text / thin lines is too pale on white,
+   so text-accent and accent borders use a deep olive in light. */
+html[data-theme='light'] {
+  --color-canvas: #f5f6f2;
+  --color-rail: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f5f1;
+  --color-surface-3: #e8eae3;
+  --color-line: rgb(20 22 16 / 0.08);
+  --color-line-strong: rgb(20 22 16 / 0.16);
+  --color-ink: #17181b;
+  --color-ink-2: #4f525a;
+  --color-ink-3: #7c7f87;
+  --color-accent: #d9f06a;
+  --color-accent-ink: #141414;
+  --color-accent-soft: rgb(132 170 20 / 0.14);
+  --color-ok: #15803d;
+  --color-warn: #b45309;
+  --color-crit: #dc2626;
+  --color-info: #0e7490;
+  --color-stop-1: #a3c21a;
+  --color-stop-3: #d97706;
+}
+html[data-theme='light'] .text-accent { color: #4d6b0a; }
+html[data-theme='light'] .border-accent { border-color: #84a514; }
+html[data-theme='light'] .shadow-card,
+html[data-theme='light'] .rounded-card { box-shadow: 0 1px 2px rgb(20 22 16 / 0.05), 0 4px 16px rgb(20 22 16 / 0.04); }
 
 @layer base {
   html {
@@ -76,9 +104,9 @@
     min-height: 100dvh;
   }
   /* Hindi: +4 px line height, no uppercase, weight ≥ 500 under 15 px */
-  html[lang='hi'] body { line-height: 26px; }
+  html[lang='hi'] body { line-height: 28px; }
   html[lang='hi'] .uppercase { text-transform: none; letter-spacing: normal; }
-  html[lang='hi'] .text-label { font-weight: 500; line-height: 22px; }
+  html[lang='hi'] .text-label { font-weight: 500; line-height: 24px; }
 
   :focus-visible {
     outline: 2px solid var(--color-accent);
@@ -105,6 +133,6 @@ html[data-low-data='on'] *, html[data-low-data='on'] *::before, html[data-low-da
   animation-duration: 0ms !important;
 }
 
-/* MapLibre controls on dark */
-.maplibregl-ctrl-attrib { background: rgb(10 10 11 / 0.7) !important; color: var(--color-ink-2) !important; }
+/* MapLibre controls follow the theme */
+.maplibregl-ctrl-attrib { background: color-mix(in srgb, var(--color-canvas) 75%, transparent) !important; color: var(--color-ink-2) !important; }
 .maplibregl-ctrl-attrib a { color: var(--color-ink-2) !important; }

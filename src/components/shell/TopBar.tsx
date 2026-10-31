@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Bell, Download, Gauge, Info, LogOut, Settings } from 'lucide-react'
-import { IconButton, LanguageButton } from '@/components/common'
+import { IconButton, LanguageButton, ThemeButton } from '@/components/common'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +48,7 @@ export function TopBar({ title }: { title: string }) {
         <div className="hidden md:block">
           <SearchBox />
         </div>
+        <ThemeButton />
         <LanguageButton />
         <IconButton
           icon={Bell}

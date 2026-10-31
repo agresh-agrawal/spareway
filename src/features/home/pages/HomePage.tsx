@@ -176,12 +176,12 @@ export default function HomePage() {
     <div className="flex flex-col gap-4">
       <Greeting />
       <Tiles />
+      <Slot name="home.widgets" props={{}} />
       <QuickActions />
       <div className="grid gap-4 lg:grid-cols-2">
         <Problems />
         <RecentActivity />
       </div>
-      <Slot name="home.widgets" props={{}} />
     </div>
   )
 }

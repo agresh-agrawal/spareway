@@ -1,5 +1,5 @@
-// MapLibre wrapper. Style URL from env (Phase 1·Git ships /map/spareway-dark.json; until it exists we
-// fall back to the OpenFreeMap dark style). Low-data → lite style. Attribution always visible.
+// MapLibre wrapper. Our styles in /map follow the Light / Dark theme (falls back to OpenFreeMap if a style is
+// missing). Low-data → lite style. Attribution always visible.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import MapGL, {
   AttributionControl,
@@ -14,20 +14,25 @@ import { setWorkerUrl } from 'maplibre-gl'
 // MapLibre 6 builds its worker URL at runtime, so the bundler never ships the file: import it explicitly.
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { Navigation, Truck } from 'lucide-react'
-import { readEnv, OPENFREEMAP_STYLE } from '@/lib/env'
+import { OPENFREEMAP_STYLE } from '@/lib/env'
 import { boundsOf, INDIA_CENTER, type LngLat } from '@/lib/geo'
 import { useLowData } from '@/lib/lowData'
 import { cn } from '@/lib/cn'
+import { useTheme } from '@/lib/theme'
 import type { GeoLineString } from '@/types/domain'
 import { stopColor } from './chips'
 
-const LITE_STYLE = '/map/spareway-lite.json'
+const STYLES = {
+  dark: { full: '/map/spareway-dark.json', lite: '/map/spareway-lite.json' },
+  light: { full: '/map/spareway-light.json', lite: '/map/spareway-light-lite.json' },
+}
 
 setWorkerUrl(maplibreWorkerUrl)
 
 function useStyleUrl(): string {
   const { lowData } = useLowData()
-  const wanted = lowData ? LITE_STYLE : (readEnv().env?.mapStyleUrl ?? OPENFREEMAP_STYLE)
+  const { theme } = useTheme()
+  const wanted = STYLES[theme][lowData ? 'lite' : 'full']
   const [url, setUrl] = useState(wanted)
   useEffect(() => {
     if (!wanted.startsWith('/')) {
@@ -146,7 +151,7 @@ export function StopPin({ lng, lat, seq, label }: { lng: number; lat: number; se
       <span
         title={label}
         aria-label={label}
-        className="flex size-[30px] items-center justify-center rounded-full border-2 border-[#0a0a0b] text-[13px] font-bold text-accent-ink shadow-lg"
+        className="flex size-[30px] items-center justify-center rounded-full border-2 border-canvas text-[13px] font-bold text-accent-ink shadow-lg"
         style={{ background: stopColor(seq) }}
       >
         {seq}

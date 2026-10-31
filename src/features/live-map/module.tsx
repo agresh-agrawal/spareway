@@ -6,6 +6,7 @@ import type { FeatureModule } from '@/types/domain'
 import en from './i18n/en.json'
 import hi from './i18n/hi.json'
 
+const HomeMap = lazy(() => import('./components/HomeMap').then((m) => ({ default: m.HomeMap })))
 const TruckLocation = lazy(() => import('./components/TruckLocation').then((m) => ({ default: m.TruckLocation })))
 
 function LiveMapAction() {
@@ -21,6 +22,7 @@ const liveMap: FeatureModule = {
   routes: [{ path: '/map', element: lazy(() => import('./pages/LiveMapPage')), titleKey: 'live-map:title' }],
   slots: {
     'home.actions': [{ id: 'live-map', order: 30, component: LiveMapAction, labelKey: 'live-map:action', icon: MapIcon }],
+    'home.widgets': [{ id: 'live-map', order: 5, component: HomeMap }],
     'truck.tabs': [{ id: 'location', order: 20, component: TruckLocation, labelKey: 'live-map:tab', icon: MapPin }],
   },
 }

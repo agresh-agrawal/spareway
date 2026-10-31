@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { AlertTriangle, ArrowLeft, Check, CheckCircle2, ClipboardList, Hourglass, LinkIcon, Send } from 'lucide-react'
-import { LanguageButton, Logo, MainButton, PlainButton, Sheet, Skeleton, StopChip, stopColor } from '@/components/common'
+import { LanguageButton,
+  ThemeButton, Logo, MainButton, PlainButton, Sheet, Skeleton, StopChip, stopColor } from '@/components/common'
 import { Slot } from '@/app/slots'
 import { SideView, TopView } from '@/features/load-planner'
 import { LANG_KEY } from '@/i18n/setup'
@@ -40,7 +41,8 @@ function Frame({ children, job }: { children: React.ReactNode; job?: LoaderJobOk
           ) : (
             <Logo />
           )}
-          <LanguageButton />
+          <ThemeButton />
+        <LanguageButton />
         </div>
       </header>
       <main className="mx-auto flex max-w-[480px] flex-col gap-4 px-4 pt-4 pb-10">{children}</main>

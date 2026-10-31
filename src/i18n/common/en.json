@@ -5,9 +5,35 @@
     "loading": "Loading…",
     "about": "About Spareway",
     "aboutText": "Spareway helps small truck owners plan safe, full loads, pick the right route and find extra loads on the way — in English and Hindi.",
-    "aboutSample": "Sample data is marked with a Sample badge. Simulated and AI values are marked too.",
     "missingEnvTitle": "App is not set up yet",
-    "missingEnvText": "This setting is missing: {{names}}. Add it to the .env file or the hosting settings and reload."
+    "missingEnvText": "This setting is missing: {{names}}. Add it to the .env file or the hosting settings and reload.",
+    "aboutWhat": "What Spareway does",
+    "aboutWho": "Who uses it",
+    "aboutTeam": "Made by Team Bravo for the MU20 Hackathon 2026",
+    "aboutDoes": {
+      "plan": "Plans how to load the truck so goods fit safely and come out in stop order.",
+      "route": "Finds truck routes with full costs — diesel, tolls, driver and waiting.",
+      "extra": "Shows extra loads on the way that really add money, and why others don't fit.",
+      "earn": "Tells you what each trip earns."
+    },
+    "aboutRoles": {
+      "owner": {
+        "name": "Truck owner",
+        "text": "Signs in, plans trips and shares links."
+      },
+      "driver": {
+        "name": "Driver",
+        "text": "Opens the driver link: route, stops and times. No login."
+      },
+      "loader": {
+        "name": "Loader",
+        "text": "Opens the loader link: box-by-box steps and a 3D view. No login."
+      },
+      "provider": {
+        "name": "Load provider",
+        "text": "Opens a load link to give goods and price. No login."
+      }
+    }
   },
   "lang": {
     "switchTo": "हिंदी",
@@ -173,5 +199,13 @@
   "fixture": {
     "banner": "Fixture mode — sample data, nothing is saved",
     "exit": "Exit"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "switchTo": {
+      "light": "Switch to light",
+      "dark": "Switch to dark"
+    }
   }
 }

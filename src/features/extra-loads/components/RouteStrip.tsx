@@ -62,7 +62,7 @@ export function RouteStrip({
         })}
         {stopX.map(({ s, x: sx }) => (
           <g key={s.id}>
-            <circle cx={sx} cy={BASE} r={13} fill={stopColor(s.seq)} stroke="#0a0a0b" strokeWidth={2} />
+            <circle cx={sx} cy={BASE} r={13} fill={stopColor(s.seq)} stroke="var(--color-canvas)" strokeWidth={2} />
             <text x={sx} y={BASE + 5} textAnchor="middle" fontSize={14} fontWeight={700} fill="#121212">
               {s.seq}
             </text>

@@ -33,5 +33,11 @@
   "empty": "No trucks yet — Add truck",
   "tab": "Location",
   "tabEmpty": "This truck has no position yet",
-  "openMap": "Open live map"
+  "openMap": "Open live map",
+  "home": {
+    "title": "Your trucks now",
+    "summary_one": "{{count}} truck on the map · {{moving}} on a trip",
+    "summary_other": "{{count}} trucks on the map · {{moving}} on a trip",
+    "empty": "No truck has a location yet"
+  }
 }

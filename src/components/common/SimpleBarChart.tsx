@@ -30,7 +30,7 @@ export function SimpleBarChart({
           />
           <Tooltip
             cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-            contentStyle={{ background: '#232327', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, color: '#f2f2f3' }}
+            contentStyle={{ background: 'var(--color-surface-3)', border: '1px solid var(--color-line-strong)', borderRadius: 12, color: 'var(--color-ink)' }}
             labelStyle={{ color: '#a1a1a8' }}
             formatter={(v) => [format(Number(v)), '']}
             separator=""

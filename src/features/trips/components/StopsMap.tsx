@@ -22,7 +22,7 @@ export default function StopsMap({ hubs, stops, onPick }: { hubs: Place[]; stops
               title={td(h.name)}
               className="flex size-7 items-center justify-center rounded-full"
             >
-              <span className="block size-3 rounded-full border-2 border-[#0a0a0b] bg-ink-2 shadow" />
+              <span className="block size-3 rounded-full border-2 border-canvas bg-ink-2 shadow" />
             </button>
           </Marker>
         ))}

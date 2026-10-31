@@ -7,6 +7,7 @@ import { LowDataProvider } from '@/lib/lowData'
 import { AppError } from '@/lib/errors'
 import { STALE_TIME_MS } from '@/lib/queryKeys'
 import { isFixtureMode } from '@/lib/fixtures'
+import { useTheme } from '@/lib/theme'
 import { OfflineLayer, persistOptions } from '@/features/offline'
 import { AuthProvider } from './auth/AuthProvider'
 
@@ -26,6 +27,19 @@ export function makeQueryClient() {
   })
 }
 
+function ThemedToaster() {
+  const { theme } = useTheme()
+  return (
+    <Toaster
+      theme={theme}
+      position="bottom-center"
+      toastOptions={{
+        style: { background: 'var(--color-surface-3)', border: '1px solid var(--color-line-strong)', color: 'var(--color-ink)', fontSize: 16 },
+      }}
+    />
+  )
+}
+
 export function Providers({ children }: { children: ReactNode }) {
   const [qc] = useState(makeQueryClient)
   // saved data for offline use (Phase 4·Code F21); fixture mode keeps its sample store in memory only
@@ -35,18 +49,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <TooltipProvider>
         <AuthProvider>{children}</AuthProvider>
         <OfflineLayer />
-        <Toaster
-          theme="dark"
-          position="bottom-center"
-          toastOptions={{
-            style: {
-              background: '#232327',
-              border: '1px solid rgba(255,255,255,0.12)',
-              color: '#f2f2f3',
-              fontSize: 15,
-            },
-          }}
-        />
+        <ThemedToaster />
       </TooltipProvider>
     </LowDataProvider>
   )

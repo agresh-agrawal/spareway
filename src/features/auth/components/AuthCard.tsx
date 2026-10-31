@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { AlertCircle } from 'lucide-react'
-import { LanguageButton, Logo } from '@/components/common'
+import { LanguageButton,
+  ThemeButton, Logo } from '@/components/common'
 
 /** No shell; centred card 420 px; logo; Hindi button top-right. */
 export function AuthCard({ title, children, footer }: { title: ReactNode; children: ReactNode; footer?: ReactNode }) {
@@ -8,6 +9,7 @@ export function AuthCard({ title, children, footer }: { title: ReactNode; childr
     <div className="flex min-h-dvh flex-col bg-canvas">
       <div className="flex items-center justify-between p-4 sm:p-6">
         <Logo />
+        <ThemeButton />
         <LanguageButton />
       </div>
       <div className="flex flex-1 items-start justify-center px-4 pb-10 sm:items-center">

@@ -4,6 +4,7 @@
 export * from './Buttons'
 export * from './Card'
 export * from './LanguageButton'
+export * from './ThemeButton'
 export * from './BigTile'
 export * from './NextStepCard'
 export * from './StepTabs'

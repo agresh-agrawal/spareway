@@ -284,7 +284,7 @@ export default function NewTripPage() {
         </p>
       )}
 
-      <div className="safe-bottom fixed inset-x-0 bottom-16 z-20 border-t border-line-strong bg-surface/95 backdrop-blur lg:bottom-0 lg:pl-[104px]">
+      <div className="safe-bottom fixed inset-x-0 bottom-16 z-20 border-t border-line-strong bg-surface/95 backdrop-blur lg:bottom-0 lg:pl-[124px]">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
           {step > 0 ? (
             <PlainButton icon={ArrowLeft} onClick={() => setStep((s) => s - 1)} className="flex-1 sm:flex-none">

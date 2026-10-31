@@ -26,7 +26,7 @@ export function AppShell() {
   return (
     <div className="min-h-dvh bg-canvas">
       <Rail items={nav} />
-      <div className="lg:pl-[104px]">
+      <div className="lg:pl-[124px]">
         <FixtureBanner />
         <TopBar title={title} />
         <main className="mx-auto w-full max-w-[1440px] px-4 pt-2 pb-28 sm:px-6 lg:pb-10">
