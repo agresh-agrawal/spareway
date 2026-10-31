@@ -1,8 +1,8 @@
 // Owner addition: decision first, then PASS / FAIL for Payload · Space · Delivery order, then the money
-// (offer, extra km, running cost, tolls, handling, waiting, total, expected extra earnings) with Estimated badges.
+// (offer, extra km, running cost, tolls, handling, waiting, total, expected extra earnings).
 import { useState } from 'react'
 import { ChevronDown, CircleCheck, CircleHelp, CircleX, Info } from 'lucide-react'
-import { Badge, StatusChip, type Tone } from '@/components/common'
+import { StatusChip, type Tone } from '@/components/common'
 import { formatInr, formatKm, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
@@ -72,11 +72,11 @@ export function MoneyDetails({ ev, offerInr, open: openInitially = false }: { ev
       </button>
       {open && (
         <dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 rounded-tile border border-line bg-surface-2 p-3 tabular">
-          {rows.map(([label, value, estimated]) => (
+          {rows.map(([label, value]) => (
             <div key={label} className="contents">
               <dt className="flex items-center gap-1.5 text-ink-2">
                 {label}
-                {estimated && <Badge kind="estimated" />}
+                
               </dt>
               <dd className="text-right">{value}</dd>
             </div>

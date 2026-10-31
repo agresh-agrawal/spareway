@@ -54,13 +54,10 @@ export function kmOfPoint(line: LngLat[], p: LngLat, cum: number[] = cumulativeK
   return at
 }
 
-/** Simulated speed (km/h) and fuel (%) — plain numbers derived from the trip, marked Simulated in the UI. */
-export function simulatedReadings(avgSpeedKmph: number, startFuelPct: number | null, kmDone: number, mileageKmpl: number, now: number) {
+/** Simulated speed (km/h) — a plain number derived from the trip. */
+export function simulatedSpeed(avgSpeedKmph: number, now: number): number {
   const wobble = Math.sin(now / 9_000) * 6
-  const speed = Math.max(0, Math.round(avgSpeedKmph + wobble))
-  const tankL = 400
-  const fuel = startFuelPct === null ? null : Math.max(5, Math.round(startFuelPct - (100 * kmDone) / mileageKmpl / tankL))
-  return { speed, fuel }
+  return Math.max(0, Math.round(avgSpeedKmph + wobble))
 }
 
 /** Minutes until the next rest break (break every `breakAfterH` hours of driving). */

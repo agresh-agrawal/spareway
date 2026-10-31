@@ -6,7 +6,6 @@ import { fixtureDashboardStats, fixtureDelay, fixtureStore, isFixtureMode } from
 export type Alert = Tables<'alerts'>
 export type Activity = Tables<'activity_log'>
 export type DashboardStats = Tables<'dashboard_stats'>
-export type DailyStat = Tables<'fleet_daily_stats'>
 
 export async function fetchDashboardStats(): Promise<DashboardStats | null> {
   if (isFixtureMode()) return fixtureDelay(fixtureDashboardStats())
@@ -50,18 +49,6 @@ export async function fetchRecentActivity(limit = 6): Promise<Activity[]> {
     .limit(limit)
   if (error) throw toAppError(error)
   return data
-}
-
-export async function fetchDailyStats(days: number): Promise<DailyStat[]> {
-  if (isFixtureMode())
-    return fixtureDelay([...fixtureStore().fleet_daily_stats].sort((a, b) => a.day.localeCompare(b.day)).slice(-days))
-  const { data, error } = await getSupabase()
-    .from('fleet_daily_stats')
-    .select('*')
-    .order('day', { ascending: false })
-    .limit(days)
-  if (error) throw toAppError(error)
-  return [...data].reverse()
 }
 
 /** id → label maps for the truck / trip chips on problem cards */

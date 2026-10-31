@@ -6,7 +6,6 @@ import type { TruckValues } from './schemas'
 
 export type Truck = Tables<'trucks'>
 export type TripOverview = Tables<'trip_overview'>
-export type Alert = Tables<'alerts'>
 
 const OPEN_TRIP = ['planned', 'loading', 'in_transit']
 
@@ -63,17 +62,6 @@ export async function listTruckTrips(truckId: string): Promise<TripOverview[]> {
   return data
 }
 
-export async function listTruckAlerts(truckId: string): Promise<Alert[]> {
-  if (isFixtureMode()) return fixtureDelay(fixtureStore().alerts.filter((a) => a.truck_id === truckId && !a.resolved))
-  const { data, error } = await getSupabase()
-    .from('alerts')
-    .select('*')
-    .eq('truck_id', truckId)
-    .eq('resolved', false)
-    .order('created_at', { ascending: false })
-  if (error) throw toAppError(error)
-  return data
-}
 
 /** Create (no id) or update a truck. A duplicate number → AppError('DUPLICATE'). */
 export async function saveTruck(v: TruckValues, id?: string): Promise<Truck> {

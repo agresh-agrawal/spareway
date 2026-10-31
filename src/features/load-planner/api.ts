@@ -172,7 +172,7 @@ export async function fetchTruckLayout(
   return { trip, truck: truck.data, plan: plan.data, stops: stops.data }
 }
 
-/** Save a packed plan as the trip's next version (draft). Items that didn't fit → one plan_unplaced alert. */
+/** Save a packed plan as the trip's next version (draft). Items that didn't fit are listed on the plan itself. */
 export async function savePlan(trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>, result: PackResult): Promise<PlanRow> {
   const row = {
     trip_id: trip.id,
@@ -183,17 +183,6 @@ export async function savePlan(trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>, 
     unplaced: result.unplaced as unknown as Json,
     metrics: result.metrics as unknown as Json,
   }
-  const count = result.unplaced.length
-  const alert = {
-    kind: 'plan_unplaced',
-    severity: 'warning',
-    title: `${count} items didn't fit in ${trip.code}`,
-    message: `${count} items didn't fit in ${trip.code}. Open the load plan to see why.`,
-    trip_id: trip.id,
-    truck_id: trip.truck_id,
-    meta: { code: trip.code, count },
-  }
-
   if (isFixtureMode()) {
     const d = fixtureStore()
     const now = new Date().toISOString()
@@ -207,8 +196,6 @@ export async function savePlan(trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>, 
       created_at: now,
     }
     d.load_plans.push(saved)
-    if (count > 0)
-      d.alerts.push({ ...alert, id: crypto.randomUUID(), company_id: d.company.id, is_sample: false, resolved: false, resolved_at: null, created_at: now })
     return fixtureDelay(saved)
   }
 
@@ -228,10 +215,6 @@ export async function savePlan(trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>, 
     .select('*')
     .single()
   if (error) throw toAppError(error)
-  if (count > 0) {
-    const { error: aErr } = await sb.from('alerts').insert(alert)
-    if (aErr) throw toAppError(aErr)
-  }
   return data
 }
 

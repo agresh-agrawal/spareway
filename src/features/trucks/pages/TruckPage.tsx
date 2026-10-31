@@ -2,9 +2,7 @@ import { Suspense, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { toast } from 'sonner'
 import {
-  AlertTriangle,
   ArrowLeft,
-  Fuel,
   Gauge,
   IndianRupee,
   LayoutGrid,
@@ -25,7 +23,6 @@ import {
   ErrorState,
   MainButton,
   PlainButton,
-  ProblemCard,
   Skeleton,
   SkeletonList,
   TripStatusChip,
@@ -34,10 +31,10 @@ import {
 import { useSlot } from '@/app/slots'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
-import { formatDateTime, formatPct, formatTruckSize, formatWeight } from '@/lib/format'
+import { formatDateTime, formatTruckSize, formatWeight } from '@/lib/format'
 import { cn } from '@/lib/cn'
 import { TruckFormSheet } from '../components/TruckFormSheet'
-import { useDeleteTruck, useSetTruckStatus, useTruck, useTruckAlerts, useTruckTrips } from '../hooks'
+import { useDeleteTruck, useSetTruckStatus, useTruck, useTruckTrips } from '../hooks'
 import type { Truck } from '../api'
 
 function Fact({ icon: Icon, label, value }: { icon: typeof Ruler; label: string; value: ReactNode }) {
@@ -77,7 +74,6 @@ function Overview({ truck }: { truck: Truck }) {
           )
         }
       />
-      {truck.fuel_level_pct !== null && <Fact icon={Fuel} label={t('overview.fuel')} value={formatPct(Number(truck.fuel_level_pct))} />}
     </div>
   )
 }
@@ -112,20 +108,6 @@ function TripsTab({ truckId }: { truckId: string }) {
   )
 }
 
-function ProblemsTab({ truckId }: { truckId: string }) {
-  const { t, tm } = useLang('trucks')
-  const { data, isLoading, error, refetch } = useTruckAlerts(truckId)
-  if (isLoading) return <SkeletonList rows={2} />
-  if (error) return <ErrorState error={error} onRetry={() => refetch()} />
-  if (!data?.length) return <EmptyState tone="ok" text={t('problems.empty')} />
-  return (
-    <div className="flex flex-col gap-2.5">
-      {data.map((a) => (
-        <ProblemCard key={a.id} severity={a.severity} title={tm(a.kind, a.meta as Record<string, unknown>, a.title)} createdAt={a.created_at} />
-      ))}
-    </div>
-  )
-}
 
 export default function TruckPage() {
   const { truckId = '' } = useParams()
@@ -143,7 +125,6 @@ export default function TruckPage() {
   const tabs = [
     { id: 'overview', label: t('tabs.overview'), icon: LayoutGrid },
     { id: 'trips', label: t('tabs.trips'), icon: RouteIcon },
-    { id: 'problems', label: t('tabs.problems'), icon: AlertTriangle },
     ...extraTabs.map((e) => ({ id: e.id, label: e.labelKey ? t(e.labelKey) : e.id, icon: e.icon ?? LayoutGrid })),
   ]
   const tab = tabs.some((x) => x.id === params.get('tab')) ? params.get('tab')! : 'overview'
@@ -243,7 +224,6 @@ export default function TruckPage() {
 
       {tab === 'overview' && <Overview truck={truck} />}
       {tab === 'trips' && <TripsTab truckId={truck.id} />}
-      {tab === 'problems' && <ProblemsTab truckId={truck.id} />}
       {Extra && (
         <Suspense fallback={<SkeletonList rows={3} />}>
           <Extra truckId={truck.id} />

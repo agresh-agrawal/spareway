@@ -6,7 +6,6 @@ import { toAppError } from '@/lib/errors'
 import i18n from '@/i18n/setup'
 import {
   fetchChipLabels,
-  fetchDailyStats,
   fetchDashboardStats,
   fetchOpenAlerts,
   fetchRecentActivity,
@@ -31,10 +30,6 @@ export function useChipLabels() {
 export function useRecentActivity() {
   useRealtime('activity_log', [queryKeys.activity])
   return useQuery({ queryKey: queryKeys.activity, queryFn: () => fetchRecentActivity(6) })
-}
-
-export function useWeekStats() {
-  return useQuery({ queryKey: queryKeys.fleetStats(7), queryFn: () => fetchDailyStats(7) })
 }
 
 /** "Done" resolves optimistically; rolls back with a toast on error. */

@@ -2,7 +2,7 @@
 import { Link } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { Coins, PackageSearch } from 'lucide-react'
-import { Badge, Card, CardHeader, QuickAction } from '@/components/common'
+import { Card, CardHeader, QuickAction } from '@/components/common'
 import { formatInr } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { queryKeys } from '@/lib/queryKeys'
@@ -40,13 +40,12 @@ export function ExtraEarningsWidget() {
     truck: d.truck,
     remainingPayloadKg: Number(d.truck.payload_kg) - booked,
   }).filter((c) => c.recommended)
-  const sample = rec.some((c) => c.listing.is_sample)
   return (
     <Card>
       <CardHeader
         icon={Coins}
         title={t('widget.title')}
-        action={<span className="flex gap-1.5">{sample && <Badge kind="sample" />}<Badge kind="estimated" /></span>}
+        action={<span className="flex gap-1.5"></span>}
       />
       {rec.length === 0 ? (
         <p className="text-ink-2">{t('widget.none')}</p>

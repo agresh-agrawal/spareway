@@ -67,16 +67,6 @@
     "error": "Something went wrong",
     "offline": "No internet — showing saved data"
   },
-  "badges": {
-    "sample": "Sample",
-    "simulated": "Simulated",
-    "ai": "AI",
-    "estimated": "Estimated",
-    "approximate": "Approximate",
-    "public": "Public",
-    "loader": "Added by loader",
-    "demo": "Demo"
-  },
   "severity": {
     "critical": "Problem",
     "warning": "Check this",

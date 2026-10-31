@@ -244,7 +244,7 @@ function fixtureAccept(extraLoadId: string, pickupAfter: number, dropAfterIn: nu
   return { pickup_stop_id: pickup.id, drop_stop_id: drop.id, pickup_seq: pickup.seq, drop_seq: drop.seq }
 }
 
-/** Save the new plan as the next version and activate it (activate_load_plan); unplaced → plan_unplaced alert. */
+/** Save the new plan as the next version and activate it (activate_load_plan); anything that didn't fit is listed on the plan. */
 export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>, result: PackResult): Promise<PlanRow> {
   const row = {
     trip_id: trip.id,
@@ -254,16 +254,6 @@ export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 't
     placements: result.placements as unknown as Json,
     unplaced: result.unplaced as unknown as Json,
     metrics: result.metrics as unknown as Json,
-  }
-  const count = result.unplaced.length
-  const alert = {
-    kind: 'plan_unplaced',
-    severity: 'warning',
-    title: `${count} items didn't fit in ${trip.code}`,
-    message: `${count} items didn't fit in ${trip.code}. Open the load plan to see why.`,
-    trip_id: trip.id,
-    truck_id: trip.truck_id,
-    meta: { code: trip.code, count },
   }
   if (isFixtureMode()) {
     const d = fixtureStore()
@@ -288,7 +278,6 @@ export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 't
       is_sample: false,
       created_at: now,
     })
-    if (count > 0) d.alerts.push({ ...alert, id: crypto.randomUUID(), company_id: d.company.id, is_sample: false, resolved: false, resolved_at: null, created_at: now })
     return fixtureDelay(saved)
   }
   const sb = getSupabase()
@@ -301,10 +290,6 @@ export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 't
     .select('*')
     .single()
   if (error) throw toAppError(error)
-  if (count > 0) {
-    const { error: aErr } = await sb.from('alerts').insert(alert)
-    if (aErr) throw toAppError(aErr)
-  }
   const { error: actErr } = await sb.rpc('activate_load_plan', { p_plan_id: data.id })
   if (actErr) throw toAppError(actErr)
   return { ...data, status: 'active' }

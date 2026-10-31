@@ -1,7 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, Coffee, MapPinOff, Phone, Route as RouteIcon, Truck as TruckIcon, X } from 'lucide-react'
-import { Badge, EmptyState, ErrorState, Skeleton, StatusChip, TruckStatusChip } from '@/components/common'
+import { Coffee, MapPinOff, Phone, Route as RouteIcon, Truck as TruckIcon, X } from 'lucide-react'
+import { EmptyState, ErrorState, Skeleton, StatusChip, TruckStatusChip } from '@/components/common'
 import { FilterChips } from '@/components/common/FilterChips'
 import { Switch } from '@/components/ui/switch'
 import { useLang } from '@/lib/i18n'
@@ -50,7 +50,7 @@ function TruckCard({ f, onClose }: { f: LiveTruck; onClose: () => void }) {
           )}
           {f.speedKmph !== null && (
             <p className="text-ink-2 tabular">
-              {f.fuelPct !== null ? t('card.readings', { speed: f.speedKmph, fuel: formatPct(f.fuelPct) }) : t('card.readingsNoFuel', { speed: f.speedKmph })}
+              {t('card.readingsNoFuel', { speed: f.speedKmph })}
             </p>
           )}
           {f.breakInMin !== null && f.breakInMin <= 60 && (
@@ -66,16 +66,9 @@ function TruckCard({ f, onClose }: { f: LiveTruck; onClose: () => void }) {
       ) : (
         <p className="mt-3 text-ink-2">
           {t('card.noTrip')}
-          {f.fuelPct !== null && ` · ${t('card.parked', { fuel: formatPct(f.fuelPct) })}`}
         </p>
       )}
 
-      {f.hasProblem && (
-        <p className="mt-2 flex items-center gap-2 text-label font-medium text-crit">
-          <AlertTriangle size={16} aria-hidden />
-          {t('card.problem')}
-        </p>
-      )}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {f.truck.driver_phone && (
@@ -109,7 +102,6 @@ export default function LiveMapPage() {
   const [filter, setFilter] = useState<Filter>('all')
   const [selected, setSelected] = useState<string | null>(null)
   const [showRoutes, setShowRoutes] = useState(true)
-  const [showProblems, setShowProblems] = useState(true)
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: fleet.length }
@@ -131,10 +123,6 @@ export default function LiveMapPage() {
           <Switch checked={showRoutes} onCheckedChange={setShowRoutes} />
           {t('showRoutes')}
         </label>
-        <label className="flex min-h-12 items-center gap-2 font-medium">
-          <Switch checked={showProblems} onCheckedChange={setShowProblems} />
-          {t('showProblems')}
-        </label>
       </div>
 
       {isLoading ? (
@@ -149,7 +137,6 @@ export default function LiveMapPage() {
               selectedId={selected}
               onSelect={setSelected}
               showRoutes={showRoutes}
-              showProblems={showProblems}
               className="h-[62dvh] lg:h-[70dvh]"
             />
           </Suspense>
@@ -162,7 +149,6 @@ export default function LiveMapPage() {
       )}
 
       <div className="flex flex-wrap items-center gap-2 text-label text-ink-2">
-        <Badge kind="simulated" />
         <span>{lowData ? t('footerLow') : t('footer')}</span>
       </div>
 

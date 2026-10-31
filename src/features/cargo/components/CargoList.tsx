@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AlertTriangle, ArrowUpFromLine, Copy, Layers, MoreVertical, Package, Pencil, Plus, Trash2, Wine } from 'lucide-react'
 import { toast } from 'sonner'
 import {
-  Badge,
   Bar,
   Card,
   ConfirmDialog,
@@ -21,7 +20,7 @@ import { useTruck } from '@/features/trucks'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
 import { formatCargoSize, formatWeight } from '@/lib/format'
-import { ensureOverloadAlert, type CargoItem } from '../api'
+import type { CargoItem } from '../api'
 import { useCargoItems, useDeleteCargo } from '../hooks'
 import { bookedPct, cargoTotals, fitsTruck } from '../lib/totals'
 import type { CargoInput } from '../schemas'
@@ -76,8 +75,8 @@ function ItemCard({
               {t('item.wontFit')}
             </span>
           )}
-          {item.added_by_loader && <Badge kind="loader" />}
-          {(item.source === 'camera' || item.source === 'voice') && <Badge kind="ai" />}
+          
+          
         </div>
       </div>
       <DropdownMenu>
@@ -124,15 +123,6 @@ export function CargoList({ tripId }: { tripId: string }) {
   const payloadKg = tr ? Number(tr.payload_kg) : 0
   const pct = bookedPct(totals, { payloadKg, volumeM3: truckBox ? (truckBox.lengthCm * truckBox.widthCm * truckBox.heightCm) / 1e6 : 0 })
 
-  // one "overload" problem when booked weight goes over the payload (only after a change, not on page open)
-  const prevKg = useRef<number | null>(null)
-  useEffect(() => {
-    if (!tr || !trip.data || cargo.isLoading) return
-    const before = prevKg.current
-    prevKg.current = totals.kg
-    if (before === null || totals.kg <= payloadKg || before === totals.kg) return
-    ensureOverloadAlert({ id: tripId, code: trip.data.trip.code, truckId: tr.id }, formatWeight(totals.kg), formatWeight(payloadKg)).catch(() => {})
-  }, [totals.kg]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const groups = useMemo(() => {
     const list = (stops.data ?? []).filter((s) => s.stop_type !== 'origin')

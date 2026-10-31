@@ -1,7 +1,7 @@
 // The only place in routes that talks to Supabase. Reads trip, truck, stops, settings, route_options and
 // pois (own company / global via RLS); calls the route-plan Edge Function only through its contract
-// (Architecture 9.1); writes route_options, trips.selected_route_id (+ departure), stop ETAs, activity and the
-// city_entry alert. Fixture mode (?fixture=seed, dev only) uses the seed, the real POIs and mocked routes.
+// (Architecture 9.1); writes route_options, trips.selected_route_id (+ departure), stop ETAs and activity
+// (no-entry waits show on the route card). Fixture mode (?fixture=seed, dev only) uses the seed, the real POIs and mocked routes.
 import { getSupabase } from '@/lib/supabase'
 import { AppError, toAppError } from '@/lib/errors'
 import { fixtureDelay, fixtureStore, isFixtureMode } from '@/lib/fixtures'
@@ -177,8 +177,8 @@ export interface ChooseInput {
 
 /**
  * "Choose": this route selected (others not), its costs + halts + warnings saved, the trip's selected route
- * (and departure, when it had none), stop ETAs, a `route_chosen` activity and — when the route waits for
- * no-entry hours — one `city_entry` alert with meta {code, city, from, to, wait}.
+ * (and departure, when it had none), stop ETAs and a `route_chosen` activity. No-entry waits show as warnings
+ * on the route card and in the journey.
  */
 export async function chooseRoute(input: ChooseInput): Promise<void> {
   const { trip, routeId, plan, cost } = input
@@ -203,23 +203,6 @@ export async function chooseRoute(input: ChooseInput): Promise<void> {
     entity_ref: trip.code,
     meta: { code: trip.code, variant: input.variant, km },
   }
-  const wait = plan.schedule.warnings.find((w) => w.code === 'NO_ENTRY')
-  const hhmm = (m: number) => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
-  const alert = wait && {
-    kind: 'city_entry',
-    severity: 'info',
-    title: `${trip.code} reaches ${wait.city} in no-entry hours`,
-    message: wait.message,
-    trip_id: trip.id,
-    truck_id: trip.truck_id,
-    meta: {
-      code: trip.code,
-      city: wait.city,
-      from: hhmm(wait.from),
-      to: hhmm(wait.until),
-      wait: `${Math.floor(wait.waitMin / 60)} h ${wait.waitMin % 60} min`,
-    },
-  }
   const tripUpdate: Partial<TripRow> = { selected_route_id: routeId }
   if (!trip.planned_departure) tripUpdate.planned_departure = input.departure
 
@@ -236,7 +219,6 @@ export async function chooseRoute(input: ChooseInput): Promise<void> {
     }
     const now = new Date().toISOString()
     d.activity_log.push({ ...activity, id: crypto.randomUUID(), company_id: d.company.id, is_sample: false, created_at: now })
-    if (alert) d.alerts.push({ ...alert, id: crypto.randomUUID(), company_id: d.company.id, is_sample: false, resolved: false, resolved_at: null, created_at: now })
     return fixtureDelay(undefined)
   }
 
@@ -247,7 +229,6 @@ export async function chooseRoute(input: ChooseInput): Promise<void> {
     () => sb.from('trips').update(tripUpdate).eq('id', trip.id),
     ...plan.schedule.stopEtas.map((e) => () => sb.from('trip_stops').update({ eta: e.eta }).eq('id', e.stopId)),
     () => sb.from('activity_log').insert(activity),
-    ...(alert ? [() => sb.from('alerts').insert(alert)] : []),
   ]
   for (const run of steps) {
     const { error } = await run()

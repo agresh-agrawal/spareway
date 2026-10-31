@@ -2,7 +2,7 @@
 // tiles, freight − costs = earning, lime "Share on WhatsApp".
 import { Link } from 'react-router'
 import { Info, MoveHorizontal, PackageCheck, Route, Send, Weight } from 'lucide-react'
-import { Badge, Card, CardHeader, ErrorState, Skeleton } from '@/components/common'
+import { Card, CardHeader, ErrorState, Skeleton } from '@/components/common'
 import { formatFt, formatInr } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
@@ -50,7 +50,7 @@ export function EarningsStep({ tripId }: { tripId: string }) {
       <Card className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-[30px] leading-9 font-semibold tabular sm:text-hero">{t('hero', { inr: formatInr(v.money.netInr) })}</h2>
-          {v.hasRoute && <Badge kind="estimated" />}
+          
         </div>
         {v.hasExtra ? (
           <p className="text-[18px] font-semibold text-ok tabular">{t('gain', { inr: formatInr(v.money.gainInr) })}</p>
@@ -83,7 +83,7 @@ export function EarningsStep({ tripId }: { tripId: string }) {
               <dt className="flex flex-wrap items-center gap-2 text-ink-2">
                 <span className="w-4 text-center font-semibold text-ink">{r.sign}</span>
                 {r.label}
-                {r.estimated && <Badge kind="estimated" />}
+                
               </dt>
               <dd className="font-medium">{r.value}</dd>
             </div>

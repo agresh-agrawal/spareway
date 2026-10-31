@@ -5,7 +5,6 @@ import {
   deleteTruck,
   getTruck,
   listOpenTripsByTruck,
-  listTruckAlerts,
   listTruckTrips,
   listTrucks,
   saveTruck,
@@ -29,10 +28,6 @@ export function useOpenTripsByTruck() {
 
 export function useTruckTrips(truckId: string) {
   return useQuery({ queryKey: [...queryKeys.truck(truckId), 'trips'], queryFn: () => listTruckTrips(truckId) })
-}
-
-export function useTruckAlerts(truckId: string) {
-  return useQuery({ queryKey: [...queryKeys.alertsAll, { truckId }], queryFn: () => listTruckAlerts(truckId) })
 }
 
 function useInvalidateTrucks() {

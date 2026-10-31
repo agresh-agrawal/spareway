@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Activity as ActivityIcon, AlertTriangle, BarChart3, CheckCircle2, Route, Truck, Zap } from 'lucide-react'
+import { Activity as ActivityIcon, AlertTriangle, CheckCircle2, Route, Truck, Zap } from 'lucide-react'
 import {
-  Badge,
   BigTile,
   Card,
   CardHeader,
@@ -11,18 +10,16 @@ import {
   Skeleton,
   SkeletonList,
 } from '@/components/common'
-import { SimpleBarChart } from '@/components/common/SimpleBarChart'
 import { Slot, useSlot } from '@/app/slots'
 import { useAuth } from '@/app/auth/AuthProvider'
 import { useLang } from '@/lib/i18n'
-import { formatDate, formatLongDate, formatPct, formatRelative, istHour } from '@/lib/format'
+import { formatLongDate, formatRelative, istHour } from '@/lib/format'
 import {
   useChipLabels,
   useDashboardStats,
   useOpenProblems,
   useRecentActivity,
   useResolveProblem,
-  useWeekStats,
 } from '../hooks'
 
 const MAX_PROBLEMS = 5
@@ -174,31 +171,6 @@ function RecentActivity() {
   )
 }
 
-function ThisWeek() {
-  const { t, lang } = useLang('home')
-  const { data, isLoading, error, refetch } = useWeekStats()
-  const sample = data?.some((d) => d.is_sample)
-  return (
-    <Card>
-      <CardHeader icon={BarChart3} title={t('week')} action={sample ? <Badge kind="sample" /> : undefined} />
-      <p className="mb-2 text-ink-2">{t('spaceChart')}</p>
-      {isLoading ? (
-        <Skeleton className="h-[180px]" />
-      ) : error ? (
-        <ErrorState error={error} onRetry={() => refetch()} />
-      ) : !data?.length ? (
-        <EmptyState icon={BarChart3} text={t('noStats')} />
-      ) : (
-        <SimpleBarChart
-          ariaLabel={t('spaceChart')}
-          data={data.map((d) => ({ label: formatDate(d.day, lang).split(' ')[0], value: Number(d.utilisation_pct) }))}
-          format={(v) => formatPct(v)}
-        />
-      )}
-    </Card>
-  )
-}
-
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-4">
@@ -207,10 +179,7 @@ export default function HomePage() {
       <QuickActions />
       <div className="grid gap-4 lg:grid-cols-2">
         <Problems />
-        <div className="flex flex-col gap-4">
-          <RecentActivity />
-          <ThisWeek />
-        </div>
+        <RecentActivity />
       </div>
       <Slot name="home.widgets" props={{}} />
     </div>

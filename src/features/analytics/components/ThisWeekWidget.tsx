@@ -1,7 +1,7 @@
 // Home widget "Money this week": earned in the last 7 days, of which from extra loads, trips done.
 import { Link } from 'react-router'
 import { Coins, TrendingUp } from 'lucide-react'
-import { Badge, Card, CardHeader } from '@/components/common'
+import { Card, CardHeader } from '@/components/common'
 import { formatInr } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { usePeriod, useTripsDone } from '../hooks'
@@ -14,7 +14,7 @@ export function ThisWeekWidget() {
   const tot = p.totals
   return (
     <Card>
-      <CardHeader icon={Coins} title={t('widget.title')} action={tot.sample ? <Badge kind="sample" /> : undefined} />
+      <CardHeader icon={Coins} title={t('widget.title')} action={undefined} />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="text-label text-ink-2">{t('widget.earned')}</div>

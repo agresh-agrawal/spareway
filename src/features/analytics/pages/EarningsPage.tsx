@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { BarChart3, Coins, PackageCheck, PackagePlus, Trophy } from 'lucide-react'
-import { Badge, Card, CardHeader, EmptyState, ErrorState, PageHeader, Skeleton, TripStatusChip } from '@/components/common'
+import { Card, CardHeader, EmptyState, ErrorState, PageHeader, Skeleton, TripStatusChip } from '@/components/common'
 import { SimpleBarChart } from '@/components/common/SimpleBarChart'
 import { formatDate, formatInr, formatPct } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
@@ -19,7 +19,7 @@ export default function EarningsPage() {
   const p = usePeriod(days)
   const top = useTopTrips()
   const tot = p.totals
-  const sample = tot?.sample ? <Badge kind="sample" /> : undefined
+  const sample =undefined
   const dayLabel = (d: string) => formatDate(d, lang).split(' ')[0]
 
   return (

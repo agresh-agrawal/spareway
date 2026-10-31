@@ -20,7 +20,6 @@ export interface LiveTrip {
 export interface LiveData {
   trucks: Truck[]
   trips: LiveTrip[]
-  problemTruckIds: string[]
 }
 
 const LIVE = ['in_transit', 'loading']
@@ -48,16 +47,14 @@ export async function getLiveData(): Promise<LiveData> {
     return fixtureDelay({
       trucks: d.trucks,
       trips,
-      problemTruckIds: [...new Set(d.alerts.filter((a) => !a.resolved && a.truck_id).map((a) => a.truck_id!))],
     })
   }
   const sb = getSupabase()
-  const [trucks, trips, alerts] = await Promise.all([
+  const [trucks, trips] = await Promise.all([
     sb.from('trucks').select('*').order('reg_no'),
     sb.from('trips').select('id, code, truck_id, status, planned_departure, actual_departure, selected_route_id').in('status', LIVE),
-    sb.from('alerts').select('truck_id').eq('resolved', false).not('truck_id', 'is', null),
   ])
-  for (const r of [trucks, trips, alerts]) if (r.error) throw toAppError(r.error)
+  for (const r of [trucks, trips]) if (r.error) throw toAppError(r.error)
   const tripRows = trips.data ?? []
   const ids = tripRows.map((t) => t.id)
   const routeIds = tripRows.map((t) => t.selected_route_id).filter((x): x is string => Boolean(x))
@@ -83,6 +80,5 @@ export async function getLiveData(): Promise<LiveData> {
         route: r ? { geometry: r.geometry as unknown as GeoLineString, durationMin: Number(r.duration_min), distanceKm: Number(r.distance_km) } : null,
       }
     }),
-    problemTruckIds: [...new Set((alerts.data ?? []).map((a) => a.truck_id!).filter(Boolean))],
   }
 }

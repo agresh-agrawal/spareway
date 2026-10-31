@@ -1,4 +1,4 @@
-// The fixture-mode api copies what the SQL does (activate_load_plan, plan_unplaced alert).
+// The fixture-mode api copies what the SQL does (activate_load_plan).
 import { resetFixtureStore, fixtureStore } from '@/lib/fixtures'
 import { activatePlan, fetchCargo, fetchPlannableTrips, fetchPlans, fetchStops, fetchTripBasics, fetchTruckLayout, savePlan } from '../api'
 import { buildPackItems, pack } from '../engine'
@@ -51,17 +51,17 @@ describe('load-planner api (fixture mode)', () => {
     expect((await fetchTruckLayout(truck.id))?.plan?.id).toBe(v2.id)
   })
 
-  it('a plan with items that did not fit writes one plan_unplaced alert with meta', async () => {
+  it('a plan with items that did not fit lists them on the plan and writes no problem', async () => {
     const id = demoId()
     const { trip } = await fetchTripBasics(id)
     const result = pack({ lengthCm: 100, widthCm: 100, heightCm: 100, payloadKg: 50 }, [
       { key: 'a#1', cargoItemId: 'a', label: 'a', l: 50, w: 50, h: 50, weightKg: 40, unloadOrder: 1, fragile: false, uprightOnly: false, stackable: true },
       { key: 'a#2', cargoItemId: 'a', label: 'a', l: 50, w: 50, h: 50, weightKg: 40, unloadOrder: 1, fragile: false, uprightOnly: false, stackable: true },
     ])
-    await savePlan(trip, result)
-    const alerts = fixtureStore().alerts.filter((a) => a.kind === 'plan_unplaced')
-    expect(alerts).toHaveLength(1)
-    expect(alerts[0]).toMatchObject({ severity: 'warning', trip_id: id, meta: { code: 'TRP-2026-0031', count: 1 } })
+    const before = fixtureStore().alerts.length
+    const saved = await savePlan(trip, result)
+    expect((saved.unplaced as unknown[]).length).toBe(1)
+    expect(fixtureStore().alerts).toHaveLength(before)
   })
 
   it('the packer runs on the main thread when Workers are missing', async () => {

@@ -60,8 +60,7 @@ describe('useRoutePlanner (fixture mode)', () => {
     })
     for (const e of waiting.plan.schedule.stopEtas) expect(d.trip_stops.find((s) => s.id === e.stopId)?.eta).toBe(e.eta)
     expect(d.activity_log.at(-1)).toMatchObject({ kind: 'route_chosen', meta: { code: 'TRP-2026-0031', variant: waiting.variant } })
-    const alert = d.alerts.find((a) => a.kind === 'city_entry' && !a.is_sample)!
-    expect(alert.meta).toMatchObject({ code: 'TRP-2026-0031', city: expect.any(String), from: expect.stringMatching(/^\d\d:\d\d$/), to: expect.stringMatching(/^\d\d:\d\d$/) })
+    expect(d.alerts.some((a) => a.kind === 'city_entry' && !a.is_sample)).toBe(false) // no-entry waits stay on the route card
     await waitFor(() => expect(result.current.selected?.row.id).toBe(waiting.row.id))
   })
 

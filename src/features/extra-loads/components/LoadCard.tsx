@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 import { Eye, PackagePlus } from 'lucide-react'
-import { Badge, MainButton, PlainButton } from '@/components/common'
+import { MainButton, PlainButton } from '@/components/common'
 import { formatCargoSize, formatDate, formatInr, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
@@ -33,9 +33,9 @@ export const LoadCard = forwardRef<HTMLElement, {
           <h3 className="text-section-title font-semibold">{td(l.goods_type)}</h3>
         </span>
         <span className="flex gap-1.5">
-          {l.is_sample && <Badge kind="demo" />}
-          {l.visibility === 'public' && <Badge kind="public" />}
-          {c.approximate && <Badge kind="approximate" />}
+          
+          
+          
         </span>
       </div>
       <div className="text-ink-2">
@@ -55,7 +55,7 @@ export const LoadCard = forwardRef<HTMLElement, {
       </div>
       <ChecksRow ev={c.evaluation} />
       <p className="flex flex-wrap items-center gap-2">
-        {takeText(c, t)} <Badge kind="estimated" />
+        {takeText(c, t)} 
       </p>
       <MoneyDetails ev={c.evaluation} offerInr={Number(l.offered_rate_inr)} />
       {l.deliver_by && <p className="text-label text-ink-2">{t('card.deliverBy', { date: formatDate(l.deliver_by, lang) })}</p>}

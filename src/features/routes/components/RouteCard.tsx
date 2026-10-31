@@ -1,5 +1,5 @@
 import { Check, CircleCheck, Eye, TriangleAlert } from 'lucide-react'
-import { Badge, MainButton, PlainButton, StatusChip } from '@/components/common'
+import { MainButton, PlainButton, StatusChip } from '@/components/common'
 import { formatDuration, formatInr, formatKm } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
@@ -50,7 +50,6 @@ export function RouteCard({
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[28px] leading-9 font-semibold tabular sm:text-big-number">{formatInr(cost.totalInr)}</span>
-          <Badge kind="estimated" />
         </div>
         <div className="text-label text-ink-2">{t('card.total')}</div>
       </div>

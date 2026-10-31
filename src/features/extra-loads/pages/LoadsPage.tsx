@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { MapPinned, Plus, Trash2 } from 'lucide-react'
-import { Badge, ConfirmDialog, EmptyState, ErrorState, PageHeader, PlainButton, SkeletonList, StatusChip } from '@/components/common'
+import { ConfirmDialog, EmptyState, ErrorState, PageHeader, PlainButton, SkeletonList, StatusChip } from '@/components/common'
 import { useAuth } from '@/app/auth/AuthProvider'
 import { formatDate, formatInr, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
@@ -90,8 +90,8 @@ export default function LoadsPage() {
               <article key={l.id} aria-label={l.code} className="flex min-w-0 flex-col gap-2 rounded-card border border-line bg-surface p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-label font-semibold text-ink-2">{l.code}</span>
-                  {l.is_sample && <Badge kind="demo" />}
-                  {l.visibility === 'public' && <Badge kind="public" />}
+                  
+                  
                   {mine && !l.is_sample && <StatusChip tone="info">{t('loads.mine')}</StatusChip>}
                   {!open && <StatusChip tone="neutral">{t('loads.taken')}</StatusChip>}
                 </div>

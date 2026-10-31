@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, Check, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Badge, MainButton, NumberField, SelectField, Sheet, TextField } from '@/components/common'
+import { MainButton, NumberField, SelectField, Sheet, TextField } from '@/components/common'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
 import { cn } from '@/lib/cn'
@@ -127,7 +127,7 @@ export function CheckItemsSheet({
             <section key={r.key} className="flex flex-col gap-3 rounded-tile border border-line bg-surface-2 p-3" aria-label={t('check.line', { n: i + 1 })}>
               <div className="flex items-center gap-2">
                 <span className="text-label font-semibold text-ink-2">{t('check.line', { n: i + 1 })}</span>
-                {ai && <Badge kind="ai" />}
+                
                 <span className={cn('text-label font-semibold', r.confidence < 0.5 ? 'text-warn' : 'text-ink-2')}>
                   {t('check.sure', { pct: Math.round(r.confidence * 100) })}
                 </span>

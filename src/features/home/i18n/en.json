@@ -9,17 +9,14 @@
     "trucksWorking": "Trucks working",
     "trucksOf": "{{n}} of {{total}}",
     "tripsOnRoad": "Trips on the road",
-    "problems": "Problems"
+    "problems": "Loader reports"
   },
   "quick": "Quick actions",
-  "problems": "Problems",
-  "allGood": "All good today",
+  "problems": "Reports from loaders",
+  "allGood": "No reports from loaders",
   "seeAll": "See all ({{count}})",
   "showFewer": "Show fewer",
   "activity": "Recent activity",
   "noActivity": "Nothing happened yet today",
-  "week": "This week",
-  "spaceChart": "Truck space used per day",
-  "noStats": "No numbers for this week yet",
   "resolved": "Marked as done"
 }

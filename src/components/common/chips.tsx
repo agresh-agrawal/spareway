@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Bot, FlaskConical, Globe, Radio, Ruler, UserRound, type LucideIcon } from 'lucide-react'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/cn'
 
@@ -15,16 +14,16 @@ const dot: Record<Tone, string> = {
   violet: 'bg-violet',
 }
 
-/** Status with word + colour dot (never colour alone). */
+/** Status as plain words with a colour dot (never colour alone, no pill). */
 export function StatusChip({ tone, children, className }: { tone: Tone; children: ReactNode; className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface-3 px-2.5 text-label font-medium text-ink',
+        'inline-flex shrink-0 items-center gap-1.5 text-[15px] font-semibold text-ink',
         className,
       )}
     >
-      <span className={cn('size-2 rounded-full', dot[tone])} aria-hidden />
+      <span className={cn('size-2.5 rounded-full', dot[tone])} aria-hidden />
       {children}
     </span>
   )
@@ -69,48 +68,6 @@ export function StopChip({ seq, name, className }: { seq: number; name: string; 
         {seq}
       </span>
       <span className="truncate">{td(name)}</span>
-    </span>
-  )
-}
-
-export type BadgeKind = 'sample' | 'simulated' | 'ai' | 'estimated' | 'approximate' | 'public' | 'loader' | 'demo'
-
-const badgeIcon: Record<BadgeKind, LucideIcon> = {
-  sample: FlaskConical,
-  demo: FlaskConical,
-  simulated: Radio,
-  ai: Bot,
-  estimated: Ruler,
-  approximate: Ruler,
-  public: Globe,
-  loader: UserRound,
-}
-
-const badgeTone: Record<BadgeKind, string> = {
-  sample: 'border-ink-3/40 text-ink-2',
-  demo: 'border-ink-3/40 text-ink-2',
-  simulated: 'border-info/40 text-info',
-  ai: 'border-violet/50 text-[#a99ff7]',
-  estimated: 'border-warn/40 text-warn',
-  approximate: 'border-warn/40 text-warn',
-  public: 'border-ok/40 text-ok',
-  loader: 'border-info/40 text-info',
-}
-
-/** Honesty badges: Sample / Simulated / AI / Estimated / Approximate / Public / Added by loader. */
-export function Badge({ kind, className }: { kind: BadgeKind; className?: string }) {
-  const { t } = useLang()
-  const Icon = badgeIcon[kind]
-  return (
-    <span
-      className={cn(
-        'inline-flex h-6 shrink-0 items-center gap-1 rounded-full border px-2 text-[12px] font-semibold',
-        badgeTone[kind],
-        className,
-      )}
-    >
-      <Icon size={13} aria-hidden />
-      {t(`badges.${kind}`)}
     </span>
   )
 }

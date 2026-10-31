@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Link } from 'react-router'
 import { MapPinOff, Map as MapIcon } from 'lucide-react'
-import { Badge, EmptyState, ErrorState, Skeleton } from '@/components/common'
+import { EmptyState, ErrorState, Skeleton } from '@/components/common'
 import { useLang } from '@/lib/i18n'
 import { useLiveFleet } from '../hooks'
 
@@ -18,10 +18,9 @@ export function TruckLocation({ truckId }: { truckId: string }) {
   return (
     <div className="flex flex-col gap-2">
       <Suspense fallback={<Skeleton className="h-72" />}>
-        <FleetMap fleet={[f]} selectedId={truckId} onSelect={() => {}} showRoutes showProblems className="h-72" />
+        <FleetMap fleet={[f]} selectedId={truckId} onSelect={() => {}} showRoutes className="h-72" />
       </Suspense>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Badge kind="simulated" />
         <Link to="/map" className="inline-flex min-h-12 items-center gap-2 font-semibold text-accent">
           <MapIcon size={18} aria-hidden />
           {t('openMap')}

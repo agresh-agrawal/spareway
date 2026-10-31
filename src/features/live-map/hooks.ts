@@ -6,7 +6,7 @@ import { useRealtime } from '@/lib/realtime'
 import { useLowData } from '@/lib/lowData'
 import type { LngLat } from '@/lib/geo'
 import { getLiveData, type LiveTrip, type Truck } from './api'
-import { cumulativeKm, kmOfPoint, minutesToBreak, nextStopIndex, pointAlong, simulatedFraction, simulatedReadings } from './lib/simulate'
+import { cumulativeKm, kmOfPoint, minutesToBreak, nextStopIndex, pointAlong, simulatedFraction, simulatedSpeed } from './lib/simulate'
 
 export interface LiveTruck {
   truck: Truck
@@ -19,11 +19,9 @@ export interface LiveTruck {
   kmLeft: number | null
   arrivesAt: number | null
   speedKmph: number | null
-  fuelPct: number | null
   breakInMin: number | null
   fromStop: string | null
   toStop: string | null
-  hasProblem: boolean
 }
 
 export function useLiveData() {
@@ -69,7 +67,6 @@ export function useLiveFleet(): { fleet: LiveTruck[]; isLoading: boolean; error:
     return data.trucks.map((truck) => {
       const trip = data.trips.find((t) => t.truckId === truck.id) ?? null
       const geo = trip ? tripGeo.get(trip.id) : undefined
-      const hasProblem = data.problemTruckIds.includes(truck.id)
       const base: LiveTruck = {
         truck,
         position: truck.last_lat !== null && truck.last_lng !== null ? [truck.last_lng, truck.last_lat] : null,
@@ -80,11 +77,9 @@ export function useLiveFleet(): { fleet: LiveTruck[]; isLoading: boolean; error:
         kmLeft: null,
         arrivesAt: null,
         speedKmph: null,
-        fuelPct: truck.fuel_level_pct === null ? null : Number(truck.fuel_level_pct),
         breakInMin: null,
         fromStop: null,
         toStop: null,
-        hasProblem,
       }
       if (!trip || !geo) return base
       if (trip.status === 'loading') return { ...base, position: geo.line[0], line: geo.line, approximate: geo.approximate, fromStop: trip.stops[0]?.name ?? null, toStop: trip.stops[1]?.name ?? null }
@@ -94,7 +89,6 @@ export function useLiveFleet(): { fleet: LiveTruck[]; isLoading: boolean; error:
       const totalKm = geo.cum[geo.cum.length - 1]
       const scale = trip.route ? trip.route.distanceKm / totalKm : roadFactor
       const next = nextStopIndex(geo.stopKms, km)
-      const read = simulatedReadings(speed, base.fuelPct, km * scale, Number(truck.mileage_kmpl) || 4, now)
       const minutesLeft = geo.durationMin * (1 - fraction)
       return {
         ...base,
@@ -104,8 +98,7 @@ export function useLiveFleet(): { fleet: LiveTruck[]; isLoading: boolean; error:
         progressPct: Math.round(fraction * 100),
         kmLeft: Math.round((totalKm - km) * scale),
         arrivesAt: now + minutesLeft * 60_000, // real ETA at normal speed
-        speedKmph: read.speed,
-        fuelPct: read.fuel,
+        speedKmph: simulatedSpeed(speed, now),
         breakInMin: minutesToBreak(fraction * geo.durationMin, breakAfter),
         fromStop: trip.stops[Math.max(0, next - 1)]?.name ?? null,
         toStop: trip.stops[next]?.name ?? null,

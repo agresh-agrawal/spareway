@@ -67,16 +67,6 @@
     "error": "कुछ गड़बड़ हो गई",
     "offline": "इंटरनेट नहीं है — सेव डेटा दिख रहा है"
   },
-  "badges": {
-    "sample": "नमूना",
-    "simulated": "सिम्युलेटेड",
-    "ai": "AI",
-    "estimated": "अनुमान",
-    "approximate": "लगभग",
-    "public": "सबके लिए",
-    "loader": "लोडर ने जोड़ा",
-    "demo": "डेमो"
-  },
   "severity": {
     "critical": "समस्या",
     "warning": "देख लें",

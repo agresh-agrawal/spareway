@@ -1,5 +1,5 @@
 import { Ban, BedDouble, Coffee, Flag, MapPin, ShieldCheck, TriangleAlert, type LucideIcon } from 'lucide-react'
-import { Badge, Card, CardHeader } from '@/components/common'
+import { Card, CardHeader } from '@/components/common'
 import { stopColor } from '@/components/common/chips'
 import { formatDayTime } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
@@ -23,7 +23,7 @@ export function Journey({ route, stops }: { route: PlannedRoute; stops: StopRow[
   const late = new Set(route.plan.schedule.warnings.flatMap((w) => (w.code === 'LATE' ? [w.stopId] : [])))
   return (
     <Card>
-      <CardHeader icon={MapPin} title={t('journey.title')} action={<Badge kind="estimated" />} />
+      <CardHeader icon={MapPin} title={t('journey.title')} />
       <ol className="flex flex-col">
         {items.map((item, i) => {
           const Icon = ICON[item.kind]
