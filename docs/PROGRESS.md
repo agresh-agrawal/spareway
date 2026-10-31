@@ -179,7 +179,24 @@ Notes for the other agent:
 - `route-plan`: I send `weightT` = gross weight (t) and `axleloadT` = gross ÷ axles; routes are read from `data.routes`; non-2xx bodies `{ ok: false, error: { code } }` are read too.
 - Extra loads (3·Git) / earnings (4·Git): `useSelectedRoute(tripId)` gives the chosen route's geometry, plan (ETAs, halts, tolls) and cost.
 
-## Phase 3·Code — Camera and Hindi voice (branch code/phase3-camera-voice) status: not started
+## Phase 3·Code — Camera and Hindi voice (branch code/phase3-camera-voice) status: built — waiting for deploy + phone check
+
+Built (from `v2`; owner's answers: Gemini key + `GEMINI_MODEL=gemini-3.5-flash` already in `.env.secrets`, A4 sheet as size reference, "ऊपर से / नीचे से 10 बाई 10" = top / base is 10 × 10, height separate). Only `src/features/smart-input` and `supabase/functions/ai-cargo` changed; no SQL, no new packages.
+- **F17 `ai-cargo` Edge Function** (`supabase/functions/ai-cargo`, contract Engineering Reference 6.2): loader token first (`loader_trip_for_token`, service role) else owner session (trip via RLS); 1–3 photos ≤ 700 KB (TOO_LARGE), stored at `cargo-images/<company>/<trip>/<uuid>.jpg`; Gemini `generateContent` with a JSON `responseSchema`, 45 s timeout, `GEMINI_API_KEY_1` as fallback key on 429/5xx; every call logged in `ai_scans` (parsed / failed); warnings COUNT_MISMATCH · SIZE_MISSING · SIZE_OUT_OF_RANGE · LOW_CONFIDENCE · NOTHING_FOUND. Voice mode for sentences the rule parser is unsure about. Pure logic in `lib.ts` (16 tests). **Not deployed yet** (see below).
+- **F18 voice parser** `voice/parse.ts`: Devanagari digits, एक…निन्यानवे, सौ/हज़ार, डेढ़/ढाई/सवा/साढ़े/पौने, बाई/बाय/by/x/×, cm/सेमी/इंच/फुट/मीटर, kg/किलो/टन, पीस/नग/बॉक्स/बोरी…, लंबाई/चौड़ाई/ऊँचाई cues, नाज़ुक / सीधा रखें / ऊपर कुछ न रखें, Hinglish + English, several items split at और/and only when the next part has its own size. Missing sizes are reported, never guessed. 27 sentences + 12 more tests.
+- **Screens** (Design System 7.12), slot `cargo.addMethods` (owner) and `loader.actions` (loader page): "Scan with camera" — tip "Keep an A4 sheet next to the boxes", 1–3 photos (compressed to ≤ 1280 px / ≤ 700 KB in the browser), Analyse ("Reading photos… about 10 s"), error → Try again / Type instead; "Speak" — 80 px hold-to-talk mic (hi-IN / en-IN, हिंदी/English switch), live text, asks "ऊँचाई कितनी है?" for each missing size (answer by voice or typing), "Type instead" (always; the only way outside Chrome/Edge); **Check items** — editable rows, AI badge + "82% sure", drop stop + kg required, "Drop all at", fragile / upright / nothing-on-top chips, warnings (count differs between photos, unusual size, not sure), "Add N items"; nothing saved before confirm. Owner rows → `cargo_items` (source camera/voice, image_path, confidence) + scan `confirmed`; loader rows → `loader_add_cargo(token, items, source)` → owner alert "Loader added cargo".
+- Fixture mode: mocked ai-cargo answer (6.2 example, counts 16 / 15) and in-memory inserts. en + hi for every string.
+
+Verified 2026-10-31 (`npm run check` 289 tests, `npm run build`; SmartAdd chunk 11 KB gzip, lazy): fixture mode in the browser, Hindi — typed "साठ बाय चालीस, सोलह कार्टन, वजन बारह किलो" → asks ऊँचाई → "पैंतालीस" → Check items 60 × 40 × 45, 16, 12 kg; Add blocked until a drop stop is chosen → cargo 104 → 120 pieces, 2,638 → 2,830 kg. Camera: generated 3000 × 2000 photo → thumbnail → Analyse → two AI lines (82 % / 64 %), "फ़ोटो में गिनती अलग है: 16 / 15". 375 px: nothing wider than the screen. No console errors.
+
+Not done yet — needs the Supabase connection (the Supabase MCP on this Claude account cannot see `darwxazznvfocihderma`; `.mcp.json` added in the main folder, owner must sign in):
+- deploy `ai-cargo` with `verify_jwt: false` (it checks the session / loader token itself, like `route-plan`); secrets `GEMINI_API_KEY`, `GEMINI_API_KEY_1`, `GEMINI_MODEL` (dashboard → Edge Functions → Secrets if the MCP can't set them);
+- run the 6.2 examples against the real endpoint (owner photo, loader voice), check `ai_scans` rows and the `cargo-images` objects;
+- phone over `npm run dev:https`: real camera + mic, owner and loader, Hindi; Firefox shows typing.
+
+CONTRACT CHANGE REQUEST — from 3·Code
+File/contract: `src/i18n/data/hi.json` (demo dictionary)   Change: add the labels the parser / AI store: "Box" → "बॉक्स", "Carton" → "कार्टन", "Crate" → "पेटी", "Sack" → "बोरी", "Drum" → "ड्रम", "TV" → "टीवी", "Refrigerator" → "फ्रिज".
+Why: cargo rows added by camera / voice show the English label in Hindi. Owner to apply: Agent Code at Merge 3.
 
 ## Phase 3·Git — Extra loads and marketplace (branch git/phase3-extra-loads) status: not started
 

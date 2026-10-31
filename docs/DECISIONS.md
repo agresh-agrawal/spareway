@@ -68,3 +68,11 @@
 | 2026-10-31 | 2·Git | Fixture mode reads the real POIs from `supabase/sql/phase0_pois_real.sql` (lazy chunk) | Fixture store has no POIs; one source of truth |
 | 2026-10-31 | Merge 2 | `tm('route_chosen')` translates `meta.variant` via `common:templates.variants` | Hindi Home showed the English variant word |
 | 2026-10-31 | Merge 2 | Phase 2 merged without the real-DB Route step check; owner checks it on the live site | Supabase MCP on the new account cannot reach the Spareway project; `route-plan` itself answers live |
+| 2026-10-31 | 3·Code | `ai-cargo` checks a loader token before a session; deployed with `verify_jwt: false` | Loaders have no login; same pattern as `route-plan` with the project's asymmetric JWT keys |
+| 2026-10-31 | 3·Code | Gemini via REST `generateContent` + `responseSchema`; `GEMINI_API_KEY_1` tried on 429 / 5xx | No SDK package; two keys given by the owner |
+| 2026-10-31 | 3·Code | "ऊपर से / नीचे से A बाई B" = top / base is A × B (length × width); height from ऊँचाई or asked | Owner answer (Phase 3 question 2) |
+| 2026-10-31 | 3·Code | Voice: quantity 1 if not said; only missing length / width / height are asked; kg asked in Check items | Spec asks for the missing size; weight is required on every row anyway |
+| 2026-10-31 | 3·Code | Rule parser first; ai-cargo voice mode only when unsure or nothing found | Spec F18; keeps Gemini calls low |
+| 2026-10-31 | 3·Code | Sizes outside 5–400 cm are a warning, outside 1–2,000 cm an error; values never changed by the app | Spec "never silently change values"; same hard limits as the cargo form |
+| 2026-10-31 | 3·Code | Drop stop preselected only when the trip has one drop stop; else "Drop all at" + per row | Spec: drop stop required — no silent default |
+| 2026-10-31 | 3·Code | Owner insert keeps the first photo path as `image_path` on every line of the scan | One scan = one set of photos; `ai_scans.input_paths` keeps all of them |
