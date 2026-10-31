@@ -87,6 +87,8 @@ export async function createTrip(input: NewTrip): Promise<{ id: string; code: st
       loader_token: null,
       loader_token_expires_at: null,
       loader_link_enabled: false,
+      driver_token: null,
+      driver_link_enabled: false,
       is_sample: false,
       created_at: now,
       updated_at: now,

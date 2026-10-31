@@ -1119,6 +1119,8 @@ export type Database = {
           company_id: string
           completed_at: string | null
           created_at: string
+          driver_link_enabled: boolean
+          driver_token: string | null
           id: string
           is_sample: boolean
           loader_link_enabled: boolean
@@ -1138,6 +1140,8 @@ export type Database = {
           company_id?: string
           completed_at?: string | null
           created_at?: string
+          driver_link_enabled?: boolean
+          driver_token?: string | null
           id?: string
           is_sample?: boolean
           loader_link_enabled?: boolean
@@ -1157,6 +1161,8 @@ export type Database = {
           company_id?: string
           completed_at?: string | null
           created_at?: string
+          driver_link_enabled?: boolean
+          driver_token?: string | null
           id?: string
           is_sample?: boolean
           loader_link_enabled?: boolean
@@ -1373,6 +1379,7 @@ export type Database = {
         Returns: Json
       }
       activate_load_plan: { Args: { p_plan_id: string }; Returns: undefined }
+      create_driver_link: { Args: { p_trip_id: string }; Returns: Json }
       create_loader_link: { Args: { p_trip_id: string }; Returns: Json }
       create_trip_with_stops: {
         Args: {
@@ -1384,7 +1391,9 @@ export type Database = {
         Returns: Json
       }
       current_company_id: { Args: never; Returns: string }
+      disable_driver_link: { Args: { p_trip_id: string }; Returns: undefined }
       disable_loader_link: { Args: { p_trip_id: string }; Returns: undefined }
+      driver_get_trip: { Args: { p_token: string }; Returns: Json }
       km_between: { Args: { lat1: number; lat2: number; lng1: number; lng2: number }; Returns: number }
       loader_add_cargo: { Args: { p_items: Json; p_source: string; p_token: string }; Returns: Json }
       loader_get_job: { Args: { p_token: string }; Returns: Json }

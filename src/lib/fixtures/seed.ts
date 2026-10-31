@@ -119,6 +119,8 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     loader_token: null,
     loader_token_expires_at: null,
     loader_link_enabled: false,
+    driver_token: null,
+    driver_link_enabled: false,
     is_sample: true,
     created_at: created,
     updated_at: created,
