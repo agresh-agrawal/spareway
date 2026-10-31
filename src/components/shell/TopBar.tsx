@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Bell, Gauge, Info, LogOut, Settings } from 'lucide-react'
+import { Bell, Download, Gauge, Info, LogOut, Settings } from 'lucide-react'
 import { IconButton, LanguageButton } from '@/components/common'
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch'
 import { useAuth } from '@/app/auth/AuthProvider'
 import { useLang } from '@/lib/i18n'
 import { useLowData } from '@/lib/lowData'
+import { useInstall } from '@/features/offline'
 import { useOpenAlertCount } from './api'
 import { SearchBox } from './SearchBox'
 import { AboutDialog } from './AboutDialog'
@@ -35,6 +36,7 @@ export function TopBar({ title }: { title: string }) {
   const nav = useNavigate()
   const { profile, company, signOut } = useAuth()
   const { lowData, setLowData } = useLowData()
+  const { canInstall, install } = useInstall()
   const { data: count = 0 } = useOpenAlertCount()
   const [about, setAbout] = useState(false)
 
@@ -81,6 +83,12 @@ export function TopBar({ title }: { title: string }) {
               <Info size={20} className="text-ink-2" />
               {t('app.about')}
             </DropdownMenuItem>
+            {canInstall && (
+              <DropdownMenuItem onSelect={() => void install()}>
+                <Download size={20} className="text-ink-2" />
+                {t('offline:install')}
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => void signOut()} className="text-crit">
               <LogOut size={20} />

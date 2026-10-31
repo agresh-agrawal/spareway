@@ -3,7 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/queryKeys'
 import { useRealtime } from '@/lib/realtime'
 import { useLowData } from '@/lib/lowData'
-import type { LoaderStepStatus } from '@/types/domain'
+import { toast } from 'sonner'
+import i18n from '@/i18n/setup'
+import { enqueue, isOfflineError } from '@/features/offline'
+import type { LoaderJob, LoaderStepStatus } from '@/types/domain'
 import { createLoaderLink, disableLoaderLink, getJob, getLinkState, getLoaderAlerts, getProgress, updateStep } from './api'
 import { pollInterval } from './lib/position'
 
@@ -65,7 +68,23 @@ export function useLoaderJob(token: string) {
 export function useUpdateStep(token: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (v: { planId: string; step: number; status: LoaderStepStatus; note?: string }) => updateStep(token, v.planId, v.step, v.status, v.note),
-    onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.loaderJob(token) }), // own writes → refetch now
+    mutationFn: async (v: { planId: string; step: number; status: LoaderStepStatus; note?: string }) => {
+      try {
+        await updateStep(token, v.planId, v.step, v.status, v.note)
+      } catch (e) {
+        // no internet: the tap counts on this phone now and is sent later, in order (offline queue kind "loader_step")
+        if (!isOfflineError(e)) throw e
+        enqueue('loader_step', { token, ...v })
+        qc.setQueryData<LoaderJob>(queryKeys.loaderJob(token), (old) =>
+          old && 'progress' in old
+            ? { ...old, progress: old.progress.map((p) => (p.step === v.step ? { ...p, status: v.status, note: v.note ?? '' } : p)) }
+            : old,
+        )
+        toast(i18n.t('offline:queued'))
+      }
+    },
+    onSettled: () => {
+      if (navigator.onLine) void qc.invalidateQueries({ queryKey: queryKeys.loaderJob(token) }) // own writes → refetch now
+    },
   })
 }

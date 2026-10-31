@@ -1,10 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { useState, type ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { LowDataProvider } from '@/lib/lowData'
 import { AppError } from '@/lib/errors'
 import { STALE_TIME_MS } from '@/lib/queryKeys'
+import { isFixtureMode } from '@/lib/fixtures'
+import { OfflineLayer, persistOptions } from '@/features/offline'
 import { AuthProvider } from './auth/AuthProvider'
 
 export function makeQueryClient() {
@@ -25,20 +28,33 @@ export function makeQueryClient() {
 
 export function Providers({ children }: { children: ReactNode }) {
   const [qc] = useState(makeQueryClient)
-  return (
-    <QueryClientProvider client={qc}>
-      <LowDataProvider>
-        <TooltipProvider>
-          <AuthProvider>{children}</AuthProvider>
-          <Toaster
-            theme="dark"
-            position="bottom-center"
-            toastOptions={{
-              style: { background: '#232327', border: '1px solid rgba(255,255,255,0.12)', color: '#f2f2f3', fontSize: 15 },
-            }}
-          />
-        </TooltipProvider>
-      </LowDataProvider>
-    </QueryClientProvider>
+  // saved data for offline use (Phase 4·Code F21); fixture mode keeps its sample store in memory only
+  const [persist] = useState(() => !isFixtureMode())
+  const inner = (
+    <LowDataProvider>
+      <TooltipProvider>
+        <AuthProvider>{children}</AuthProvider>
+        <OfflineLayer />
+        <Toaster
+          theme="dark"
+          position="bottom-center"
+          toastOptions={{
+            style: {
+              background: '#232327',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: '#f2f2f3',
+              fontSize: 15,
+            },
+          }}
+        />
+      </TooltipProvider>
+    </LowDataProvider>
+  )
+  return persist ? (
+    <PersistQueryClientProvider client={qc} persistOptions={persistOptions}>
+      {inner}
+    </PersistQueryClientProvider>
+  ) : (
+    <QueryClientProvider client={qc}>{inner}</QueryClientProvider>
   )
 }

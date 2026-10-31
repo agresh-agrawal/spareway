@@ -1,0 +1,27 @@
+{
+  "banner": "No internet — showing saved data, changes will be sent later",
+  "waiting_one": "{{count}} change waiting",
+  "waiting_other": "{{count}} changes waiting",
+  "queued": "Saved on this phone — it will be sent when you are online",
+  "synced_one": "{{count}} saved change sent",
+  "synced_other": "{{count}} saved changes sent",
+  "dropped_one": "{{count}} change could not be sent — please check it",
+  "dropped_other": "{{count}} changes could not be sent — please check them",
+  "update": "A new version of Spareway is ready",
+  "reload": "Reload",
+  "install": "Install app",
+  "map": {
+    "title": "Save map for offline (NH48)",
+    "help": "Keeps the Delhi–Mumbai (NH48) map on this phone, so maps work without internet. About 40 MB.",
+    "save": "Save map",
+    "saving": "Saving map… {{pct}}%",
+    "cancel": "Stop",
+    "saved": "Map saved {{date}} — {{mb}} MB",
+    "update": "Save again",
+    "remove": "Remove saved map",
+    "removed": "Saved map removed",
+    "failed": "Couldn't save the map — check the internet and try again",
+    "needsOnline": "Connect to the internet to save the map",
+    "notSupported": "This browser can't keep maps offline"
+  }
+}
