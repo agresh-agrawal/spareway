@@ -79,5 +79,13 @@
       "countMismatch": "Counts differ between photos: {{counts}}",
       "lowConfidence": "Not sure — please check"
     }
+  },
+  "mine": {
+    "title": "Items you added",
+    "edit": "Change",
+    "save": "Save changes",
+    "saved": "Item saved",
+    "removed": "Item removed",
+    "remove": "Remove item"
   }
 }

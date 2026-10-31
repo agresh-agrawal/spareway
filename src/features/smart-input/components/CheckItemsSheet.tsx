@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, Check, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { MainButton, NumberField, SelectField, Sheet, TextField } from '@/components/common'
+import { MainButton, NumberField, PlainButton, SelectField, Sheet, TextField } from '@/components/common'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
 import { cn } from '@/lib/cn'
@@ -41,6 +41,8 @@ export function CheckItemsSheet({
   stops,
   photos = [],
   ai,
+  confirmLabel,
+  onRemove,
   onConfirm,
 }: {
   open: boolean
@@ -51,6 +53,10 @@ export function CheckItemsSheet({
   photos?: string[]
   /** true for camera / AI suggestions (shows the AI badge) */
   ai: boolean
+  /** button text instead of "Add N items" (editing an existing item) */
+  confirmLabel?: string
+  /** shows "Remove item" (editing an existing item) */
+  onRemove?: () => Promise<void>
   onConfirm: (rows: CheckRow[]) => Promise<void>
 }) {
   const { t, td } = useLang('smart-input')
@@ -95,7 +101,7 @@ export function CheckItemsSheet({
       description={t('check.desc')}
       footer={
         <MainButton icon={Check} onClick={confirm} loading={saving} disabled={rows.length === 0} className="w-full">
-          {t('check.add', { count: pieces })}
+          {confirmLabel ?? t('check.add', { count: pieces })}
         </MainButton>
       }
     >
@@ -108,6 +114,11 @@ export function CheckItemsSheet({
           </div>
         )}
         {ai && <p className="text-label text-ink-2">{t('check.aiNote')}</p>}
+        {onRemove && (
+          <PlainButton icon={Trash2} tone="danger" onClick={() => void onRemove().catch((e) => toast.error(t(`common:errors.${toAppError(e).code}`)))}>
+            {t('mine.remove')}
+          </PlainButton>
+        )}
         {rows.length === 0 && <p className="text-ink-2">{t('check.empty')}</p>}
 
         {stops.length > 1 && rows.length > 1 && (

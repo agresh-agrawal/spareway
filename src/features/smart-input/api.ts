@@ -179,3 +179,76 @@ export async function addAsLoader(token: string, rows: CheckRow[], source: Sourc
   const res = throwIfDataError(data) as { added?: number } | null
   return res?.added ?? items.length
 }
+
+export interface LoaderItem extends LoaderCargoRow {
+  id: string
+  source: string
+}
+
+/** Items this loader added on this link's trip (loader_my_cargo). */
+export async function listLoaderItems(token: string): Promise<LoaderItem[]> {
+  if (isFixtureMode()) {
+    const d = fixtureStore()
+    const t = d.trips.find((x) => x.loader_token === token)
+    if (!t) throw new AppError('LINK_INVALID')
+    return fixtureDelay(
+      d.cargo_items
+        .filter((c) => c.trip_id === t.id && c.added_by_loader)
+        .map((c) => ({
+          id: c.id,
+          label: c.label,
+          lengthCm: Number(c.length_cm),
+          widthCm: Number(c.width_cm),
+          heightCm: Number(c.height_cm),
+          weightKg: Number(c.weight_kg),
+          quantity: c.quantity,
+          dropStopId: c.drop_stop_id,
+          fragile: c.fragile,
+          uprightOnly: c.upright_only,
+          stackable: c.stackable,
+          source: c.source,
+          confidence: c.confidence ?? undefined,
+        })),
+    )
+  }
+  const { data, error } = await getSupabase().rpc('loader_my_cargo', { p_token: token })
+  if (error) throw toAppError(error)
+  return throwIfDataError(data) as unknown as LoaderItem[]
+}
+
+/** Correct one item the loader added (loader_update_cargo). */
+export async function updateLoaderItem(token: string, id: string, row: CheckRow): Promise<void> {
+  const item = toLoaderRow(row)
+  if (isFixtureMode()) {
+    const c = fixtureStore().cargo_items.find((x) => x.id === id && x.added_by_loader)
+    if (!c) throw new AppError('BAD_ITEMS')
+    Object.assign(c, {
+      label: item.label,
+      length_cm: item.lengthCm,
+      width_cm: item.widthCm,
+      height_cm: item.heightCm,
+      weight_kg: item.weightKg,
+      quantity: item.quantity,
+      drop_stop_id: item.dropStopId,
+      fragile: item.fragile,
+      upright_only: item.uprightOnly,
+      stackable: item.stackable,
+    })
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('loader_update_cargo', { p_token: token, p_id: id, p_item: item as never })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
+}
+
+/** Remove one item the loader added (loader_delete_cargo). */
+export async function deleteLoaderItem(token: string, id: string): Promise<void> {
+  if (isFixtureMode()) {
+    const d = fixtureStore()
+    d.cargo_items = d.cargo_items.filter((c) => !(c.id === id && c.added_by_loader))
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('loader_delete_cargo', { p_token: token, p_id: id })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
+}

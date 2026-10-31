@@ -1396,10 +1396,16 @@ export type Database = {
       driver_get_trip: { Args: { p_token: string }; Returns: Json }
       km_between: { Args: { lat1: number; lat2: number; lng1: number; lng2: number }; Returns: number }
       loader_add_cargo: { Args: { p_items: Json; p_source: string; p_token: string }; Returns: Json }
+      loader_delete_cargo: { Args: { p_id: string; p_token: string }; Returns: Json }
       loader_get_job: { Args: { p_token: string }; Returns: Json }
+      loader_my_cargo: { Args: { p_token: string }; Returns: Json }
       loader_trip_for_token: {
         Args: { p_token: string }
         Returns: { company_id: string; trip_id: string }[]
+      }
+      loader_update_cargo: {
+        Args: { p_id: string; p_item: Json; p_token: string }
+        Returns: Json
       }
       loader_update_step: {
         Args: { p_note?: string; p_plan_id: string; p_status: string; p_step: number; p_token: string }

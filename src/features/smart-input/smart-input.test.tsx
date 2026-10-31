@@ -5,7 +5,7 @@ import { fakeAuth, renderAt } from '@/test/renderWithAuth'
 import { fixtureStore, resetFixtureStore } from '@/lib/fixtures'
 import { applyLang } from '@/lib/i18n'
 import { getModules, slotEntries } from '@/app/modules'
-import { addAsLoader, FIXTURE_SCAN } from './api'
+import { addAsLoader, deleteLoaderItem, FIXTURE_SCAN, listLoaderItems, updateLoaderItem } from './api'
 import { OwnerSmartAdd } from './components/SmartAdd'
 import { allValid, rowErrors, rowWarnings, toRows, fitSize } from './lib/validate'
 
@@ -98,6 +98,24 @@ describe('loader flow', () => {
     ])
     expect(d.alerts.at(-1)).toMatchObject({ kind: 'loader_cargo', meta: { code: trip.code, count: 2, source: 'camera' } })
     await expect(addAsLoader('nope', rows, 'voice', { imagePaths: [] })).rejects.toMatchObject({ code: 'LINK_INVALID' })
+  })
+})
+
+describe('loader corrects own items', () => {
+  it('lists, changes and removes only the items the loader added', async () => {
+    const d = fixtureStore()
+    d.trips.find((t) => t.id === DEMO)!.loader_token = 'tok-2'
+    const drop = d.trip_stops.find((s) => s.trip_id === DEMO && s.stop_type !== 'origin')!
+    await addAsLoader('tok-2', toRows(FIXTURE_SCAN.items, drop.id).map((r) => ({ ...r, weightKg: 9 })), 'voice', { imagePaths: [] })
+    const mine = await listLoaderItems('tok-2')
+    expect(mine.map((m) => m.quantity)).toEqual([16, 6])
+    const [row] = toRows([{ ...mine[0], notes: '', confidence: 1 }], mine[0].dropStopId)
+    await updateLoaderItem('tok-2', mine[0].id, { ...row, quantity: 15, weightKg: 10 })
+    expect(d.cargo_items.find((c) => c.id === mine[0].id)).toMatchObject({ quantity: 15, weight_kg: 10 })
+    await deleteLoaderItem('tok-2', mine[1].id)
+    expect((await listLoaderItems('tok-2')).map((m) => m.id)).toEqual([mine[0].id])
+    const seeded = d.cargo_items.find((c) => c.trip_id === DEMO && !c.added_by_loader)!
+    await expect(updateLoaderItem('tok-2', seeded.id, row)).rejects.toMatchObject({ code: 'BAD_ITEMS' })
   })
 })
 

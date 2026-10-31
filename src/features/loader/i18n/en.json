@@ -66,6 +66,7 @@
     "planningText": "This page checks again every few seconds.",
     "endedTitle": "This link has ended",
     "endedText": "Ask the owner for a new one.",
-    "issueMark": "Problem reported"
+    "issueMark": "Problem reported",
+    "in3d": "3D"
   }
 }

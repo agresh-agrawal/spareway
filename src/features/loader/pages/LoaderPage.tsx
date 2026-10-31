@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { AlertTriangle, ArrowLeft, Check, CheckCircle2, ClipboardList, Hourglass, LinkIcon, Send } from 'lucide-react'
 import { LanguageButton, Logo, MainButton, PlainButton, Sheet, Skeleton, StopChip, stopColor, ThemeButton } from '@/components/common'
 import { Slot } from '@/app/slots'
-import { SideView, TopView } from '@/features/load-planner'
+import { SideView, TopView, TruckScene } from '@/features/load-planner'
+import { useLowData } from '@/lib/lowData'
 import { LANG_KEY } from '@/i18n/setup'
 import { applyLang, useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
@@ -75,7 +76,8 @@ export default function LoaderPage() {
   const job = useLoaderJob(token)
   const update = useUpdateStep(token)
   const [step, setStep] = useState<number | null>(null)
-  const [view, setView] = useState<'top' | 'side'>('top')
+  const [view, setView] = useState<'top' | 'side' | '3d'>('top')
+  const { lowData } = useLowData()
   const [problemOpen, setProblemOpen] = useState(false)
   const [reason, setReason] = useState<(typeof REASONS)[number]>('missing')
   const [note, setNote] = useState('')
@@ -212,7 +214,7 @@ export default function LoaderPage() {
 
           <div className="mt-4">
             <div className="mb-2 flex gap-1 rounded-control border border-line-strong bg-surface-2 p-1" role="group">
-              {(['top', 'side'] as const).map((v) => (
+              {(lowData ? (['top', 'side'] as const) : (['top', 'side', '3d'] as const)).map((v) => (
                 <button
                   key={v}
                   type="button"
@@ -220,11 +222,15 @@ export default function LoaderPage() {
                   onClick={() => setView(v)}
                   className={cn('h-10 flex-1 rounded-[10px] font-semibold', view === v ? 'bg-surface-3 text-ink' : 'text-ink-2')}
                 >
-                  {v === 'top' ? t('page.fromTop') : t('page.fromSide')}
+                  {v === 'top' ? t('page.fromTop') : v === 'side' ? t('page.fromSide') : t('page.in3d')}
                 </button>
               ))}
             </div>
-            {view === 'top' ? (
+            {view === '3d' && !lowData ? (
+              <Suspense fallback={<Skeleton className="h-80" />}>
+                <TruckScene container={container} placements={placements} highlightKey={p.key} states={states} visibleSteps={current} className="h-80" />
+              </Suspense>
+            ) : view === 'top' ? (
               <TopView container={container} placements={placements} highlightKey={p.key} states={states} visibleSteps={current} />
             ) : (
               <SideView container={container} placements={placements} highlightKey={p.key} states={states} visibleSteps={current} />
