@@ -91,3 +91,5 @@
 | 2026-10-31 | 3·Git | "Find a trip for this load" matches on straight lines between stops with 2 × corridor (80 km) | Straight lines cut corners; the step then checks on the real route |
 | 2026-10-31 | 3·Git | New load in "See in truck" drawn in stop colour 8 (pink) | Its own stop colour can equal planned boxes (e.g. cyan for Ahmedabad) |
 | 2026-10-31 | 3·Git | Extra loads step reads the chosen route directly from route_options (no `useSelectedRoute`) | That hook can start a route-plan call as a side effect |
+| 2026-10-31 | Merge 3 | `corridor_km` default 40 + existing 20 → 40 via `phase3code_corridor.sql` | Change request from 3·Git (owner's answer: look 40 km off route) |
+| 2026-10-31 | Merge 3 | Parser / AI cargo labels added to the Hindi demo dictionary | Change request from 3·Code: camera / voice rows showed English in Hindi |

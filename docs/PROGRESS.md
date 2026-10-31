@@ -47,6 +47,14 @@ Verified: `route-plan` live on `darwxazznvfocihderma` (no session → 401 `AUTH_
 Not verified this time (the Supabase MCP on the new Claude account cannot see project `darwxazznvfocihderma`, and the agent does not sign in with passwords): real-DB Route step (3 ORS routes, `route_options` rows, cache on reload, `trip_financials.route_cost_inr`), loader link end to end on a real phone, map following a chosen route for a trip on the road. Owner to run these on https://spareway.vercel.app as qa.owner2.
 Known: the `city_entry` alert's "(from–to)" shows arrival time → end of no-entry (e.g. 19:23–23:00), not the whole no-entry window — 2·Git's meta; fix in Phase 3 if wanted.
 
+## Merge 3 — Phase 3 Code + Git into main (tag v3) — done 2026-10-31
+
+Merged `code/phase3-camera-voice` then `git/phase3-extra-loads` into `main` — no git conflicts. `npm run check` + `npm run build` after each merge; final 323 tests, build passes also without `.env`. No `phase3git_*.sql`.
+Change requests applied: `supabase/sql/phase3code_corridor.sql` (corridor default 20 → 40 km + existing companies; applied with the MCP — all 5 companies now 40; `database.ts` unchanged because column defaults are not in the generated types) · Hindi demo labels Box / Carton / Crate / Sack / Drum / TV / Refrigerator in `src/i18n/data/hi.json` · NextStepCard on Extra loads: nothing to do (the trip page shows it only on the Cargo step).
+Checked on the real project: `ai-cargo` live (see Phase 3·Code) · RPCs used by extra-loads exist with the same arguments and `authenticated` execute (`accept_extra_load(p_extra_load_id, p_pickup_after_seq, p_drop_after_seq)`, `activate_load_plan(p_plan_id)`, `next_listing_code()`) · every company has the 12 demo listings LD-1041…1052 open.
+Verified together in the app (fixture mode, Hindi, laptop + 375 px): trip steps माल · लोड प्लान · लोडर · रूट · अतिरिक्त लोड; Route → Choose → Extra loads: 3 tiles, 5 स्वीकार करें cards (LD-1041 ₹14,392 first), Payload / Space / Delivery order ठीक, "सही नहीं (7)"; Add to trip LD-1045 → toasts "LD-1045 जोड़ा — भरी जगह 34% → 43%" + "स्टॉप बदल गए — रूट फिर से चुनें"; Cargo step 122 pieces / 3,448 kg with the Vadodara stop and the camera + voice buttons; Home "अतिरिक्त लोड खोजें", widget "अतिरिक्त कमाई मिल सकती है", activity "अतिरिक्त लोड LD-1045 TRP-2026-0031 में जोड़ा: वडोदरा → मुंबई (भिवंडी)"; /loads 11 open (LD-1045 taken); no sideways scroll at 375 px.
+Not verified (the agent does not sign in to the live site with passwords): Phase 3·Git "Code must verify" items on the real database (Add to trip rows / plan v-next, second company "just taken", loading-started re-plan, Enter a load decisions on real trucks, Post a load → LD-2001) and the Phase 2 real-DB Route step; real phone camera + mic. Owner to run them on https://spareway.vercel.app as qa.owner / qa.owner2.
+
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
 Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):
@@ -179,7 +187,7 @@ Notes for the other agent:
 - `route-plan`: I send `weightT` = gross weight (t) and `axleloadT` = gross ÷ axles; routes are read from `data.routes`; non-2xx bodies `{ ok: false, error: { code } }` are read too.
 - Extra loads (3·Git) / earnings (4·Git): `useSelectedRoute(tripId)` gives the chosen route's geometry, plan (ETAs, halts, tolls) and cost.
 
-## Phase 3·Code — Camera and Hindi voice (branch code/phase3-camera-voice) status: ready to merge
+## Phase 3·Code — Camera and Hindi voice (branch code/phase3-camera-voice) status: merged (v3)
 
 Built (from `v2`; owner's answers: Gemini key + `GEMINI_MODEL=gemini-3.5-flash` already in `.env.secrets`, A4 sheet as size reference, "ऊपर से / नीचे से 10 बाई 10" = top / base is 10 × 10, height separate). Only `src/features/smart-input` and `supabase/functions/ai-cargo` changed; no SQL, no new packages.
 - **F17 `ai-cargo` Edge Function** (`supabase/functions/ai-cargo`, contract Engineering Reference 6.2): loader token first (`loader_trip_for_token`, service role) else owner session (trip via RLS); 1–3 photos ≤ 700 KB (TOO_LARGE), stored at `cargo-images/<company>/<trip>/<uuid>.jpg`; Gemini `generateContent` with a JSON `responseSchema`, 45 s timeout, `GEMINI_API_KEY_1` as fallback key on 429/5xx; every call logged in `ai_scans` (parsed / failed); warnings COUNT_MISMATCH · SIZE_MISSING · SIZE_OUT_OF_RANGE · LOW_CONFIDENCE · NOTHING_FOUND. Voice mode for sentences the rule parser is unsure about. Pure logic in `lib.ts` (16 tests). Deployed 2026-10-31 (v1, `verify_jwt: false`); Gemini secrets were already set on the project.
@@ -202,7 +210,7 @@ CONTRACT CHANGE REQUEST — from 3·Code
 File/contract: `src/i18n/data/hi.json` (demo dictionary)   Change: add the labels the parser / AI store: "Box" → "बॉक्स", "Carton" → "कार्टन", "Crate" → "पेटी", "Sack" → "बोरी", "Drum" → "ड्रम", "TV" → "टीवी", "Refrigerator" → "फ्रिज".
 Why: cargo rows added by camera / voice show the English label in Hindi. Owner to apply: Agent Code at Merge 3.
 
-## Phase 3·Git — Extra loads and marketplace (branch git/phase3-extra-loads) status: ready to merge
+## Phase 3·Git — Extra loads and marketplace (branch git/phase3-extra-loads) status: merged (v3)
 
 OWNER ADDITION (2026-10-31, written by Agent Code for the owner) — **Additional Cargo Evaluation Engine**, part of F19. Build it inside `src/features/extra-loads` (`lib/evaluate.ts`, pure and tested); every candidate — a marketplace listing **or** a load the owner types in — goes through this one engine.
 - **Inputs, reused (no new truck/trip profiles):** truck inside L×W×H, payload kg, ₹/km (`cost_per_km_inr`), axles; trip stops in order, selected route (`useSelectedRoute`, else straight line through stops marked Approximate), existing cargo + active plan (`fitAdditional`). Missing value → plain message + NEEDS REVIEW, never a guess.
