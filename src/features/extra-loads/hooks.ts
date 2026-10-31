@@ -51,6 +51,12 @@ function basePlan(d: StepData, options: PackOptions): BasePlan {
   return { container, items, placements, started, loaded: placements.filter((p) => loadedKeys.has(p.key)) }
 }
 
+/** OK only if nothing new is left out — neither the load nor cargo that fitted before. */
+export function spaceVerdict(unplaced: PackResult['unplaced'], alreadyMissing = 0): SpaceCheck {
+  if (unplaced.length <= alreadyMissing) return 'OK'
+  return unplaced.some((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
+}
+
 /** Same rule as "Add to trip": pack everything again before loading starts, else fit around the loaded boxes. */
 export function fitWithLoad(
   packer: Pick<Packer, 'pack' | 'fitAdditional'>,
@@ -93,6 +99,8 @@ export function useExtraLoads(tripId: string) {
 
   const toCheck = first.filter((c) => c.recommended || c.feasibility.reason === 'LOW_MARGIN')
   const spaceKey = base ? `${base.started}:${computeInputHash(base.container, base.items, options, base.started ? base.loaded : [])}` : 'none'
+  // boxes the current plan already leaves out don't count against a new load
+  const baseMissing = base ? base.items.length - base.placements.length : 0
   const space = useQuery({
     queryKey: [...queryKeys.tripExtra(tripId), 'space', spaceKey, toCheck.map((c) => `${c.listingId}:${c.loadOrder}:${c.unloadOrder}`).join(',')],
     enabled: Boolean(base) && toCheck.length > 0,
@@ -103,9 +111,7 @@ export function useExtraLoads(tripId: string) {
       for (const c of toCheck) {
         const extra = listingPackItems(c)
         const r = await fitWithLoad(packer, base!, extra, options)
-        const keys = new Set(extra.map((i) => i.key))
-        const missed = r.unplaced.filter((u) => keys.has(u.key))
-        out.set(c.listingId, missed.length === 0 ? 'OK' : missed.some((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE')
+        out.set(c.listingId, spaceVerdict(r.unplaced, baseMissing))
       }
       return out
     },
@@ -241,8 +247,11 @@ export function usePlannableTrips() {
   return useQuery({ queryKey: [...queryKeys.tripsAll, 'withStops'], queryFn: fetchPlannableTripsWithStops })
 }
 
+/** Straight lines between stops cut corners, so the rough trip match allows twice the corridor. */
+export const FIND_TRIP_KM = 80
+
 /** The planned trip a listing fits best (near the stops line, right direction, least off-route), or null. */
-export function bestTripFor(listing: ListingRow, trips: Awaited<ReturnType<typeof fetchPlannableTripsWithStops>>, corridor = 40) {
+export function bestTripFor(listing: ListingRow, trips: Awaited<ReturnType<typeof fetchPlannableTripsWithStops>>, corridor = FIND_TRIP_KM) {
   let best: { tripId: string; off: number } | null = null
   for (const { trip, stops } of trips) {
     if (stops.length < 2) continue

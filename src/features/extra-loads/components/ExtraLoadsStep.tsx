@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ChevronDown, Coins, Info, MoveHorizontal, PackageSearch, Scale, XCircle } from 'lucide-react'
-import { BigTile, EmptyState, ErrorState, Skeleton } from '@/components/common'
+import { EmptyState, ErrorState, Skeleton } from '@/components/common'
 import { formatFt, formatInr, formatWeight } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
@@ -14,6 +14,17 @@ import { reasonText } from '../lib/text'
 import { LoadCard } from './LoadCard'
 import { RouteStrip } from './RouteStrip'
 import { PreviewSheet } from './PreviewSheet'
+
+/** Compact tile (3 per row also at 375 px in Hindi): icon, number, one-line label. */
+function Tile({ icon: Icon, value, label, ok }: { icon: typeof Coins; value: string; label: string; ok?: boolean }) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1 rounded-tile border border-line bg-surface-2 p-3 sm:p-4">
+      <Icon size={24} aria-hidden className={ok ? 'text-ok' : 'text-ink-2'} />
+      <span className={cn('text-[18px] leading-7 font-semibold break-words tabular sm:text-[24px]', ok && 'text-ok')}>{value}</span>
+      <span className="text-label text-ink-2">{label}</span>
+    </div>
+  )
+}
 
 export function ExtraLoadsStep({ tripId }: { tripId: string }) {
   const { t, td } = useLang('extra-loads')
@@ -64,9 +75,9 @@ export function ExtraLoadsStep({ tripId }: { tripId: string }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
-        <BigTile icon={MoveHorizontal} value={formatFt(freeFloor)} label={t('tiles.freeFloor')} />
-        <BigTile icon={Scale} value={formatWeight(Math.max(0, x.remainingPayloadKg))} label={t('tiles.weightLeft')} />
-        <BigTile icon={Coins} value={top ? formatInr(top.netBenefitInr) : '—'} label={t('tiles.possible')} tone={top ? 'ok' : 'default'} />
+        <Tile icon={MoveHorizontal} value={formatFt(freeFloor)} label={t('tiles.freeFloor')} />
+        <Tile icon={Scale} value={formatWeight(Math.max(0, x.remainingPayloadKg))} label={t('tiles.weightLeft')} />
+        <Tile icon={Coins} value={top ? formatInr(top.netBenefitInr) : '—'} label={t('tiles.possible')} ok={Boolean(top)} />
       </div>
 
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-label text-ink-2">

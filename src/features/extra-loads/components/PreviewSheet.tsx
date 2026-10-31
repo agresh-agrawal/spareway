@@ -9,6 +9,8 @@ import type { PackOptions } from '@/types/domain'
 import { listingPackItems, type Candidate } from '../lib/candidates'
 import { fitWithLoad, type BasePlan } from '../hooks'
 
+const NEW_LOAD_COLOUR_SEQ = 8
+
 function canWebGL(): boolean {
   try {
     if (/jsdom/i.test(navigator.userAgent)) return false
@@ -40,6 +42,11 @@ export function PreviewSheet({
     staleTime: Infinity,
     queryFn: () => fitWithLoad(packer, base!, listingPackItems(candidate!), options),
   })
+  // the new load in stop colour 8 (pink — not used by a normal trip), so it stands out from the planned boxes
+  const shown = useMemo(() => {
+    const prefix = candidate ? `${candidate.listingId}#` : '\u0000'
+    return (preview.data?.placements ?? []).map((p) => (p.key.startsWith(prefix) ? { ...p, unloadOrder: NEW_LOAD_COLOUR_SEQ } : p))
+  }, [preview.data, candidate])
   const states = useMemo(() => {
     const m = new Map<string, 'waiting'>()
     // the new load solid, everything else faded
@@ -49,17 +56,16 @@ export function PreviewSheet({
   }, [preview.data, candidate])
   return (
     <Sheet open={Boolean(candidate)} onOpenChange={(o) => !o && onClose()} title={t('preview.title', { code: candidate?.code ?? '' })} description={t('preview.new')}>
-      <p className="mb-3 text-ink-2">{t('preview.new')}</p>
       {!preview.data || !base ? (
         <Skeleton className="h-72" />
       ) : webgl && !lowData ? (
         <Suspense fallback={<Skeleton className="h-72" />}>
-          <TruckScene container={base.container} placements={preview.data.placements} states={states} className="h-72 w-full overflow-hidden rounded-card sm:h-96" />
+          <TruckScene container={base.container} placements={shown} states={states} className="h-72 w-full overflow-hidden rounded-card sm:h-96" />
         </Suspense>
       ) : (
         <div className="flex flex-col gap-3">
-          <TopView container={base.container} placements={preview.data.placements} states={states} />
-          <SideView container={base.container} placements={preview.data.placements} states={states} bare />
+          <TopView container={base.container} placements={shown} states={states} />
+          <SideView container={base.container} placements={shown} states={states} bare />
         </div>
       )}
     </Sheet>

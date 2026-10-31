@@ -87,9 +87,9 @@ export default function PostLoadPage() {
       </Card>
       <Card className="flex flex-col gap-4">
         <div className="grid grid-cols-3 gap-3">
-          <NumberField label={t('form.length')} unit="cm" error={err('length_cm')} {...form.register('length_cm')} />
-          <NumberField label={t('form.width')} unit="cm" error={err('width_cm')} {...form.register('width_cm')} />
-          <NumberField label={t('form.height')} unit="cm" error={err('height_cm')} {...form.register('height_cm')} />
+          <NumberField label={t('form.lengthCm')} error={err('length_cm')} {...form.register('length_cm')} />
+          <NumberField label={t('form.widthCm')} error={err('width_cm')} {...form.register('width_cm')} />
+          <NumberField label={t('form.heightCm')} error={err('height_cm')} {...form.register('height_cm')} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <NumberField label={t('form.kgEach')} unit="kg" error={err('weight_kg')} {...form.register('weight_kg')} />

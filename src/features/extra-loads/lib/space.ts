@@ -13,8 +13,9 @@ export function checkSpace(
 ): { check: SpaceCheck; result: PackResult } {
   const extra = listingPackItems(candidate)
   const result = fitAdditional(container, base, [...baseItems, ...extra], options)
-  const keys = new Set(extra.map((i) => i.key))
-  const missed = result.unplaced.filter((u) => keys.has(u.key))
-  const check: SpaceCheck = missed.length === 0 ? 'OK' : missed.some((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
+  // nothing may drop out — neither the new load nor cargo that was already planned
+  const alreadyMissing = baseItems.length - base.length
+  const check: SpaceCheck =
+    result.unplaced.length <= alreadyMissing ? 'OK' : result.unplaced.some((u) => u.reason === 'ORDER_CONFLICT') ? 'ORDER_CONFLICT' : 'NO_SPACE'
   return { check, result }
 }

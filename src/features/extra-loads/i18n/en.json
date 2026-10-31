@@ -38,7 +38,7 @@
   "empty": "No loads on your way right now",
   "preview": {
     "title": "{{code}} in the truck",
-    "new": "New load is solid, planned boxes are faded",
+    "new": "New load in pink, planned boxes faded",
     "close": "Close"
   },
   "added": "Added {{code}} — space used {{before}}% → {{after}}%",
@@ -76,9 +76,6 @@
     "from": "Pickup",
     "to": "Drop",
     "choose": "Choose a place",
-    "length": "Length",
-    "width": "Width",
-    "height": "Height",
     "kgEach": "Weight of one piece",
     "qty": "How many pieces",
     "fragile": "Fragile",
@@ -92,7 +89,10 @@
       "positive": "Must be more than 0",
       "same": "Pickup and drop must differ",
       "size": "Between 5 and 1,500 cm"
-    }
+    },
+    "lengthCm": "Length (cm)",
+    "widthCm": "Width (cm)",
+    "heightCm": "Height (cm)"
   },
   "widget": {
     "title": "Extra earnings available",
