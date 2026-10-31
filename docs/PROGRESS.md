@@ -281,7 +281,36 @@ CHANGE REQUEST APPLIED (Agent Code, owner of the merge) — shared Phase 0 files
 - **Fallbacks:** typed voice ("Type instead"), manual cargo form, saved routes, Settings → Reset sample data, backup video. If signup emails are slow: Supabase → Auth → turn **Confirm email OFF** before judges sign up.
 - **5 minutes:** Home → हिंदी → English · Cargo (104 units, truck a third full) · Load plan → 3D → Play · Send to loader → phone scans QR → Done / Problem · Route → three routes → Choose · Extra loads → reasons → Add LD-1045 · Speak Hindi on the loader phone → owner alert · Earnings → before vs after.
 
-## Phase 4·Git — Earnings and analytics (branch git/phase4-earnings) status: not started
+## Phase 4·Git — Earnings and analytics (branch git/phase4-earnings) status: ready to merge
+
+Started from tag `v3`. Only `src/features/analytics` changed. No SQL file, no new packages. Owner's answers: the /earnings big numbers are **Earned · From extra loads · Space used**; default period **7 days**; Home widget **"Money this week"** (doesn't repeat the Phase 0 space chart).
+
+Built (F23):
+- **Maths** `analytics/lib/earnings.ts` (pure, tested): earning = freight + accepted extra offers − route cost − extra-load costs (Engineering Reference 7.8: 62,000 + 14,000 − 40,000 − 3,550 = **₹32,450**, before ₹22,000, gain **+₹10,450**); space used before → after (booked volume without / with `extra_load` cargo); empty floor saved = used floor length with − without extra loads (both packed with load-planner `pack`); cost per tonne-km = route cost ÷ (t × km) → (route + extra costs) ÷ (t incl. extra × km); fleet period totals from `fleet_daily_stats` (earned = Σ revenue − cost, extra-load revenue, average space used, per-day series).
+- **Earnings step** (slot `trip.steps` order 6): "You earn ₹32,450" + Estimated, "+₹10,450 from extra loads" (or "No extra loads on this trip yet"); tiles Space used 34% → 43% · Empty floor saved 2.6 ft · Cost per tonne-km ₹10.70 → ₹8.91; "How it adds up" (+ Freight, + Extra loads, − Route cost, − Extra-load costs = You earn, Estimated on costs); lime "Share on WhatsApp" (summary in the screen language). No route chosen → "Choose a route to see costs" + "Open Route"; route cost "not known yet".
+- **/earnings** (nav "Earnings", phone More): chips 7 days / 30 days; three big numbers (Sample badge on demo data); two simple bar charts (money earned per day, space used per day); top trips by earning (→ trip's Earnings step; "Costs not known — no route chosen").
+- **Home widget** "Money this week" (`home.widgets`): earned in the last 7 days, from extra loads, trips done, "See earnings".
+- Data via `analytics/api.ts` (`trip_financials`, trip + truck + stops + cargo + chosen route km, `fleet_daily_stats`, completed trips); fixture mode for every read.
+- Public API `analytics/index.ts`: `tripEarnings`, `periodTotals`, `spaceBeforeAfter`, `costPerTonneKm`, `emptyFloorSavedCm`, `cargoTonnes`, `useTripEarnings`, `usePeriod`.
+- Tests: 15 new (maths incl. Engineering Reference 7.8, fixture hooks, step EN + HI, no-route state, page, widget, slots). `npm run check` 339 tests + `npm run build` pass, also without `.env`. Main bundle 137 KB gzip.
+
+How to demo (fixture mode): `npm run dev` → `http://localhost:5173/trips/00000000-0000-4000-8000-000000000031?step=route&fixture=seed` → Choose Fastest → Extra loads → Add LD-1045 → tab "Earnings" ("You earn …", "+₹12,507 from extra loads", 34% → 43%, 2.6 ft, ₹14.52 → ₹11.42 with the fixture route) → Share on WhatsApp → `/earnings` (7 / 30 days) → Home "Money this week" → tap हिंदी.
+
+Contract change requests: none.
+
+Code must verify (Git only) — real database:
+- [ ] TRP-2026-0031 after Choose route + Add LD-1045 → step 6 "Earnings": "You earn ₹…" = `trip_financials.net_earnings_inr`; "+₹… from extra loads" = 14,000 − LD-1045's `incremental_cost_inr`; list rows = freight 62,000 / extra 14,000 / route cost = chosen `route_options.total_cost_inr` / extra costs.
+- [ ] Tiles: Space used 34% → ~43%, Empty floor saved > 0 ft, Cost per tonne-km before → after (after lower).
+- [ ] Trip without a chosen route → "Choose a route to see costs" + Open Route.
+- [ ] Share on WhatsApp opens WhatsApp with the summary (English or Hindi as on screen).
+- [ ] /earnings: 7 days → 3 numbers + 2 charts from `fleet_daily_stats` (Sample badge — the 30 seeded days are `is_sample`); 30 days changes them; top trips list, tap → trip Earnings step.
+- [ ] Home: "Money this week" card (Sample) + "See earnings".
+- [ ] 375 px in Hindi: step, page, widget — no sideways scroll (checked here in fixture mode).
+
+Notes for the other agent:
+- The Earnings step owns its lime button (Share on WhatsApp); no NextStepCard needed there.
+- Two "This week" cards on Home: Phase 0's space chart and mine "Money this week" (owner's choice — money, not the same chart).
+- `trip_financials.route_cost_inr` is 0 when no route is chosen; the step uses `trips.selected_route_id` to show "not known yet" instead of ₹0.
 
 ## Working together — Agent Code (local) + Agent Git (cloud) (added 2026-10-30 by Agent Git)
 

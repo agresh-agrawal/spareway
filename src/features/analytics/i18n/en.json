@@ -1,0 +1,49 @@
+{
+  "title": "Earnings",
+  "step": "Earnings",
+  "hero": "You earn {{inr}}",
+  "gain": "+{{inr}} from extra loads",
+  "noExtra": "No extra loads on this trip yet",
+  "noRoute": "Choose a route to see costs",
+  "openRoute": "Open Route",
+  "tiles": {
+    "space": "Space used",
+    "spaceValue": "{{before}}% → {{after}}%",
+    "floor": "Empty floor saved",
+    "perTonneKm": "Cost per tonne-km",
+    "perTonneKmValue": "{{before}} → {{after}}"
+  },
+  "list": {
+    "title": "How it adds up",
+    "freight": "Freight",
+    "extra": "Extra loads",
+    "route": "Route cost",
+    "extraCost": "Extra-load costs",
+    "total": "You earn",
+    "notKnown": "not known yet"
+  },
+  "share": "Share on WhatsApp",
+  "shareText": "Spareway · {{code}}\nFreight {{freight}} + extra loads {{extra}} − route {{route}} − extra costs {{extraCost}}\nYou earn {{net}} ({{gain}} from extra loads)",
+  "page": {
+    "subtitle": "How the fleet is doing",
+    "days_7": "7 days",
+    "days_30": "30 days",
+    "earned": "Earned",
+    "extra": "From extra loads",
+    "space": "Space used",
+    "moneyChart": "Money earned per day",
+    "spaceChart": "Space used per day",
+    "topTrips": "Top trips",
+    "noRouteTrip": "Costs not known — no route chosen",
+    "empty": "No numbers yet",
+    "tripsNone": "No trips yet"
+  },
+  "widget": {
+    "title": "Money this week",
+    "earned": "Earned",
+    "extra": "{{inr}} from extra loads",
+    "trips_one": "{{count}} trip done",
+    "trips_other": "{{count}} trips done",
+    "see": "See earnings"
+  }
+}

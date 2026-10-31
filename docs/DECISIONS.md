@@ -99,3 +99,10 @@
 | 2026-10-31 | 4·Code | Only new owner cargo lines are queued offline; edits / deletes still need the internet | Spec names "owner cargo adds"; a queued edit could overwrite newer data |
 | 2026-10-31 | 4·Code | Offline map = corridor z4–8 + 3-tile band to z11 (~574 tiles, ~40 MB) | Close to the spec's ~30 MB; z11 is enough to read the highway and towns |
 | 2026-10-31 | 4·Code | Providers + TopBar edited directly (change request applied by the merge owner) | No slot for app-wide providers or the avatar menu |
+| 2026-10-31 | 4·Git | /earnings big numbers: Earned (Σ revenue − cost) · From extra loads · Space used (average) | Owner answer Q1 |
+| 2026-10-31 | 4·Git | Earnings page opens on 7 days | Owner answer Q2 (spec default) |
+| 2026-10-31 | 4·Git | Home widget = "Money this week" (earned, from extra loads, trips done), not a second space chart | Owner answer; Phase 0 already shows the space chart |
+| 2026-10-31 | 4·Git | Space used before → after = booked volume without / with extra-load cargo | Same measure as the Cargo step and the Load plan (volume) |
+| 2026-10-31 | 4·Git | Empty floor saved = used floor length with − without extra loads, both packed with load-planner `pack` | Real floor from the same engine, not a guess |
+| 2026-10-31 | 4·Git | Cost per tonne-km = route cost ÷ (t × route km) → (route + extra costs) ÷ (t incl. extra × km); shown only with a chosen route | Spec "₹2.41 → ₹1.73"; no route → costs not known |
+| 2026-10-31 | 4·Git | Without a chosen route the earning shows freight + extras with route cost "not known yet" (not ₹0) | trip_financials puts 0 when there is no route |
