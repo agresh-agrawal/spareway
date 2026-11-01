@@ -812,6 +812,83 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          company_id: string
+          created_at: string
+          emailed_at: string | null
+          id: string
+          is_sample: boolean
+          kind: string
+          link: string
+          major: boolean
+          meta: Json
+          read_at: string | null
+          severity: string
+          title: string
+          trip_id: string | null
+        }
+        Insert: {
+          company_id?: string
+          created_at?: string
+          emailed_at?: string | null
+          id?: string
+          is_sample?: boolean
+          kind: string
+          link?: string
+          major?: boolean
+          meta?: Json
+          read_at?: string | null
+          severity?: string
+          title: string
+          trip_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          emailed_at?: string | null
+          id?: string
+          is_sample?: boolean
+          kind?: string
+          link?: string
+          major?: boolean
+          meta?: Json
+          read_at?: string | null
+          severity?: string
+          title?: string
+          trip_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_company_id_fkey'
+            columns: ['company_id']
+            isOneToOne: false
+            referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trip_financials'
+            referencedColumns: ['trip_id']
+          },
+          {
+            foreignKeyName: 'notifications_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trip_overview'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trips'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       pois: {
         Row: {
           city: string
@@ -862,6 +939,7 @@ export type Database = {
           company_id: string
           created_at: string
           email: string
+          email_notify: boolean
           full_name: string
           id: string
           preferred_lang: string
@@ -870,6 +948,7 @@ export type Database = {
           company_id: string
           created_at?: string
           email?: string
+          email_notify?: boolean
           full_name?: string
           id: string
           preferred_lang?: string
@@ -878,6 +957,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           email?: string
+          email_notify?: boolean
           full_name?: string
           id?: string
           preferred_lang?: string
@@ -926,6 +1006,7 @@ export type Database = {
       }
       providers: {
         Row: {
+          blocked: boolean
           company_id: string
           created_at: string
           id: string
@@ -937,6 +1018,7 @@ export type Database = {
           portal_token: string
         }
         Insert: {
+          blocked?: boolean
           company_id: string
           created_at?: string
           id?: string
@@ -948,6 +1030,7 @@ export type Database = {
           portal_token: string
         }
         Update: {
+          blocked?: boolean
           company_id?: string
           created_at?: string
           id?: string
@@ -1352,6 +1435,11 @@ export type Database = {
           driver_name: string
           driver_phone: string
           driver_token: string | null
+          gps_accuracy_m: number | null
+          gps_at: string | null
+          gps_lat: number | null
+          gps_lng: number | null
+          gps_speed_kmph: number | null
           id: string
           is_sample: boolean
           loader_link_enabled: boolean
@@ -1375,6 +1463,11 @@ export type Database = {
           driver_name?: string
           driver_phone?: string
           driver_token?: string | null
+          gps_accuracy_m?: number | null
+          gps_at?: string | null
+          gps_lat?: number | null
+          gps_lng?: number | null
+          gps_speed_kmph?: number | null
           id?: string
           is_sample?: boolean
           loader_link_enabled?: boolean
@@ -1398,6 +1491,11 @@ export type Database = {
           driver_name?: string
           driver_phone?: string
           driver_token?: string | null
+          gps_accuracy_m?: number | null
+          gps_at?: string | null
+          gps_lat?: number | null
+          gps_lng?: number | null
+          gps_speed_kmph?: number | null
           id?: string
           is_sample?: boolean
           loader_link_enabled?: boolean
@@ -1628,7 +1726,12 @@ export type Database = {
         Returns: Json
       }
       activate_load_plan: { Args: { p_plan_id: string }; Returns: undefined }
+      block_provider: {
+        Args: { p_block: boolean; p_id: string }
+        Returns: Json
+      }
       check_report_token: { Args: { p_token: string }; Returns: boolean }
+      close_old_links: { Args: never; Returns: number }
       create_driver_link: { Args: { p_trip_id: string }; Returns: Json }
       create_loader_link: { Args: { p_trip_id: string }; Returns: Json }
       create_trip_with_stops: {
@@ -1643,6 +1746,7 @@ export type Database = {
         Returns: Json
       }
       current_company_id: { Args: never; Returns: string }
+      delete_my_account: { Args: { p_confirm: string }; Returns: Json }
       disable_driver_link: { Args: { p_trip_id: string }; Returns: undefined }
       disable_loader_link: { Args: { p_trip_id: string }; Returns: undefined }
       driver_add_expense: {
@@ -1657,6 +1761,16 @@ export type Database = {
       driver_get_trip: { Args: { p_token: string }; Returns: Json }
       driver_mark_stop: {
         Args: { p_status: string; p_stop_id: string; p_token: string }
+        Returns: Json
+      }
+      driver_send_location: {
+        Args: {
+          p_accuracy_m?: number
+          p_lat: number
+          p_lng: number
+          p_speed_kmph?: number
+          p_token: string
+        }
         Returns: Json
       }
       get_provider_link: { Args: { p_new?: boolean }; Returns: Json }
@@ -1695,6 +1809,16 @@ export type Database = {
         }
         Returns: Json
       }
+      loader_update_steps: {
+        Args: {
+          p_plan_id: string
+          p_status: string
+          p_steps: number[]
+          p_token: string
+        }
+        Returns: Json
+      }
+      mark_notifications_read: { Args: never; Returns: number }
       next_listing_code: { Args: never; Returns: string }
       next_trip_code: { Args: never; Returns: string }
       provider_answer_offer: {

@@ -1,5 +1,5 @@
 import { getSupabase } from '@/lib/supabase'
-import { toAppError } from '@/lib/errors'
+import { throwIfDataError, toAppError } from '@/lib/errors'
 import type { SettingsValues } from './schemas'
 import { fixtureDelay, fixtureStore, isFixtureMode, resetFixtureStore } from '@/lib/fixtures'
 
@@ -36,4 +36,15 @@ export async function resetSampleData(): Promise<void> {
   }
   const { error } = await getSupabase().rpc('reset_sample_data')
   if (error) throw toAppError(error)
+}
+
+/** Delete the signed-in account (and the company when nobody else is in it). `confirm` must be DELETE. */
+export async function deleteMyAccount(confirm: string): Promise<void> {
+  if (isFixtureMode()) {
+    if (confirm !== 'DELETE') throw toAppError({ message: 'BAD_ITEMS' })
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('delete_my_account', { p_confirm: confirm })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
 }

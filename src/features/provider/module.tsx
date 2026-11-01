@@ -1,11 +1,15 @@
 import { lazy } from 'react'
-import { Megaphone } from 'lucide-react'
+import { Megaphone, Users } from 'lucide-react'
 import type { FeatureModule } from '@/types/domain'
 import en from './i18n/en.json'
 import hi from './i18n/hi.json'
 
 const ProviderAction = lazy(() =>
   import('./components/OwnerTools').then((m) => ({ default: m.ProviderAction })),
+)
+
+const ProvidersSection = lazy(() =>
+  import('./components/ProvidersSection').then((m) => ({ default: m.ProvidersSection })),
 )
 
 /** Load providers (stage 5): no-login posting link, a page per load with counter-offers. */
@@ -19,6 +23,7 @@ const provider: FeatureModule = {
     { path: '/my-loads/:portal', element: lazy(() => import('./pages/PortalPage')), guard: 'none' },
   ],
   slots: {
+    'settings.sections': [{ id: 'providers', order: 45, component: ProvidersSection, labelKey: 'provider:list.title', icon: Users }],
     'home.actions': [
       {
         id: 'provider-link',

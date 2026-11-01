@@ -31,6 +31,7 @@ export interface FixtureData {
   provider_links: Tables<'provider_links'>[]
   listing_offers: Tables<'listing_offers'>[]
   providers: Tables<'providers'>[]
+  notifications: Tables<'notifications'>[]
   activity_log: Tables<'activity_log'>[]
   fleet_daily_stats: Tables<'fleet_daily_stats'>[]
   pois: Tables<'pois'>[]
@@ -127,6 +128,11 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     driver_link_enabled: false,
     driver_name: trucks.find((x) => x.reg_no === reg)!.driver_name,
     driver_phone: trucks.find((x) => x.reg_no === reg)!.driver_phone,
+    gps_lat: null,
+    gps_lng: null,
+    gps_accuracy_m: null,
+    gps_speed_kmph: null,
+    gps_at: null,
     is_sample: true,
     created_at: created,
     updated_at: created,
@@ -340,6 +346,31 @@ export function buildSeed(now: Date = new Date()): FixtureData {
   ]
 
   const alerts: Tables<'alerts'>[] = [] // only loader reports remain; none in the sample
+  const note = (
+    n: number,
+    kind: string,
+    severity: string,
+    major: boolean,
+    meta: Record<string, string | number>,
+    link: string,
+    tripId: string | null,
+    agoMin: number,
+    read: boolean,
+  ): Tables<'notifications'> => ({
+    id: id('n', n),
+    company_id: c,
+    trip_id: tripId,
+    kind,
+    severity,
+    major,
+    title: kind.replace(/_/g, ' '),
+    meta,
+    link,
+    read_at: read ? iso(t - (agoMin - 5) * MIN) : null,
+    emailed_at: null,
+    is_sample: true,
+    created_at: iso(t - agoMin * MIN),
+  })
 
   const act = (n: number, kind: string, message: string, entity_type: string, entity_ref: string, agoMin: number): Tables<'activity_log'> => ({
     id: id('v', n),
@@ -385,6 +416,7 @@ export function buildSeed(now: Date = new Date()): FixtureData {
       full_name: 'Agresh Agrawal',
       email: 'owner@fixture.test',
       preferred_lang: 'en',
+      email_notify: true,
       created_at: created,
     },
     company: { id: c, name: 'Agrawal Transport', city: 'Indore', phone: '', created_by: FIXTURE_USER_ID, sample_seeded_at: created, created_at: created },
@@ -426,6 +458,11 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     provider_links: [],
     listing_offers: [],
     providers: [],
+    notifications: [
+      note(1, 'trip_done', 'info', true, { code: done.code }, `/trips/${done.id}`, done.id, 6 * 60, true),
+      note(2, 'driver_challan', 'warning', true, { code: done.code, kind: 'challan', amount: 2000, note: 'No-entry time, Jaipur' }, `/trips/${done.id}`, done.id, 6 * 60 + 30, true),
+      note(3, 'provider_load', 'info', true, { name: 'Sharma Trading Co.', count: 3 }, '/loads', null, 25, false),
+    ],
     activity_log,
     fleet_daily_stats,
     pois: [],

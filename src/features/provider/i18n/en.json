@@ -160,5 +160,15 @@
       "empty": "No shipments yet. Book your first one from here.",
       "goodsHint": "e.g. 20 crates of machine parts"
     }
+  },
+  "list": {
+    "title": "Load providers",
+    "text": "Traders and shippers who joined with your provider link. Block someone who posts fake or wrong loads — their page stops and their open loads come off the market.",
+    "empty": "Nobody has joined yet. Share your provider link from the Loads page.",
+    "block": "Block",
+    "unblock": "Unblock",
+    "isBlocked": "Blocked",
+    "blocked": "Provider blocked — their open loads are taken off",
+    "unblocked": "Provider unblocked — send them the link again"
   }
 }

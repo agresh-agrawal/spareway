@@ -53,6 +53,38 @@ const hex = (n: number) =>
 
 // ---------- owner ----------
 
+export type ProviderRow = Pick<Tables<'providers'>, 'id' | 'name' | 'phone' | 'kind' | 'blocked' | 'created_at'>
+
+/** Traders / shippers who joined through the link, newest first. */
+export async function listProviders(): Promise<ProviderRow[]> {
+  if (isFixtureMode())
+    return fixtureDelay(fixtureStore().providers.slice().sort((a, b) => b.created_at.localeCompare(a.created_at)))
+  const { data, error } = await getSupabase()
+    .from('providers')
+    .select('id, name, phone, kind, blocked, created_at')
+    .order('created_at', { ascending: false })
+  if (error) throw toAppError(error)
+  return data
+}
+
+/** Block (or unblock) a provider: their page stops working and their open loads come off the market. */
+export async function blockProvider(id: string, block: boolean): Promise<void> {
+  if (isFixtureMode()) {
+    const d = fixtureStore()
+    const p = d.providers.find((x) => x.id === id)
+    if (!p) throw new AppError('UNKNOWN')
+    p.blocked = block
+    if (block) {
+      p.portal_token = hex(16)
+      for (const l of d.freight_listings) if (l.provider_id === id && l.status === 'open') l.status = 'expired'
+    }
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('block_provider', { p_id: id, p_block: block })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
+}
+
 /** The company's provider link token (made on first use); `fresh` replaces the old link. */
 export async function getProviderLink(fresh = false): Promise<string> {
   if (isFixtureMode()) {
@@ -384,7 +416,7 @@ export async function joinProvider(token: string, kind: ProviderKind, name: stri
     let p = d.providers.find((x) => x.company_id === link.company_id && x.phone === phoneKey(phone))
     if (p) Object.assign(p, { kind, name: name.trim(), link_id: link.id })
     else {
-      p = { id: crypto.randomUUID(), company_id: link.company_id, link_id: link.id, kind, name: name.trim(), phone: phoneKey(phone), portal_token: hex(16), is_sample: false, created_at: new Date().toISOString() }
+      p = { id: crypto.randomUUID(), company_id: link.company_id, link_id: link.id, kind, name: name.trim(), phone: phoneKey(phone), portal_token: hex(16), blocked: false, is_sample: false, created_at: new Date().toISOString() }
       d.providers.push(p)
     }
     return fixtureDelay(p.portal_token)

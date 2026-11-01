@@ -59,5 +59,22 @@
     "number": "Type a number",
     "range": "Out of range",
     "phone": "Only digits, spaces, + and -"
+  },
+  "privacy": {
+    "title": "Privacy and your data",
+    "points": {
+      "data": "We keep your name, email, mobile, company, trucks, trips, cargo and money numbers. Only people in your company can see them.",
+      "location": "Driver location is used only while the driver has the Spareway map open and agreed to it. We keep only the last point on the trip, not a history.",
+      "photos": "Cargo photos are deleted after 30 days. The items and sizes read from them stay.",
+      "links": "Loader and driver links stop working 48 hours after the trip ends. You can switch them off at any time.",
+      "email": "Emails come only from Spareway (monthly report, important changes). Switch them off above.",
+      "never": "We never sell your data or show it to other transporters."
+    },
+    "delete": "Delete my account",
+    "deleteTitle": "Delete your account?",
+    "deleteText": "Your login is deleted. If nobody else is in your company, the company and all its trucks, trips, loads and photos are deleted too. This cannot be undone.",
+    "typeDelete": "Type DELETE to confirm",
+    "deleteForever": "Delete forever",
+    "deleted": "Your account is deleted"
   }
 }
