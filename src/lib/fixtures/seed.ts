@@ -30,6 +30,7 @@ export interface FixtureData {
   trip_expenses: Tables<'trip_expenses'>[]
   provider_links: Tables<'provider_links'>[]
   listing_offers: Tables<'listing_offers'>[]
+  providers: Tables<'providers'>[]
   activity_log: Tables<'activity_log'>[]
   fleet_daily_stats: Tables<'fleet_daily_stats'>[]
   pois: Tables<'pois'>[]
@@ -278,6 +279,7 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     company_id: c,
     share_token: null,
     provider_link_id: null,
+    provider_id: null,
     visibility: 'company',
     code,
     shipper_name,
@@ -423,6 +425,7 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     ],
     provider_links: [],
     listing_offers: [],
+    providers: [],
     activity_log,
     fleet_daily_stats,
     pois: [],

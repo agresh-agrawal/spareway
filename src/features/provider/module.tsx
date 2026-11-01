@@ -16,6 +16,7 @@ const provider: FeatureModule = {
   publicRoutes: [
     { path: '/post/:token', element: lazy(() => import('./pages/ProviderPostPage')), guard: 'none' },
     { path: '/offer/:share', element: lazy(() => import('./pages/SharedLoadPage')), guard: 'none' },
+    { path: '/my-loads/:portal', element: lazy(() => import('./pages/PortalPage')), guard: 'none' },
   ],
   slots: {
     'home.actions': [

@@ -121,3 +121,5 @@
 | 2026-10-31 | Pre-4 | GitHub history was rewritten earlier today; local commits were rebased onto it, never force-pushed | Keep the remote as the source of truth |
 | 2026-10-31 | Pre-4 | Auto-pick adds one load at a time and re-evaluates on the new plan (no combined search) | Every pick is checked by the same engine; nothing can overfill |
 | 2026-10-31 | Pre-4 | Hindi map labels from OSM `name:hi` with fallback, set at runtime in MapView (`src/components/common`) | Same free OpenFreeMap tiles; no second style file |
+| 2026-11-01 | Pre-4 | Providers identified by last 10 digits of their mobile per transporter; one private portal token each, no password | Owner: separate page for traders and shippers, no login |
+| 2026-11-01 | Pre-4 | Extra sample loads via `_seed_more_loads`, hooked into seed / reset by patching the call in place | Keeps `_seed_company` untouched |

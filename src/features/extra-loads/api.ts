@@ -371,6 +371,7 @@ export async function postListing(input: NewListing): Promise<ListingRow> {
       code,
       share_token: null,
       provider_link_id: null,
+      provider_id: null,
       posted_by: d.profile.id,
       accepted_by_company: null,
       is_sample: false,

@@ -9,7 +9,10 @@ export function LoadFields({
   value,
   onChange,
   errors,
+  goodsHint,
 }: {
+  /** placeholder for "What goods?" (trader / shipper wording) */
+  goodsHint?: string
   value: LoadForm
   onChange: (v: LoadForm) => void
   errors: Record<string, string>
@@ -29,7 +32,7 @@ export function LoadFields({
     <div className="flex flex-col gap-4">
       <TextField
         label={t('form.goods')}
-        placeholder={t('form.goodsHint')}
+        placeholder={goodsHint ?? t('form.goodsHint')}
         value={value.goods}
         error={err('goods')}
         onChange={(e) => set('goods', e.target.value)}

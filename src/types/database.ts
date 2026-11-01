@@ -520,6 +520,7 @@ export type Database = {
           pickup_lng: number
           pickup_name: string
           posted_by: string | null
+          provider_id: string | null
           provider_link_id: string | null
           quantity: number
           ready_from: string | null
@@ -554,6 +555,7 @@ export type Database = {
           pickup_lng: number
           pickup_name: string
           posted_by?: string | null
+          provider_id?: string | null
           provider_link_id?: string | null
           quantity?: number
           ready_from?: string | null
@@ -588,6 +590,7 @@ export type Database = {
           pickup_lng?: number
           pickup_name?: string
           posted_by?: string | null
+          provider_id?: string | null
           provider_link_id?: string | null
           quantity?: number
           ready_from?: string | null
@@ -614,6 +617,13 @@ export type Database = {
             columns: ['company_id']
             isOneToOne: false
             referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'freight_listings_provider_id_fkey'
+            columns: ['provider_id']
+            isOneToOne: false
+            referencedRelation: 'providers'
             referencedColumns: ['id']
           },
           {
@@ -910,6 +920,57 @@ export type Database = {
             columns: ['company_id']
             isOneToOne: false
             referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      providers: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          is_sample: boolean
+          kind: string
+          link_id: string | null
+          name: string
+          phone: string
+          portal_token: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          kind: string
+          link_id?: string | null
+          name: string
+          phone: string
+          portal_token: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          kind?: string
+          link_id?: string | null
+          name?: string
+          phone?: string
+          portal_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'providers_company_id_fkey'
+            columns: ['company_id']
+            isOneToOne: false
+            referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'providers_link_id_fkey'
+            columns: ['link_id']
+            isOneToOne: false
+            referencedRelation: 'provider_links'
             referencedColumns: ['id']
           },
         ]
@@ -1550,12 +1611,14 @@ export type Database = {
       }
     }
     Functions: {
+      _phone_key: { Args: { p: string }; Returns: string }
       _provider_load_fields: { Args: { p: Json }; Returns: Json }
       _seed_company: { Args: { p_company: string }; Returns: undefined }
       _seed_company_missing_trucks_guard: {
         Args: { p_company: string }
         Returns: undefined
       }
+      _seed_more_loads: { Args: { p_company: string }; Returns: undefined }
       accept_extra_load: {
         Args: {
           p_drop_after_seq: number
@@ -1640,7 +1703,21 @@ export type Database = {
       }
       provider_cancel_load: { Args: { p_share: string }; Returns: Json }
       provider_get_load: { Args: { p_share: string }; Returns: Json }
+      provider_join: {
+        Args: {
+          p_kind: string
+          p_name: string
+          p_phone: string
+          p_token: string
+        }
+        Returns: Json
+      }
       provider_link_info: { Args: { p_token: string }; Returns: Json }
+      provider_portal: { Args: { p_portal: string }; Returns: Json }
+      provider_portal_post: {
+        Args: { p_loads: Json; p_portal: string }
+        Returns: Json
+      }
       provider_post_loads: {
         Args: { p_loads: Json; p_shipper: Json; p_token: string }
         Returns: Json
@@ -1649,6 +1726,7 @@ export type Database = {
         Args: { p_load: Json; p_share: string }
         Returns: Json
       }
+      report_email_config: { Args: never; Returns: Json }
       reset_sample_data: { Args: never; Returns: Json }
       sample_data_allowed: { Args: never; Returns: boolean }
       seed_sample_data: { Args: never; Returns: Json }

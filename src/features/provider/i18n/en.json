@@ -92,7 +92,7 @@
   "owner": {
     "getLoads": "Get loads from providers",
     "linkTitle": "Link for load providers",
-    "linkText": "Send this link to traders and shippers. They post their goods with size, weight and price — no app, no login. Their loads show here and to other transporters.",
+    "linkText": "Send this link to traders and shippers. Each one says once who they are and gets their own page to upload loads and see your offers — no app, no login.",
     "whatsapp": "Send your goods with us — post the load here (no app needed): {{link}}",
     "newLink": "Make a new link",
     "newLinkHelp": "A new link stops the old one from working.",
@@ -119,5 +119,46 @@
     "withdraw": "Withdraw offer",
     "copyLink": "Copy load link",
     "copied": "Link copied"
+  },
+  "join": {
+    "title": "Send your loads",
+    "intro": "{{company}} uses Spareway to find trucks for goods. Tell us who you are once — you get your own page to upload loads and see offers. No app or password.",
+    "whoAreYou": "Who are you?",
+    "trader": "Trader",
+    "traderHelp": "I sell goods and send them to my buyers",
+    "shipper": "Shipper",
+    "shipperHelp": "I send my own goods — factory, warehouse or shop",
+    "pickKind": "Choose trader or shipper",
+    "phoneHelp": "Your page opens again with the same mobile",
+    "open": "Open my page"
+  },
+  "portal": {
+    "notFound": "This page link does not work",
+    "tiles": {
+      "open": "Waiting for a truck",
+      "offers": "Offers to answer",
+      "agreed": "Agreed"
+    },
+    "ready": "ready {{date}}",
+    "offersWaiting_one": "{{count}} offer waiting · {{inr}}",
+    "offersWaiting_other": "{{count}} offers waiting · best {{inr}}",
+    "keepLink": "This is your own page. Keep the link to come back any time.",
+    "copy": "Copy my page link",
+    "whatsapp": "Send it to myself",
+    "whatsappSelf": "My Spareway loads page: {{link}}",
+    "trader": {
+      "sub": "Trader · loads for {{company}}",
+      "loads": "My orders to deliver",
+      "upload": "Send goods to a buyer",
+      "empty": "No loads yet. Send goods to your buyers from here.",
+      "goodsHint": "e.g. 50 bags of cement for a buyer in Pune"
+    },
+    "shipper": {
+      "sub": "Shipper · loads for {{company}}",
+      "loads": "My shipments",
+      "upload": "Book a shipment",
+      "empty": "No shipments yet. Book your first one from here.",
+      "goodsHint": "e.g. 20 crates of machine parts"
+    }
   }
 }

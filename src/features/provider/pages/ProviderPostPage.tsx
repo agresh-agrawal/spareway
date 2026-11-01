@@ -1,50 +1,46 @@
-// /post/:token — load provider, no login (stage 5): who you are, then one or more loads (batch), "Send loads".
-// After sending, each load has its own link to see offers, change or take it off.
+// /post/:token — the transporter's shared link for load providers, no login. Asks once: trader or shipper, name,
+// mobile → opens that person's own page (/my-loads/:portal), remembered on this phone.
 import { useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { CheckCircle2, ExternalLink, LinkIcon, Plus, Send, Trash2 } from 'lucide-react'
-import { Card, MainButton, PlainButton, Skeleton, TextField } from '@/components/common'
+import { ArrowRight, Factory, LinkIcon, Store } from 'lucide-react'
+import { Card, MainButton, Skeleton, TextField } from '@/components/common'
 import { useLang } from '@/lib/i18n'
 import { toAppError } from '@/lib/errors'
-import { getLinkInfo, postLoads } from '../api'
-import { LoadFields } from '../components/LoadFields'
+import { cn } from '@/lib/cn'
+import { getLinkInfo, joinProvider, type ProviderKind } from '../api'
 import { PublicFrame } from '../components/PublicFrame'
-import { myLoads, rememberLoads, toProviderLoad } from '../lib/convert'
-import { emptyLoad, formErrors, loadFormSchema, shipperSchema, type LoadForm } from '../lib/offer'
+import { formErrors, shipperSchema } from '../lib/offer'
 
-const WHO_KEY = 'spareway.provider'
+const portalKey = (token: string) => `spareway.portal.${token}`
 
-function savedWho(): { name: string; phone: string } {
+function savedPortal(token: string): string | null {
   try {
-    return JSON.parse(localStorage.getItem(WHO_KEY) ?? '') as { name: string; phone: string }
+    return localStorage.getItem(portalKey(token))
   } catch {
-    return { name: '', phone: '' }
+    return null
   }
 }
 
 export default function ProviderPostPage() {
   const { token = '' } = useParams()
+  const [params] = useSearchParams()
+  const nav = useNavigate()
   const { t } = useLang('provider')
-  const info = useQuery({
-    queryKey: ['providerLink', token],
-    queryFn: () => getLinkInfo(token),
-    retry: false,
-  })
-  const [who, setWho] = useState(savedWho)
-  const [whoErr, setWhoErr] = useState<Record<string, string>>({})
-  const [loads, setLoads] = useState<LoadForm[]>([emptyLoad()])
-  const [errs, setErrs] = useState<Record<string, string>[]>([{}])
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState<{ code: string; shareToken: string }[] | null>(null)
-  const earlier = myLoads()
+  const info = useQuery({ queryKey: ['providerLink', token], queryFn: () => getLinkInfo(token), retry: false })
+  const [kind, setKind] = useState<ProviderKind | null>(null)
+  const [who, setWho] = useState({ name: '', phone: '' })
+  const [errs, setErrs] = useState<Record<string, string>>({})
+  const [busy, setBusy] = useState(false)
+  const saved = params.get('new') ? null : savedPortal(token)
 
+  if (saved) return <Navigate to={`/my-loads/${saved}`} replace />
   if (info.isLoading)
     return (
       <PublicFrame>
         <Skeleton className="h-40" />
-        <Skeleton className="h-96" />
+        <Skeleton className="h-72" />
       </PublicFrame>
     )
   if (info.error || !info.data)
@@ -61,164 +57,77 @@ export default function ProviderPostPage() {
     )
   const company = info.data.company
 
-  const send = async () => {
-    const w = shipperSchema.safeParse(who)
-    const checks = loads.map((l) => loadFormSchema.safeParse(l))
-    setWhoErr(formErrors(w))
-    setErrs(checks.map(formErrors))
-    if (!w.success || checks.some((c) => !c.success)) {
-      toast.error(t('fixErrors'))
-      return
-    }
-    setSending(true)
+  const open = async () => {
+    const r = shipperSchema.safeParse(who)
+    const e = formErrors(r)
+    if (!kind) e.kind = 'provider:join.pickKind'
+    setErrs(e)
+    if (!r.success || !kind) return
+    setBusy(true)
     try {
-      const out = await postLoads(
-        token,
-        w.data,
-        checks.map((c) => toProviderLoad(c.data!)),
-      )
+      const portal = await joinProvider(token, kind, r.data.name, r.data.phone)
       try {
-        localStorage.setItem(WHO_KEY, JSON.stringify(w.data))
+        localStorage.setItem(portalKey(token), portal)
       } catch {
-        /* private window */
+        /* private window: the page link still works */
       }
-      rememberLoads(out)
-      setSent(out)
-      setLoads([emptyLoad()])
-      setErrs([{}])
-    } catch (e) {
-      toast.error(t(`common:errors.${toAppError(e).code}`))
+      nav(`/my-loads/${portal}`, { replace: true })
+    } catch (err) {
+      toast.error(t(`common:errors.${toAppError(err).code}`))
     } finally {
-      setSending(false)
+      setBusy(false)
     }
   }
 
-  if (sent)
-    return (
-      <PublicFrame title={company.name}>
-        <Card className="flex flex-col items-center gap-3 text-center">
-          <CheckCircle2 size={48} className="text-ok" aria-hidden />
-          <h1 className="text-page-title font-semibold">{t('sentTitle', { count: sent.length })}</h1>
-          <p className="text-ink-2">{t('sentText', { company: company.name })}</p>
-        </Card>
-        <Card>
-          <ul className="flex flex-col divide-y divide-line">
-            {sent.map((s) => (
-              <li key={s.shareToken} className="flex items-center justify-between gap-3 py-3">
-                <span className="font-semibold">{s.code}</span>
-                <Link
-                  to={`/offer/${s.shareToken}`}
-                  className="inline-flex h-12 items-center gap-2 rounded-control border border-line-strong bg-surface-2 px-4 font-semibold"
-                >
-                  <ExternalLink size={18} aria-hidden />
-                  {t('openLoad')}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-        <PlainButton icon={Plus} onClick={() => setSent(null)}>
-          {t('sendMore')}
-        </PlainButton>
-      </PublicFrame>
-    )
+  const KINDS: { id: ProviderKind; icon: typeof Store }[] = [
+    { id: 'trader', icon: Store },
+    { id: 'shipper', icon: Factory },
+  ]
 
   return (
-    <PublicFrame title={t('title')} sub={t('to', { company: company.name })}>
-      <p className="text-[18px] leading-7 text-ink-2">{t('intro', { company: company.name })}</p>
-
-      {earlier.length > 0 && (
-        <Card>
-          <h2 className="mb-2 text-section-title font-semibold">{t('yourLoads')}</h2>
-          <ul className="flex flex-wrap gap-2">
-            {earlier.slice(0, 8).map((s) => (
-              <li key={s.shareToken}>
-                <Link
-                  to={`/offer/${s.shareToken}`}
-                  className="inline-flex h-11 items-center gap-1.5 rounded-control border border-line-strong bg-surface-2 px-3 font-semibold"
-                >
-                  {s.code}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
-
+    <PublicFrame title={t('join.title')} sub={t('to', { company: company.name })}>
+      <p className="text-[18px] leading-7 text-ink-2">{t('join.intro', { company: company.name })}</p>
+      <Card className="flex flex-col gap-3">
+        <h2 className="text-section-title font-semibold">{t('join.whoAreYou')}</h2>
+        <div role="radiogroup" aria-label={t('join.whoAreYou')} className="grid gap-3 sm:grid-cols-2">
+          {KINDS.map(({ id, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={kind === id}
+              onClick={() => setKind(id)}
+              className={cn(
+                'flex items-start gap-3 rounded-tile border p-4 text-left transition-colors',
+                kind === id ? 'border-accent bg-accent-soft' : 'border-line-strong bg-surface-2 hover:bg-surface-3',
+              )}
+            >
+              <Icon size={28} className={kind === id ? 'text-accent' : 'text-ink-2'} aria-hidden />
+              <span>
+                <span className="block text-[19px] font-semibold">{t(`join.${id}`)}</span>
+                <span className="block text-ink-2">{t(`join.${id}Help`)}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+        {errs.kind && <p className="text-crit">{t(errs.kind)}</p>}
+      </Card>
       <Card className="flex flex-col gap-4">
-        <h2 className="text-section-title font-semibold">{t('who')}</h2>
-        <TextField
-          label={t('name')}
-          value={who.name}
-          error={whoErr.name ? t(whoErr.name) : undefined}
-          onChange={(e) => setWho({ ...who, name: e.target.value })}
-        />
+        <TextField label={t('name')} value={who.name} error={errs.name ? t(errs.name) : undefined} onChange={(e) => setWho({ ...who, name: e.target.value })} />
         <TextField
           label={t('phone')}
           type="tel"
           inputMode="tel"
           placeholder="98270 12345"
+          help={t('join.phoneHelp')}
           value={who.phone}
-          error={whoErr.phone ? t(whoErr.phone) : undefined}
+          error={errs.phone ? t(errs.phone) : undefined}
           onChange={(e) => setWho({ ...who, phone: e.target.value })}
         />
+        <MainButton icon={ArrowRight} size="lg" loading={busy} onClick={open} className="w-full">
+          {t('join.open')}
+        </MainButton>
       </Card>
-
-      {loads.map((l, i) => (
-        <Card key={i} className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-section-title font-semibold">{t('loadN', { n: i + 1 })}</h2>
-            {loads.length > 1 && (
-              <PlainButton
-                icon={Trash2}
-                tone="danger"
-                className="h-11"
-                onClick={() => {
-                  setLoads(loads.filter((_, j) => j !== i))
-                  setErrs(errs.filter((_, j) => j !== i))
-                }}
-              >
-                {t('remove')}
-              </PlainButton>
-            )}
-          </div>
-          <LoadFields
-            value={l}
-            errors={errs[i] ?? {}}
-            onChange={(v) => setLoads(loads.map((x, j) => (j === i ? v : x)))}
-          />
-        </Card>
-      ))}
-      {loads.length < 10 && (
-        <PlainButton
-          icon={Plus}
-          onClick={() => {
-            // same pickup / drop as the last load: batches usually travel together
-            const last = loads.at(-1)!
-            setLoads([
-              ...loads,
-              {
-                ...emptyLoad(),
-                from: last.from,
-                to: last.to,
-                readyFrom: last.readyFrom,
-                deliverBy: last.deliverBy,
-              },
-            ])
-            setErrs([...errs, {}])
-          }}
-        >
-          {t('addLoad')}
-        </PlainButton>
-      )}
-
-      <div className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-line-strong bg-surface/95 backdrop-blur">
-        <div className="mx-auto max-w-[640px] px-4 py-3">
-          <MainButton icon={Send} size="lg" loading={sending} onClick={send} className="w-full">
-            {t('send', { count: loads.length })}
-          </MainButton>
-        </div>
-      </div>
     </PublicFrame>
   )
 }

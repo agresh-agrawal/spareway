@@ -87,6 +87,8 @@ Tests 376 pass, build passes.
 - **Map in Hindi**: place and water labels use OpenStreetMap `name:hi` (else the usual name) when the app is in Hindi; switches live.
 - Checked with sample data: owner (new trip, challan corner, earnings, history, loads, auto-pick), driver link (Hindi, phone width, dark, reached / challan), loader link (layers, 3D), provider link (post page).
 
+- **Trader / shipper portal** (`prephase4code_provider_portal.sql`): the provider link asks once "Trader or shipper?" + name + mobile → `/my-loads/:portal`, that person's own page (same mobile = same page): tiles (waiting / offers to answer / agreed), their loads with offers, "Upload loads" (batch). Traders and shippers get their own wording. **18 more sample loads** (LD-1101…1118, real hubs and rates) + a sample trader and shipper on the 3 sample accounts (30 open loads each); seed and reset add them too.
+
 **Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords). Company phone is needed for "Call owner" (Settings).
 
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)

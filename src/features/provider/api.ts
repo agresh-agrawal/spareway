@@ -192,6 +192,7 @@ export async function postLoads(
         status: 'open',
         share_token: shareToken,
         provider_link_id: link.id,
+        provider_id: null,
         posted_by: null,
         accepted_by_company: null,
         is_sample: false,
@@ -344,4 +345,105 @@ export async function answerOffer(share: string, offerId: string, accept: boolea
   })
   if (error) throw toAppError(error)
   throwIfDataError(data)
+}
+
+// ---------- trader / shipper portal (one private page per provider) ----------
+
+export type ProviderKind = 'trader' | 'shipper'
+
+export interface PortalLoad {
+  code: string
+  status: string
+  goods: string
+  pickupName: string
+  dropName: string
+  quantity: number
+  weightKg: number
+  priceInr: number
+  readyFrom: string | null
+  deliverBy: string | null
+  shareToken: string
+  createdAt: string
+  offersWaiting: number
+  bestOffer: number | null
+}
+
+export interface Portal {
+  provider: { kind: ProviderKind; name: string; phone: string }
+  company: { name: string; phone: string }
+  loads: PortalLoad[]
+}
+
+const phoneKey = (p: string) => p.replace(/\D/g, '').slice(-10)
+
+/** The shared link → this trader's / shipper's own portal token (same mobile = same portal). */
+export async function joinProvider(token: string, kind: ProviderKind, name: string, phone: string): Promise<string> {
+  if (isFixtureMode()) {
+    const link = fixtureLink(token)
+    const d = fixtureStore()
+    let p = d.providers.find((x) => x.company_id === link.company_id && x.phone === phoneKey(phone))
+    if (p) Object.assign(p, { kind, name: name.trim(), link_id: link.id })
+    else {
+      p = { id: crypto.randomUUID(), company_id: link.company_id, link_id: link.id, kind, name: name.trim(), phone: phoneKey(phone), portal_token: hex(16), is_sample: false, created_at: new Date().toISOString() }
+      d.providers.push(p)
+    }
+    return fixtureDelay(p.portal_token)
+  }
+  const { data, error } = await getSupabase().rpc('provider_join', { p_token: token, p_kind: kind, p_name: name, p_phone: phone })
+  if (error) throw toAppError(error)
+  return (throwIfDataError(data) as unknown as { portalToken: string }).portalToken
+}
+
+export async function getPortal(portal: string): Promise<Portal> {
+  if (isFixtureMode()) {
+    const d = fixtureStore()
+    const p = d.providers.find((x) => x.portal_token === portal)
+    if (!p) throw new AppError('LINK_INVALID')
+    return fixtureDelay({
+      provider: { kind: p.kind as ProviderKind, name: p.name, phone: p.phone },
+      company: { name: d.company.name, phone: d.company.phone },
+      loads: d.freight_listings
+        .filter((l) => l.provider_id === p.id)
+        .sort((a, b) => b.created_at.localeCompare(a.created_at))
+        .map((l) => {
+          const pending = d.listing_offers.filter((o) => o.listing_id === l.id && o.status === 'pending')
+          return {
+            code: l.code,
+            status: l.status,
+            goods: l.goods_type,
+            pickupName: l.pickup_name,
+            dropName: l.drop_name,
+            quantity: l.quantity,
+            weightKg: Number(l.weight_kg),
+            priceInr: Number(l.offered_rate_inr),
+            readyFrom: l.ready_from,
+            deliverBy: l.deliver_by,
+            shareToken: l.share_token ?? '',
+            createdAt: l.created_at,
+            offersWaiting: pending.length,
+            bestOffer: pending.length ? Math.max(...pending.map((o) => Number(o.amount_inr))) : null,
+          }
+        }),
+    })
+  }
+  const { data, error } = await getSupabase().rpc('provider_portal', { p_portal: portal })
+  if (error) throw toAppError(error)
+  return throwIfDataError(data) as unknown as Portal
+}
+
+/** Upload loads from the portal; name and mobile come from the provider. */
+export async function postFromPortal(portal: string, loads: ProviderLoad[]): Promise<{ code: string; shareToken: string }[]> {
+  if (isFixtureMode()) {
+    const d = fixtureStore()
+    const p = d.providers.find((x) => x.portal_token === portal)
+    const link = p && d.provider_links.find((l) => l.id === p.link_id)
+    if (!p || !link) throw new AppError('LINK_INVALID')
+    const out = await postLoads(link.token, { name: p.name, phone: p.phone }, loads)
+    for (const l of d.freight_listings) if (out.some((o) => o.shareToken === l.share_token)) l.provider_id = p.id
+    return out
+  }
+  const body = loads.map((l) => ({ ...l, readyFrom: toIso(l.readyFrom), deliverBy: toIso(l.deliverBy) }))
+  const { data, error } = await getSupabase().rpc('provider_portal_post', { p_portal: portal, p_loads: body as never })
+  if (error) throw toAppError(error)
+  return (throwIfDataError(data) as unknown as { loads: { code: string; shareToken: string }[] }).loads
 }
