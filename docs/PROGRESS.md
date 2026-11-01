@@ -101,6 +101,8 @@ Tests 376 pass, build passes.
 - **Home**: "Trips now and next" — open trips with route, truck, time, space used and the next step (plan the load / find extra loads).
 Tests 385 + 39 Edge Function tests pass, build passes (also without `.env`).
 
+**Demo-readiness pass (2026-11-01):** judges' feature guide and code guide written (Claude Docs). Walked every owner page, all trip steps and the loader / driver / provider link pages at phone width in English and Hindi. Fixed: a route that reaches a stop after its delivery time is never "Best" (`bestIndex`); demo trip windows were impossible with rest stops and no-entry hours — now Ahmedabad +26–46 h, Mumbai +52–70 h (`prephase4code_demo_windows.sql`, applied; fixture too), so all three routes are on time; loader layer list shows the real item numbers on that layer (`#33, 36, 39–40, …`); provider page intro wording. Tests 386 pass, build passes.
+
 Open (owner): apply `supabase/sql/prephase4code_photo_retention.sql` (the daily `spareway-photo-cleanup` cron; my apply was blocked by the permission check) · Supabase Auth → turn on leaked-password protection · re-open each trip's Load plan and "Use this plan" so loaders get the balanced layout.
 
 **Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords). Company phone is needed for "Call owner" (Settings).

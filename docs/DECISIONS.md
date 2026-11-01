@@ -131,3 +131,5 @@
 | 2026-11-01 | Pre-4 | Owner map shows real GPS only when the phone fix is < 10 min old, else Simulated | Old points would look live |
 | 2026-11-01 | Pre-4 | Notifications in their own table filled by triggers; major ones emailed as one digest per company every 10 min | Alerts table is limited to loader reports; avoids one email per event |
 | 2026-11-01 | Pre-4 | Cargo photos deleted after 30 days by an Edge Function (Storage API), AI results kept | Storage objects cannot be deleted from SQL |
+| 2026-11-01 | Pre-4 | Best route = fewest stops reached after the delivery time, then lowest score | A cheaper route that misses the delivery is not the best |
+| 2026-11-01 | Pre-4 | Demo trip windows widened (Ahmedabad +26–46 h, Mumbai +52–70 h) by patching `_seed_company` in place | The old ones could not be met by any route once rest stops and no-entry hours are counted |
