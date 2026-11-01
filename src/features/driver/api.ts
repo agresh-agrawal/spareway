@@ -194,3 +194,51 @@ export async function sendDriverLocation(token: string, lat: number, lng: number
   if (error) throw toAppError(error)
   throwIfDataError(data)
 }
+
+export interface DriverWeighing {
+  net: number
+  declared: number
+  match: boolean
+  placeOk: boolean
+}
+
+/** Driver types the weighbridge reading (driver_add_weighing) — compared with the declared cargo; owner told if off. */
+export async function addDriverWeighing(
+  token: string,
+  grossKg: number,
+  tareKg: number | null,
+  pos: { lat: number; lng: number; accuracyM: number | null } | null,
+): Promise<DriverWeighing> {
+  if (isFixtureMode()) {
+    const t = fixtureTripFor(token)
+    if (!(grossKg > 0 && grossKg <= 100000) || (tareKg !== null && (tareKg <= 0 || tareKg >= grossKg)))
+      throw new AppError('BAD_ITEMS')
+    const { fixtureWeighing } = await import('@/features/cargo')
+    const w = fixtureWeighing(fixtureStore(), {
+      tripId: t.id,
+      grossKg,
+      tareKg,
+      slipPath: null,
+      lat: pos?.lat ?? null,
+      lng: pos?.lng ?? null,
+      accuracyM: pos?.accuracyM ?? null,
+      enteredBy: 'driver',
+    })
+    return fixtureDelay({
+      net: Math.round(Number(w.net_kg)),
+      declared: Math.round(Number(w.declared_kg)),
+      match: w.status === 'match',
+      placeOk: w.place_ok,
+    })
+  }
+  const { data, error } = await getSupabase().rpc('driver_add_weighing', {
+    p_token: token,
+    p_gross: grossKg,
+    p_tare: tareKg ?? undefined,
+    p_lat: pos?.lat ?? undefined,
+    p_lng: pos?.lng ?? undefined,
+    p_accuracy: pos?.accuracyM ?? undefined,
+  })
+  if (error) throw toAppError(error)
+  return throwIfDataError(data) as unknown as DriverWeighing
+}

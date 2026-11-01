@@ -119,6 +119,15 @@ Frontend: `features/cargo/lib/integrity.ts` (same limits as SQL) runs live in th
 Verified: `npm run check` 395 tests + `npm run build` pass; browser (fixture, laptop): impossible weight + "goods" → both "Data looks irrelevant" lines, Save off; Steel bolts 100 kg in 30 cm³ → Check needed, banner, 55 % → Mark as checked with a reason → Checked, note shown; Change history lists added + check note.
 Not done / not verified: driver-link weighbridge entry (SQL `driver_add_weighing` is live, no driver UI yet); proof-photo and slip upload on the real database (no signed-in test — the agent does not sign in with passwords); weighbridge sheet not clicked through in the browser.
 
+## Demo readiness — 2026-11-01, branch code/prephase4-fixes
+
+Driver link: "Weighed at a weighbridge" (`features/driver/components/WeighSheet.tsx`, lazy) → `driver_add_weighing` with gross, optional tare and one GPS fix; fixture mode uses `fixtureWeighing` (dynamic import of the cargo index, so the driver page stays light). Strings en + hi. Driver page: Google Maps button removed; live map: footer line removed.
+Demo data (one-time data fix, not a SQL file — the plan holds this account's cargo ids): owner account TRP-2026-0032 (RJ14 GC 7735, loading) got an active load plan made by the app's own engine (`sw-pack-1`, 94 placed, 0 unplaced, 49.8 % space, `validatePlan` clean), 32 of 94 steps done, `plan_activated` activity row (Sample). QA Transport 0032 already had its plan.
+Demo path (owner account agresh@agreshagrawal.com): 0031 MP09 HG 4821 (104 boxes entered) → cargo, plan, route, extra loads; 0032 → loader link (make the link, plan already a third loaded); 0029 GJ01 KT 2208 on the road → driver link + live map; finished trips → earnings, history, monthly report. Judges' and code guides updated (no auto-balance, "Misc", demo trips, cargo data checks, driver weighbridge).
+Verified: `npm run check` 394 tests + `npm run build` pass; browser (fixture): driver link → weighbridge sheet (Hindi) saved → owner's cargo step shows "entered by the driver", mismatch notice; every owner page opens with no console errors in en and hi; no sideways scroll at 375 px.
+Not verified: signed-in flows on the live database (the agent does not sign in with passwords); Vercel deployment list (API refused, 403) — live site checked by URL instead.
+Owner to do: apply `supabase/sql/prephase4code_photo_retention.sql` (the agent's migration call was refused); turn on leaked-password protection (Supabase Auth); add the company phone in Settings ("Call the owner" on the driver page).
+
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
 
 Built (from `v0.1`; owner's answers: presets yes, delivery times optional, step order as spec, trip save in one DB function):

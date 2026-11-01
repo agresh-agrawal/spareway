@@ -12,8 +12,6 @@
   },
   "showRoutes": "Show routes",
   "showProblems": "Show problems",
-  "footer": "Simulated, except trucks whose driver shares live GPS — updates every 3 s",
-  "footerLow": "Simulated, except trucks whose driver shares live GPS — updates every 10 s",
   "card": {
     "progress": "Trip done",
     "arrives": "Arrives {{time}} · {{km}} left",

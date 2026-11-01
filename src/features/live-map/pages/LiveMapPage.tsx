@@ -5,7 +5,6 @@ import { EmptyState, ErrorState, Skeleton, StatusChip, TruckStatusChip } from '@
 import { FilterChips } from '@/components/common/FilterChips'
 import { Switch } from '@/components/ui/switch'
 import { useLang } from '@/lib/i18n'
-import { useLowData } from '@/lib/lowData'
 import { formatDuration, formatKm, formatPct, formatRelative, formatTime } from '@/lib/format'
 import { cn } from '@/lib/cn'
 import { useLiveFleet, type LiveTruck } from '../hooks'
@@ -102,7 +101,6 @@ function TruckCard({ f, onClose }: { f: LiveTruck; onClose: () => void }) {
 /** /map — all trucks on one map (Architecture F15, Design System 7.11). */
 export default function LiveMapPage() {
   const { t } = useLang('live-map')
-  const { lowData } = useLowData()
   const { fleet, isLoading, error, refetch } = useLiveFleet()
   const [filter, setFilter] = useState<Filter>('all')
   const [selected, setSelected] = useState<string | null>(null)
@@ -152,10 +150,6 @@ export default function LiveMapPage() {
           )}
         </div>
       )}
-
-      <div className="flex flex-wrap items-center gap-2 text-label text-ink-2">
-        <span>{lowData ? t('footerLow') : t('footer')}</span>
-      </div>
 
       {noPosition.length > 0 && (
         <section className="rounded-card border border-line bg-surface p-4">

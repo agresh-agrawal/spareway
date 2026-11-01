@@ -15,6 +15,7 @@ import {
   Phone,
   ReceiptIndianRupee,
   Route as RouteIcon,
+  Scale,
   ShieldAlert,
 } from 'lucide-react'
 import { Card, CardHeader, LanguageButton, Logo, Skeleton, StopChip, ThemeButton } from '@/components/common'
@@ -25,10 +26,11 @@ import { toAppError } from '@/lib/errors'
 import { formatDayTime, formatDuration, formatInr, formatKm, formatWeight } from '@/lib/format'
 import { cn } from '@/lib/cn'
 import type { Halt } from '@/types/domain'
-import { addDriverExpense, getDriverTrip, markDriverStop, type DriverStop, type DriverTrip } from '../api'
+import { addDriverExpense, getDriverTrip, markDriverStop, type DriverTrip } from '../api'
 
 const DriverMap = lazy(() => import('../components/DriverMap'))
 const NavMode = lazy(() => import('../components/NavMode'))
+const WeighSheet = lazy(() => import('../components/WeighSheet').then((m) => ({ default: m.WeighSheet })))
 
 /** Driver page language: saved on this phone, Hindi the first time (like the loader page). */
 function useDriverLanguage() {
@@ -67,8 +69,6 @@ function Frame({ children, data }: { children: React.ReactNode; data?: DriverTri
   )
 }
 
-const mapsUrl = (s: DriverStop) => `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=driving`
-
 export default function DriverPage() {
   useDriverLanguage()
   const { token = '' } = useParams()
@@ -76,6 +76,7 @@ export default function DriverPage() {
   const qc = useQueryClient()
   const [costOpen, setCostOpen] = useState(false)
   const [navOpen, setNavOpen] = useState(false)
+  const [weighOpen, setWeighOpen] = useState(false)
   const key = ['driverTrip', token]
   const q = useQuery({
     queryKey: key,
@@ -176,15 +177,6 @@ export default function DriverPage() {
               <span className="block text-[14px] opacity-80">{t('navStartHelp')}</span>
             </span>
           </button>
-          <a
-            href={mapsUrl(next)}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control border border-line-strong bg-surface-2 text-[17px] font-semibold"
-          >
-            <MapPin size={20} aria-hidden />
-            {t('navigateGoogle')}
-          </a>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <button
               type="button"
@@ -237,6 +229,20 @@ export default function DriverPage() {
           {t('paidChallan')}
         </button>
       </div>
+
+      {d.trip.status !== 'completed' && (
+        <button
+          type="button"
+          onClick={() => setWeighOpen(true)}
+          className="flex min-h-16 w-full items-center gap-3 rounded-card border border-line-strong bg-surface px-4 py-3 text-left"
+        >
+          <Scale size={28} className="shrink-0 text-accent" aria-hidden />
+          <span>
+            <span className="block text-[18px] leading-6 font-semibold">{t('weigh.button')}</span>
+            <span className="block text-[15px] text-ink-2">{t('weigh.buttonHelp')}</span>
+          </span>
+        </button>
+      )}
 
       <Card>
         <CardHeader icon={ShieldAlert} title={t('careful')} />
@@ -336,6 +342,12 @@ export default function DriverPage() {
             ))}
           </ul>
         </Card>
+      )}
+
+      {weighOpen && (
+        <Suspense fallback={null}>
+          <WeighSheet token={token} open={weighOpen} onOpenChange={setWeighOpen} onSaved={() => void qc.invalidateQueries({ queryKey: key })} />
+        </Suspense>
       )}
 
       <CostSheet

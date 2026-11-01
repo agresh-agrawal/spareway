@@ -141,3 +141,5 @@
 | 2026-11-01 | Pre-4 | Sign-in pages show a labelled Light / Dark switch; home shows the live map next to "Trips now and next" | Owner's request for the demo |
 | 2026-11-01 | Pre-4 | Unused packages removed (@turf/turf, browser-image-compression, class-variance-authority, date-fns, date-fns-tz, motion) | Never imported |
 | 2026-11-01 | Pre-4 | Demo data: `_seed_demo_extras` (8 finished trips with routes, costs, a matching weighbridge slip, a trip being loaded) added to first sign-in and Reset sample data; owner and QA Transport accounts wiped and reseeded | Owner's request: a full month to show the judges |
+| 2026-11-01 | Pre-4 | Driver can enter a weighbridge reading without a slip photo; the owner needs a slip photo | The driver is at the weighbridge with GPS on; the owner types later and must show proof |
+| 2026-11-01 | Pre-4 | Owner demo trip 0032 gets a ready plan, a third loaded, as a one-time data fix | Plans hold account-specific cargo ids; the demo should open on a truck being loaded |

@@ -17,7 +17,6 @@
   "deliverBy": "Deliver before {{time}}",
   "dropHere": "Drop here: {{pieces}} pieces · {{kg}}",
   "fragile": "has fragile goods",
-  "navigate": "Open in Google Maps",
   "noRoute": "Route not chosen yet — straight line between stops",
   "tolls_one": "{{count}} toll",
   "tolls_other": "{{count}} tolls",
@@ -54,7 +53,6 @@
   "myCosts": "Costs you reported",
   "navStart": "Drive with Spareway map",
   "navStartHelp": "Live map on the truck route — turns, time, speed, tolls",
-  "navigateGoogle": "Google Maps",
   "nav": {
     "title": "Spareway drive",
     "intro": "Live map that follows your truck on the route your owner planned for trucks — it avoids no-entry hours and truck-banned roads, and knows the tolls and rest stops.",
@@ -119,5 +117,19 @@
       "checkpoint": "Checkpoint"
     },
     "sharing": "Location shared with the owner · accuracy {{m}} m"
+  },
+  "weigh": {
+    "button": "Weighed at a weighbridge",
+    "buttonHelp": "Type the slip weight — it proves the load to the owner",
+    "title": "Weighbridge reading",
+    "text": "Type the full truck weight from the weighbridge slip. Your phone location is saved with it.",
+    "gross": "Full truck weight (gross)",
+    "grossError": "Type the gross weight from the slip",
+    "tare": "Empty truck weight (tare)",
+    "tareHelp": "Leave empty if it is not on the slip — the truck record is used",
+    "tareError": "Empty weight must be less than the full weight",
+    "save": "Save reading",
+    "match": "Saved — {{net}} matches the cargo list",
+    "mismatch": "Saved — {{net}} weighed, {{declared}} on the list. Owner told."
   }
 }
