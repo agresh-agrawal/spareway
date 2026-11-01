@@ -140,3 +140,4 @@
 | 2026-11-01 | Pre-4 | Trip tab "Challan corner" renamed "Misc" (challan risks and trip costs stay inside) | Owner's request |
 | 2026-11-01 | Pre-4 | Sign-in pages show a labelled Light / Dark switch; home shows the live map next to "Trips now and next" | Owner's request for the demo |
 | 2026-11-01 | Pre-4 | Unused packages removed (@turf/turf, browser-image-compression, class-variance-authority, date-fns, date-fns-tz, motion) | Never imported |
+| 2026-11-01 | Pre-4 | Demo data: `_seed_demo_extras` (8 finished trips with routes, costs, a matching weighbridge slip, a trip being loaded) added to first sign-in and Reset sample data; owner and QA Transport accounts wiped and reseeded | Owner's request: a full month to show the judges |
