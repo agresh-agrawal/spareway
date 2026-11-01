@@ -40,6 +40,8 @@ export interface PlanPalette {
   boxEdgeMix: string
   fragile: string
   issue: string
+  /** safe zone + centre-of-gravity pin when balanced */
+  balanceOk: string
 }
 
 export const PALETTES: Record<ThemeName, PlanPalette> = {
@@ -58,6 +60,7 @@ export const PALETTES: Record<ThemeName, PlanPalette> = {
     boxEdgeMix: '#0a0a0b',
     fragile: '#f5a524',
     issue: '#ef4444',
+    balanceOk: '#4ade80',
   },
   light: {
     canvas: '#f4f4f5',
@@ -74,6 +77,7 @@ export const PALETTES: Record<ThemeName, PlanPalette> = {
     boxEdgeMix: '#27272a',
     fragile: '#d97706',
     issue: '#dc2626',
+    balanceOk: '#16a34a',
   },
 }
 

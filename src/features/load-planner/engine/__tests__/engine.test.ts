@@ -227,6 +227,35 @@ describe('pack', () => {
     expect(validatePlan(c, items, loose, { supportRatio: 0.5 })).toEqual([])
   })
 
+  it('a small load is moved over the axles and to the middle, not left at the cab', () => {
+    const { container } = demoTripInput()
+    const items: PackItem[] = [
+      ...[1, 2, 3, 4].map((n) => ({ ...box('jaipur', 40, 30, 30, { weightKg: 2, unloadOrder: 1 }), key: `jaipur#${n}` })),
+      ...[1, 2].map((n) => ({ ...box('mumbai', 40, 30, 30, { weightKg: 2, unloadOrder: 2 }), key: `mumbai#${n}` })),
+      box('glass', 40, 30, 30, { weightKg: 2, unloadOrder: 2, fragile: true, stackable: false }),
+    ]
+    const r = pack(container, items)
+    expect(r.unplaced).toEqual([])
+    expect(validatePlan(container, items, r)).toEqual([])
+    expect(r.metrics.cogXPct).toBeGreaterThanOrEqual(35)
+    expect(r.metrics.cogXPct).toBeLessThanOrEqual(45)
+    expect(Math.abs(r.metrics.cogYPct - 50)).toBeLessThan(5)
+    const codes = r.warnings.map((w) => w.code)
+    expect(codes).not.toContain('COG_LONGITUDINAL')
+    expect(codes).not.toContain('COG_LATERAL')
+    expect(codes).toContain('LOAD_GAP')
+    // validatePlan above also checks stop order (Jaipur never blocked by Mumbai); nothing sits on the fragile box
+    const g = r.placements.find((p) => p.key === 'glass#1')!
+    expect(r.placements.some((p) => p.z > g.z && Math.abs(p.z - (g.z + g.h)) < 0.5 && p.x < g.x + g.l && p.x + p.l > g.x && p.y < g.y + g.w && p.y + p.w > g.y)).toBe(false)
+  })
+
+  it('a truck already partly loaded is not moved', () => {
+    const c: PackContainer = { lengthCm: 400, widthCm: 200, heightCm: 200, payloadKg: 1000 }
+    const loaded: Placement = { key: 'a#1', cargoItemId: 'a', label: 'a', x: 0, y: 0, z: 0, l: 50, w: 50, h: 50, orientation: 0, unloadOrder: 2, weightKg: 10, fragile: false, step: 1 }
+    const r = fitAdditional(c, [loaded], [box('b', 50, 50, 50, { unloadOrder: 1 })])
+    expect(r.placements.find((p) => p.key === 'a#1')).toMatchObject({ x: 0, y: 0, z: 0 })
+  })
+
   it('0 items → empty plan', () => {
     const { container } = demoTripInput()
     const r = pack(container, [])

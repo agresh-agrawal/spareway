@@ -29,7 +29,7 @@ function Tile({ icon: Icon, value, label, tone }: { icon: typeof Scale; value: s
 export function PlanSummary({ container, result }: { container: PackContainer; result: PackResult }) {
   const { t } = useLang('load-planner')
   const m = result.metrics
-  const balanceWarnings = result.warnings.filter((w) => w.code !== 'HEAVY_HIGH')
+  const balanceWarnings = result.warnings.filter((w) => w.code === 'COG_LONGITUDINAL' || w.code === 'COG_LATERAL')
   const balanced = balanceWarnings.length === 0
   return (
     <div className="flex flex-col gap-3">

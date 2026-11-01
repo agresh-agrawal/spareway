@@ -15,7 +15,8 @@
   "warnings": {
     "COG_LONGITUDINAL": "Too much weight at one end — spread heavy goods along the truck",
     "COG_LATERAL": "More weight on one side — move heavy goods to the middle",
-    "HEAVY_HIGH": "Heavy goods are high up — keep them on the floor"
+    "HEAVY_HIGH": "Heavy goods are high up — keep them on the floor",
+    "LOAD_GAP": "The load is placed over the axles with space around it — tie it down, or fill the gaps with empty crates, so it cannot slide when braking"
   },
   "view": {
     "label": "Truck view",
@@ -89,5 +90,14 @@
     "noLayout": "This plan was saved without a layout",
     "open": "Open load plan",
     "trip": "Trip {{code}}"
+  },
+  "scene": {
+    "cogOk": "Weight centre is in the green safe zone",
+    "cogOff": {
+      "cab": "Weight centre too close to the cab",
+      "doors": "Weight centre too close to the doors",
+      "side": "Weight centre is off to one side"
+    },
+    "soFar": "loaded so far"
   }
 }

@@ -207,7 +207,7 @@ export interface PackResult {
   placements: Placement[]
   unplaced: { key: string; label: string; reason: UnplacedReason }[]
   metrics: PackMetrics
-  warnings: { code: 'COG_LONGITUDINAL' | 'COG_LATERAL' | 'HEAVY_HIGH'; message: string }[]
+  warnings: { code: 'COG_LONGITUDINAL' | 'COG_LATERAL' | 'HEAVY_HIGH' | 'LOAD_GAP'; message: string }[]
 }
 
 export interface PackOptions {
