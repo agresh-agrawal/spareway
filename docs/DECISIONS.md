@@ -123,3 +123,11 @@
 | 2026-10-31 | Pre-4 | Hindi map labels from OSM `name:hi` with fallback, set at runtime in MapView (`src/components/common`) | Same free OpenFreeMap tiles; no second style file |
 | 2026-11-01 | Pre-4 | Providers identified by last 10 digits of their mobile per transporter; one private portal token each, no password | Owner: separate page for traders and shippers, no login |
 | 2026-11-01 | Pre-4 | Extra sample loads via `_seed_more_loads`, hooked into seed / reset by patching the call in place | Keeps `_seed_company` untouched |
+| 2026-11-01 | Pre-4 | Packing balance = one shift of the whole new load after placement (engine `sw-pack-2`), not a change of the extreme-point order | A uniform shift keeps every checked rule (support, fragile, stacking, stop order) true; re-ordering would trade them off |
+| 2026-11-01 | Pre-4 | Shift along the truck only when the centre is outside 15–60 % (to 40 %); across always to the middle; never when boxes are already loaded | Smallest gap behind the cab; a partly loaded truck cannot be moved |
+| 2026-11-01 | Pre-4 | New warning LOAD_GAP (≥ 30 cm space at the cab or sides) — added to the PackResult warning codes in `src/types/domain.ts` | A centred load must be tied down or the gap filled; honest about the trade-off |
+| 2026-11-01 | Pre-4 | `usedLengthCm` = floor the load takes (last box end − first box start) | Floor in front of a balanced load is still free for extra loads |
+| 2026-11-01 | Pre-4 | Driver navigation draws turns from the owner's chosen truck route shape, no turn-by-turn API | Free; keeps the truck-safe route the owner picked |
+| 2026-11-01 | Pre-4 | Owner map shows real GPS only when the phone fix is < 10 min old, else Simulated | Old points would look live |
+| 2026-11-01 | Pre-4 | Notifications in their own table filled by triggers; major ones emailed as one digest per company every 10 min | Alerts table is limited to loader reports; avoids one email per event |
+| 2026-11-01 | Pre-4 | Cargo photos deleted after 30 days by an Edge Function (Storage API), AI results kept | Storage objects cannot be deleted from SQL |

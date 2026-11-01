@@ -89,6 +89,20 @@ Tests 376 pass, build passes.
 
 - **Trader / shipper portal** (`prephase4code_provider_portal.sql`): the provider link asks once "Trader or shipper?" + name + mobile → `/my-loads/:portal`, that person's own page (same mobile = same page): tiles (waiting / offers to answer / agreed), their loads with offers, "Upload loads" (batch). Traders and shippers get their own wording. **18 more sample loads** (LD-1101…1118, real hubs and rates) + a sample trader and shipper on the 3 sample accounts (30 open loads each); seed and reset add them too.
 
+**Roadmap pass (2026-11-01, owner's 17-item list + requests):**
+- **Loader link**: "All N loaded" marks the whole run of the same item in one tap (with Undo), "{{layer}}: all loaded", tap any box or row → item sheet (what it is, size, weight, where, stop, fragile / heavy, mark loaded / undo / problem) (`prephase4code_loader_bulk.sql` `loader_update_steps`; offline taps queued).
+- **Notification bar**: bell with unread count + list (realtime), mark read / all; Settings "Email me major changes"; Edge Function `notify-email` + pg_cron every 10 min, one digest per company (`prephase4code_notifications.sql`, triggers on alerts and trip status).
+- **Monthly email** redesigned: headline net with change, KPI grid, where the money went, best / weakest trip, per-truck table, tips (Estimated noted).
+- **Driver "Drive with Spareway map"**: own full-screen live map on the owner's truck route — turn arrows from the route shape, voice (hi / en), speed warning, off-route warning, ETA, km left, halts, "I reached" near the stop; location sent every 30 s only while open, after the privacy note; Demo drive is labelled Simulated (`prephase4code_driver_gps.sql`). Google Maps stays as a second button.
+- **Owner live map** uses the driver's real GPS when the fix is under 10 min old ("Live GPS · 2 min ago · ±12 m"), else the simulation, labelled Simulated.
+- **Packing balance** (engine `sw-pack-2`): after placing, the whole new load slides along / across the floor so its centre of gravity is in the safe band (to 40 % of the length when outside 15–60 %, to the middle across). One shift for every box keeps support, fragile, stacking and stop-order rules. A gap of 30 cm+ → LOAD_GAP "tie it down / fill the gap". 3D view: green safe zone on the floor + weight-centre pin (green / red) and a label that follows the loading playback. Old saved plans show as out of date and re-pack.
+- **Security** (`prephase4code_security_pass.sql`): block a provider (Settings → Load providers; new portal token, open loads expired, same mobile refused), loader / driver links close 48 h after the trip ends (daily cron), anon execute revoked on owner-only functions, profile updates limited to name / language / email switch.
+- **Privacy**: Settings "Privacy and your data" (what is kept, location, photos, links, emails) + "Delete my account" (type DELETE; `prephase4code_privacy.sql`). Edge Function `photo-cleanup` deletes cargo photos after 30 days and photos of deleted companies.
+- **Home**: "Trips now and next" — open trips with route, truck, time, space used and the next step (plan the load / find extra loads).
+Tests 385 + 39 Edge Function tests pass, build passes (also without `.env`).
+
+Open (owner): apply `supabase/sql/prephase4code_photo_retention.sql` (the daily `spareway-photo-cleanup` cron; my apply was blocked by the permission check) · Supabase Auth → turn on leaked-password protection · re-open each trip's Load plan and "Use this plan" so loaders get the balanced layout.
+
 **Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords). Company phone is needed for "Call owner" (Settings).
 
 ## Phase 1·Code — Trucks, trips and cargo (branch code/phase1-trucks-trips) status: merged (v1)
