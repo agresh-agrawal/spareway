@@ -49,7 +49,8 @@
     "price": "Type the price in ₹",
     "dates": "Deliver-by must be after ready-from",
     "name": "Type your name",
-    "phone": "Type a 10-digit mobile number, like 98270 12345"
+    "phone": "Type a 10-digit mobile number, like 98270 12345",
+    "irrelevant": "Data looks irrelevant — that weight is impossible for this size"
   },
   "share": {
     "postedFor": "Shared with {{company}}",

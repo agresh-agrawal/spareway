@@ -216,6 +216,45 @@ export type Database = {
           },
         ]
       }
+      cargo_changes: {
+        Row: {
+          action: string
+          actor: string
+          actor_user: string | null
+          cargo_item_id: string
+          changes: Json
+          company_id: string
+          created_at: string
+          id: string
+          label: string
+          trip_id: string
+        }
+        Insert: {
+          action: string
+          actor: string
+          actor_user?: string | null
+          cargo_item_id: string
+          changes?: Json
+          company_id: string
+          created_at?: string
+          id?: string
+          label?: string
+          trip_id: string
+        }
+        Update: {
+          action?: string
+          actor?: string
+          actor_user?: string | null
+          cargo_item_id?: string
+          changes?: Json
+          company_id?: string
+          created_at?: string
+          id?: string
+          label?: string
+          trip_id?: string
+        }
+        Relationships: []
+      }
       cargo_items: {
         Row: {
           added_by_loader: boolean
@@ -224,11 +263,17 @@ export type Database = {
           confidence: number | null
           created_at: string
           drop_stop_id: string
+          evidence_path: string | null
           extra_load_id: string | null
           fragile: boolean
           height_cm: number
           id: string
           image_path: string | null
+          integrity_confirmed_at: string | null
+          integrity_confirmed_by: string | null
+          integrity_flags: string[]
+          integrity_note: string | null
+          integrity_status: string
           label: string
           length_cm: number
           max_top_load_kg: number | null
@@ -250,11 +295,17 @@ export type Database = {
           confidence?: number | null
           created_at?: string
           drop_stop_id: string
+          evidence_path?: string | null
           extra_load_id?: string | null
           fragile?: boolean
           height_cm: number
           id?: string
           image_path?: string | null
+          integrity_confirmed_at?: string | null
+          integrity_confirmed_by?: string | null
+          integrity_flags?: string[]
+          integrity_note?: string | null
+          integrity_status?: string
           label: string
           length_cm: number
           max_top_load_kg?: number | null
@@ -276,11 +327,17 @@ export type Database = {
           confidence?: number | null
           created_at?: string
           drop_stop_id?: string
+          evidence_path?: string | null
           extra_load_id?: string | null
           fragile?: boolean
           height_cm?: number
           id?: string
           image_path?: string | null
+          integrity_confirmed_at?: string | null
+          integrity_confirmed_by?: string | null
+          integrity_flags?: string[]
+          integrity_note?: string | null
+          integrity_status?: string
           label?: string
           length_cm?: number
           max_top_load_kg?: number | null
@@ -1423,6 +1480,98 @@ export type Database = {
           },
         ]
       }
+      trip_weighings: {
+        Row: {
+          accuracy_m: number | null
+          company_id: string
+          created_at: string
+          declared_kg: number
+          diff_kg: number
+          distance_km: number | null
+          entered_by: string
+          gross_kg: number
+          id: string
+          lat: number | null
+          lng: number | null
+          net_kg: number
+          note: string
+          place_ok: boolean
+          slip_path: string | null
+          status: string
+          tare_kg: number | null
+          trip_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          company_id?: string
+          created_at?: string
+          declared_kg?: number
+          diff_kg?: number
+          distance_km?: number | null
+          entered_by?: string
+          gross_kg: number
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          net_kg?: number
+          note?: string
+          place_ok?: boolean
+          slip_path?: string | null
+          status?: string
+          tare_kg?: number | null
+          trip_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          company_id?: string
+          created_at?: string
+          declared_kg?: number
+          diff_kg?: number
+          distance_km?: number | null
+          entered_by?: string
+          gross_kg?: number
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          net_kg?: number
+          note?: string
+          place_ok?: boolean
+          slip_path?: string | null
+          status?: string
+          tare_kg?: number | null
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'trip_weighings_company_id_fkey'
+            columns: ['company_id']
+            isOneToOne: false
+            referencedRelation: 'companies'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'trip_weighings_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trip_financials'
+            referencedColumns: ['trip_id']
+          },
+          {
+            foreignKeyName: 'trip_weighings_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trip_overview'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'trip_weighings_trip_id_fkey'
+            columns: ['trip_id']
+            isOneToOne: false
+            referencedRelation: 'trips'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       trips: {
         Row: {
           actual_departure: string | null
@@ -1709,6 +1858,8 @@ export type Database = {
       }
     }
     Functions: {
+      _cargo_label_key: { Args: { p: string }; Returns: string }
+      _cargo_vague: { Args: { p: string }; Returns: boolean }
       _phone_key: { Args: { p: string }; Returns: string }
       _provider_load_fields: { Args: { p: Json }; Returns: Json }
       _seed_company: { Args: { p_company: string }; Returns: undefined }
@@ -1732,6 +1883,10 @@ export type Database = {
       }
       check_report_token: { Args: { p_token: string }; Returns: boolean }
       close_old_links: { Args: never; Returns: number }
+      confirm_cargo_check: {
+        Args: { p_id: string; p_note: string }
+        Returns: Json
+      }
       create_driver_link: { Args: { p_trip_id: string }; Returns: Json }
       create_loader_link: { Args: { p_trip_id: string }; Returns: Json }
       create_trip_with_stops: {
@@ -1754,6 +1909,17 @@ export type Database = {
           p_amount: number
           p_kind: string
           p_note?: string
+          p_token: string
+        }
+        Returns: Json
+      }
+      driver_add_weighing: {
+        Args: {
+          p_accuracy?: number
+          p_gross: number
+          p_lat?: number
+          p_lng?: number
+          p_tare?: number
           p_token: string
         }
         Returns: Json

@@ -9,6 +9,7 @@ import { kmBetween } from '@/lib/geo'
 import type { Json, Tables } from '@/types/database'
 import type { GeoLineString, PackResult } from '@/types/domain'
 import type { Candidate } from './lib/candidates'
+import { guardCargo, integrityDefaults } from '@/features/cargo'
 
 export type TripRow = Tables<'trips'>
 export type TruckRow = Tables<'trucks'>
@@ -49,7 +50,11 @@ export async function fetchStepData(tripId: string): Promise<StepData> {
       settings: d.settings,
       cargo: d.cargo_items.filter((c) => c.trip_id === tripId),
       activePlan,
-      loadedKeys: activePlan ? d.loading_progress.filter((r) => r.load_plan_id === activePlan.id && r.status === 'done').map((r) => r.placement_key) : [],
+      loadedKeys: activePlan
+        ? d.loading_progress
+            .filter((r) => r.load_plan_id === activePlan.id && r.status === 'done')
+            .map((r) => r.placement_key)
+        : [],
       routeLine: (route?.geometry as unknown as GeoLineString) ?? null,
       listings: d.freight_listings.filter((l) => OPEN.includes(l.status)),
     })
@@ -69,11 +74,16 @@ export async function fetchStepData(tripId: string): Promise<StepData> {
       : Promise.resolve({ data: null, error: null }),
     sb.from('freight_listings').select('*').in('status', OPEN).order('created_at'),
   ])
-  for (const r of [truck, stops, settings, cargo, plan, route, listings]) if (r.error) throw toAppError(r.error)
+  for (const r of [truck, stops, settings, cargo, plan, route, listings])
+    if (r.error) throw toAppError(r.error)
   if (!truck.data || !settings.data) throw new AppError('TRIP_NOT_FOUND')
   let loadedKeys: string[] = []
   if (plan.data) {
-    const { data, error: pErr } = await sb.from('loading_progress').select('placement_key').eq('load_plan_id', plan.data.id).eq('status', 'done')
+    const { data, error: pErr } = await sb
+      .from('loading_progress')
+      .select('placement_key')
+      .eq('load_plan_id', plan.data.id)
+      .eq('status', 'done')
     if (pErr) throw toAppError(pErr)
     loadedKeys = data.map((r) => r.placement_key)
   }
@@ -113,7 +123,14 @@ export async function saveSuggestion(tripId: string, c: Candidate): Promise<stri
       return fixtureDelay(existing.id)
     }
     const id = crypto.randomUUID()
-    d.trip_extra_loads.push({ ...row, id, company_id: d.company.id, pickup_stop_id: null, drop_stop_id: null, created_at: new Date().toISOString() })
+    d.trip_extra_loads.push({
+      ...row,
+      id,
+      company_id: d.company.id,
+      pickup_stop_id: null,
+      drop_stop_id: null,
+      created_at: new Date().toISOString(),
+    })
     return fixtureDelay(id)
   }
   const sb = getSupabase()
@@ -143,7 +160,11 @@ export interface AcceptResult {
 }
 
 /** accept_extra_load: adds / reuses stops (2 km), adds the cargo, marks the listing taken, writes activity. */
-export async function acceptExtraLoad(extraLoadId: string, pickupAfterSeq: number, dropAfterSeq: number): Promise<AcceptResult> {
+export async function acceptExtraLoad(
+  extraLoadId: string,
+  pickupAfterSeq: number,
+  dropAfterSeq: number,
+): Promise<AcceptResult> {
   if (isFixtureMode()) return fixtureDelay(fixtureAccept(extraLoadId, pickupAfterSeq, dropAfterSeq))
   const { data, error } = await getSupabase().rpc('accept_extra_load', {
     p_extra_load_id: extraLoadId,
@@ -166,7 +187,14 @@ function fixtureAccept(extraLoadId: string, pickupAfter: number, dropAfterIn: nu
   if (!OPEN.includes(l.status)) throw new AppError('LISTING_NOT_OPEN')
   const tripStops = () => d.trip_stops.filter((s) => s.trip_id === x.trip_id)
   const now = new Date().toISOString()
-  const newStop = (seq: number, type: string, name: string, lat: number, lng: number, windowEnd: string | null): StopRow => ({
+  const newStop = (
+    seq: number,
+    type: string,
+    name: string,
+    lat: number,
+    lng: number,
+    windowEnd: string | null,
+  ): StopRow => ({
     id: crypto.randomUUID(),
     company_id: d.company.id,
     trip_id: x.trip_id,
@@ -201,32 +229,39 @@ function fixtureAccept(extraLoadId: string, pickupAfter: number, dropAfterIn: nu
     drop = newStop(dropAfter + 1, 'drop', l.drop_name, l.drop_lat, l.drop_lng, l.deliver_by)
     d.trip_stops.push(drop)
   }
-  d.cargo_items.push({
-    id: crypto.randomUUID(),
-    company_id: d.company.id,
-    trip_id: x.trip_id,
-    label: `${l.goods_type} (${l.code})`,
-    sku: '',
-    client_name: l.shipper_name,
-    length_cm: l.length_cm,
-    width_cm: l.width_cm,
-    height_cm: l.height_cm,
-    weight_kg: l.weight_kg,
-    quantity: l.quantity,
-    pickup_stop_id: pickup.id,
-    drop_stop_id: drop.id,
-    fragile: l.fragile,
-    upright_only: l.upright_only,
-    stackable: l.stackable,
-    max_top_load_kg: null,
-    priority: 'normal',
-    source: 'extra_load',
-    added_by_loader: false,
-    extra_load_id: x.id,
-    image_path: null,
-    confidence: null,
-    created_at: now,
-  })
+  // same trigger as accept_extra_load's insert: flags + change history (the listing guard already refused impossible weights)
+  const row = guardCargo(
+    d,
+    {
+      ...integrityDefaults,
+      id: crypto.randomUUID(),
+      company_id: d.company.id,
+      trip_id: x.trip_id,
+      label: `${l.goods_type} (${l.code})`,
+      sku: '',
+      client_name: l.shipper_name,
+      length_cm: l.length_cm,
+      width_cm: l.width_cm,
+      height_cm: l.height_cm,
+      weight_kg: l.weight_kg,
+      quantity: l.quantity,
+      pickup_stop_id: pickup.id,
+      drop_stop_id: drop.id,
+      fragile: l.fragile,
+      upright_only: l.upright_only,
+      stackable: l.stackable,
+      max_top_load_kg: null,
+      priority: 'normal',
+      source: 'extra_load',
+      added_by_loader: false,
+      extra_load_id: x.id,
+      image_path: null,
+      confidence: null,
+      created_at: now,
+    },
+    { actor: 'owner' },
+  )
+  d.cargo_items.push(row)
   Object.assign(x, { status: 'accepted', pickup_stop_id: pickup.id, drop_stop_id: drop.id })
   Object.assign(l, { status: 'accepted', accepted_by_company: d.company.id })
   const trip = d.trips.find((t) => t.id === x.trip_id)
@@ -237,7 +272,14 @@ function fixtureAccept(extraLoadId: string, pickupAfter: number, dropAfterIn: nu
     message: `Extra load ${l.code} accepted for ${trip?.code}: ${l.pickup_name} → ${l.drop_name}`,
     entity_type: 'listing',
     entity_ref: l.code,
-    meta: { trip_id: x.trip_id, trip_code: trip?.code ?? '', listing_code: l.code, pickup: l.pickup_name, drop: l.drop_name, net_benefit_inr: x.net_benefit_inr },
+    meta: {
+      trip_id: x.trip_id,
+      trip_code: trip?.code ?? '',
+      listing_code: l.code,
+      pickup: l.pickup_name,
+      drop: l.drop_name,
+      net_benefit_inr: x.net_benefit_inr,
+    },
     is_sample: false,
     created_at: now,
   })
@@ -245,7 +287,10 @@ function fixtureAccept(extraLoadId: string, pickupAfter: number, dropAfterIn: nu
 }
 
 /** Save the new plan as the next version and activate it (activate_load_plan); anything that didn't fit is listed on the plan. */
-export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>, result: PackResult): Promise<PlanRow> {
+export async function saveAndActivatePlan(
+  trip: Pick<TripRow, 'id' | 'code' | 'truck_id'>,
+  result: PackResult,
+): Promise<PlanRow> {
   const row = {
     trip_id: trip.id,
     status: 'draft',
@@ -258,14 +303,32 @@ export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 't
   if (isFixtureMode()) {
     const d = fixtureStore()
     const now = new Date().toISOString()
-    const version = d.load_plans.filter((p) => p.trip_id === trip.id).reduce((m, p) => Math.max(m, p.version), 0) + 1
-    const saved: PlanRow = { ...row, id: crypto.randomUUID(), company_id: d.company.id, version, created_by: d.profile.id, created_at: now }
+    const version =
+      d.load_plans.filter((p) => p.trip_id === trip.id).reduce((m, p) => Math.max(m, p.version), 0) + 1
+    const saved: PlanRow = {
+      ...row,
+      id: crypto.randomUUID(),
+      company_id: d.company.id,
+      version,
+      created_by: d.profile.id,
+      created_at: now,
+    }
     d.load_plans.push(saved)
-    for (const p of d.load_plans) if (p.trip_id === trip.id && p.id !== saved.id && p.status === 'active') p.status = 'superseded'
+    for (const p of d.load_plans)
+      if (p.trip_id === trip.id && p.id !== saved.id && p.status === 'active') p.status = 'superseded'
     saved.status = 'active'
     d.loading_progress = d.loading_progress.filter((r) => r.load_plan_id !== saved.id)
     for (const pl of result.placements)
-      d.loading_progress.push({ id: crypto.randomUUID(), company_id: d.company.id, load_plan_id: saved.id, step_index: pl.step, placement_key: pl.key, status: 'pending', note: '', updated_at: now })
+      d.loading_progress.push({
+        id: crypto.randomUUID(),
+        company_id: d.company.id,
+        load_plan_id: saved.id,
+        step_index: pl.step,
+        placement_key: pl.key,
+        status: 'pending',
+        note: '',
+        updated_at: now,
+      })
     const vol = String(result.metrics.volumeUsedPct)
     d.activity_log.push({
       id: crypto.randomUUID(),
@@ -281,7 +344,13 @@ export async function saveAndActivatePlan(trip: Pick<TripRow, 'id' | 'code' | 't
     return fixtureDelay(saved)
   }
   const sb = getSupabase()
-  const { data: last, error: vErr } = await sb.from('load_plans').select('version').eq('trip_id', trip.id).order('version', { ascending: false }).limit(1).maybeSingle()
+  const { data: last, error: vErr } = await sb
+    .from('load_plans')
+    .select('version')
+    .eq('trip_id', trip.id)
+    .order('version', { ascending: false })
+    .limit(1)
+    .maybeSingle()
   if (vErr) throw toAppError(vErr)
   const { data: user } = await sb.auth.getUser()
   const { data, error } = await sb
@@ -301,8 +370,14 @@ export type ListingFilter = 'open' | 'taken' | 'all'
 
 /** Listings I can see: my own (incl. demo copies) + everyone's public ones. */
 export async function fetchListings(filter: ListingFilter): Promise<ListingRow[]> {
-  const want = (s: string) => (filter === 'open' ? OPEN.includes(s) : filter === 'taken' ? s === 'accepted' : true)
-  if (isFixtureMode()) return fixtureDelay(fixtureStore().freight_listings.filter((l) => want(l.status)).sort((a, b) => b.created_at.localeCompare(a.created_at) || a.code.localeCompare(b.code)))
+  const want = (s: string) =>
+    filter === 'open' ? OPEN.includes(s) : filter === 'taken' ? s === 'accepted' : true
+  if (isFixtureMode())
+    return fixtureDelay(
+      fixtureStore()
+        .freight_listings.filter((l) => want(l.status))
+        .sort((a, b) => b.created_at.localeCompare(a.created_at) || a.code.localeCompare(b.code)),
+    )
   let q = getSupabase().from('freight_listings').select('*')
   if (filter === 'open') q = q.in('status', OPEN)
   if (filter === 'taken') q = q.eq('status', 'accepted')
@@ -397,7 +472,9 @@ export async function postListing(input: NewListing): Promise<ListingRow> {
 export async function removeListing(id: string): Promise<void> {
   if (isFixtureMode()) {
     const d = fixtureStore()
-    d.freight_listings = d.freight_listings.filter((l) => !(l.id === id && l.company_id === d.company.id && OPEN.includes(l.status)))
+    d.freight_listings = d.freight_listings.filter(
+      (l) => !(l.id === id && l.company_id === d.company.id && OPEN.includes(l.status)),
+    )
     return fixtureDelay(undefined)
   }
   const { error } = await getSupabase().from('freight_listings').delete().eq('id', id).in('status', OPEN)
@@ -412,14 +489,28 @@ export async function fetchPlannableTripsWithStops(): Promise<{ trip: TripRow; s
       d.trips
         .filter((t) => t.status === 'planned' || t.status === 'loading')
         .sort((a, b) => (a.planned_departure ?? '').localeCompare(b.planned_departure ?? ''))
-        .map((trip) => ({ trip, stops: d.trip_stops.filter((s) => s.trip_id === trip.id).sort((a, b) => a.seq - b.seq) })),
+        .map((trip) => ({
+          trip,
+          stops: d.trip_stops.filter((s) => s.trip_id === trip.id).sort((a, b) => a.seq - b.seq),
+        })),
     )
   }
   const sb = getSupabase()
-  const { data: trips, error } = await sb.from('trips').select('*').in('status', ['planned', 'loading']).order('planned_departure', { ascending: true, nullsFirst: false })
+  const { data: trips, error } = await sb
+    .from('trips')
+    .select('*')
+    .in('status', ['planned', 'loading'])
+    .order('planned_departure', { ascending: true, nullsFirst: false })
   if (error) throw toAppError(error)
   if (trips.length === 0) return []
-  const { data: stops, error: sErr } = await sb.from('trip_stops').select('*').in('trip_id', trips.map((t) => t.id)).order('seq')
+  const { data: stops, error: sErr } = await sb
+    .from('trip_stops')
+    .select('*')
+    .in(
+      'trip_id',
+      trips.map((t) => t.id),
+    )
+    .order('seq')
   if (sErr) throw toAppError(sErr)
   return trips.map((trip) => ({ trip, stops: stops.filter((s) => s.trip_id === trip.id) }))
 }

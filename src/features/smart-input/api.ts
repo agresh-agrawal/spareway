@@ -7,6 +7,7 @@ import type { Lang, LoaderCargoRow } from '@/types/domain'
 import type { PhotoIn } from './lib/image'
 import type { CheckRow, SuggestedItem } from './lib/validate'
 import { parseVoice } from './voice/parse'
+import { guardCargo, integrityDefaults, logChange } from '@/features/cargo'
 
 export type Who = { tripId: string; loaderToken?: undefined } | { loaderToken: string; tripId?: undefined }
 export type Source = 'camera' | 'voice'
@@ -18,7 +19,8 @@ export interface AiResult {
   warnings: string[]
 }
 
-type Reply = { ok: true; data: AiResult & { model: string } } | { ok: false; error: { code: string; message?: string } }
+type Reply =
+  { ok: true; data: AiResult & { model: string } } | { ok: false; error: { code: string; message?: string } }
 
 export const A4 = { name: 'A4 sheet', lengthCm: 29.7, widthCm: 21 }
 
@@ -27,8 +29,32 @@ export const FIXTURE_SCAN: AiResult = {
   scanId: null,
   imagePaths: [],
   items: [
-    { label: 'Carton', lengthCm: 60, widthCm: 40, heightCm: 45, quantity: 16, fragile: false, uprightOnly: false, stackable: true, confidence: 0.82, notes: '', countsPerView: [16, 15] },
-    { label: 'Carton', lengthCm: 30, widthCm: 30, heightCm: 30, quantity: 6, fragile: true, uprightOnly: false, stackable: true, confidence: 0.64, notes: 'Glass marks', countsPerView: [6, 6] },
+    {
+      label: 'Carton',
+      lengthCm: 60,
+      widthCm: 40,
+      heightCm: 45,
+      quantity: 16,
+      fragile: false,
+      uprightOnly: false,
+      stackable: true,
+      confidence: 0.82,
+      notes: '',
+      countsPerView: [16, 15],
+    },
+    {
+      label: 'Carton',
+      lengthCm: 30,
+      widthCm: 30,
+      heightCm: 30,
+      quantity: 6,
+      fragile: true,
+      uprightOnly: false,
+      stackable: true,
+      confidence: 0.64,
+      notes: 'Glass marks',
+      countsPerView: [6, 6],
+    },
   ],
   warnings: ['COUNT_MISMATCH'],
 }
@@ -51,7 +77,13 @@ const whoBody = (who: Who) => ({ tripId: who.tripId ?? null, loaderToken: who.lo
 
 export async function analysePhotos(who: Who, photos: PhotoIn[], lang: Lang): Promise<AiResult> {
   if (isFixtureMode()) return fixtureDelay(structuredClone(FIXTURE_SCAN), 1200)
-  return callAi({ mode: 'image', ...whoBody(who), images: photos.map((p) => ({ base64: p.base64, mime: p.mime })), reference: A4, lang })
+  return callAi({
+    mode: 'image',
+    ...whoBody(who),
+    images: photos.map((p) => ({ base64: p.base64, mime: p.mime })),
+    reference: A4,
+    lang,
+  })
 }
 
 /** Voice mode on the server — only used when the rule parser is unsure. */
@@ -79,7 +111,12 @@ const toLoaderRow = (r: CheckRow, imagePath?: string): LoaderCargoRow => ({
 })
 
 /** Owner: insert the checked rows (source camera/voice) and mark the scan confirmed. */
-export async function addAsOwner(tripId: string, rows: CheckRow[], source: Source, scan: { scanId: string | null; imagePaths: string[] }): Promise<number> {
+export async function addAsOwner(
+  tripId: string,
+  rows: CheckRow[],
+  source: Source,
+  scan: { scanId: string | null; imagePaths: string[] },
+): Promise<number> {
   const imagePath = scan.imagePaths[0] ?? null
   const insert = rows.map((r) => ({
     trip_id: tripId,
@@ -99,64 +136,94 @@ export async function addAsOwner(tripId: string, rows: CheckRow[], source: Sourc
   }))
   if (isFixtureMode()) {
     const d = fixtureStore()
-    for (const row of insert)
-      d.cargo_items.push({
-        ...row,
-        id: crypto.randomUUID(),
-        company_id: FIXTURE_COMPANY_ID,
-        sku: '',
-        client_name: '',
-        pickup_stop_id: null,
-        max_top_load_kg: null,
-        priority: 'normal',
-        added_by_loader: false,
-        extra_load_id: null,
-        created_at: new Date().toISOString(),
-      })
+    // one insert in the database: every line passes the guard or none is added
+    const checked = insert.map((row) =>
+      guardCargo(
+        d,
+        {
+          ...row,
+          ...integrityDefaults,
+          id: crypto.randomUUID(),
+          company_id: FIXTURE_COMPANY_ID,
+          sku: '',
+          client_name: '',
+          pickup_stop_id: null,
+          max_top_load_kg: null,
+          priority: 'normal',
+          added_by_loader: false,
+          extra_load_id: null,
+          created_at: new Date().toISOString(),
+        },
+        { actor: 'owner', log: false },
+      ),
+    )
+    for (const c of checked) {
+      d.cargo_items.push(c)
+      logChange(d, 'insert', undefined, c, 'owner')
+    }
     return fixtureDelay(insert.length)
   }
   const sb = getSupabase()
   const { error } = await sb.from('cargo_items').insert(insert)
   if (error) throw toAppError(error)
-  if (scan.scanId) await sb.from('ai_scans').update({ status: 'confirmed', parsed_items: rows as never }).eq('id', scan.scanId)
+  if (scan.scanId)
+    await sb
+      .from('ai_scans')
+      .update({ status: 'confirmed', parsed_items: rows as never })
+      .eq('id', scan.scanId)
   return insert.length
 }
 
 /** Loader (no login): loader_add_cargo → the owner gets a "Loader added cargo" alert. */
-export async function addAsLoader(token: string, rows: CheckRow[], source: Source, scan: { imagePaths: string[] }): Promise<number> {
+export async function addAsLoader(
+  token: string,
+  rows: CheckRow[],
+  source: Source,
+  scan: { imagePaths: string[] },
+): Promise<number> {
   const items = rows.map((r) => toLoaderRow(r, scan.imagePaths[0]))
   if (isFixtureMode()) {
     const d = fixtureStore()
     const t = d.trips.find((x) => x.loader_token === token)
     if (!t) throw new AppError('LINK_INVALID')
     const now = new Date().toISOString()
-    for (const it of items)
-      d.cargo_items.push({
-        id: crypto.randomUUID(),
-        company_id: FIXTURE_COMPANY_ID,
-        trip_id: t.id,
-        label: it.label,
-        sku: '',
-        client_name: '',
-        length_cm: it.lengthCm,
-        width_cm: it.widthCm,
-        height_cm: it.heightCm,
-        weight_kg: it.weightKg,
-        quantity: it.quantity,
-        pickup_stop_id: null,
-        drop_stop_id: it.dropStopId,
-        fragile: it.fragile,
-        upright_only: it.uprightOnly,
-        stackable: it.stackable,
-        max_top_load_kg: null,
-        priority: 'normal',
-        source,
-        added_by_loader: true,
-        extra_load_id: null,
-        image_path: it.imagePath ?? null,
-        confidence: it.confidence ?? null,
-        created_at: now,
-      })
+    const checked = items.map((it) =>
+      guardCargo(
+        d,
+        {
+          ...integrityDefaults,
+          id: crypto.randomUUID(),
+          company_id: FIXTURE_COMPANY_ID,
+          trip_id: t.id,
+          label: it.label,
+          sku: '',
+          client_name: '',
+          length_cm: it.lengthCm,
+          width_cm: it.widthCm,
+          height_cm: it.heightCm,
+          weight_kg: it.weightKg,
+          quantity: it.quantity,
+          pickup_stop_id: null,
+          drop_stop_id: it.dropStopId,
+          fragile: it.fragile,
+          upright_only: it.uprightOnly,
+          stackable: it.stackable,
+          max_top_load_kg: null,
+          priority: 'normal',
+          source,
+          added_by_loader: true,
+          extra_load_id: null,
+          image_path: it.imagePath ?? null,
+          confidence: it.confidence ?? null,
+          created_at: now,
+        },
+        { actor: 'loader', log: false },
+      ),
+    )
+    for (const c of checked) {
+      d.cargo_items.push(c)
+      logChange(d, 'insert', undefined, c, 'loader')
+    }
     d.alerts.push({
       id: crypto.randomUUID(),
       company_id: FIXTURE_COMPANY_ID,
@@ -174,7 +241,11 @@ export async function addAsLoader(token: string, rows: CheckRow[], source: Sourc
     })
     return fixtureDelay(items.length)
   }
-  const { data, error } = await getSupabase().rpc('loader_add_cargo', { p_token: token, p_items: items as never, p_source: source })
+  const { data, error } = await getSupabase().rpc('loader_add_cargo', {
+    p_token: token,
+    p_items: items as never,
+    p_source: source,
+  })
   if (error) throw toAppError(error)
   const res = throwIfDataError(data) as { added?: number } | null
   return res?.added ?? items.length
@@ -220,23 +291,34 @@ export async function listLoaderItems(token: string): Promise<LoaderItem[]> {
 export async function updateLoaderItem(token: string, id: string, row: CheckRow): Promise<void> {
   const item = toLoaderRow(row)
   if (isFixtureMode()) {
-    const c = fixtureStore().cargo_items.find((x) => x.id === id && x.added_by_loader)
+    const d = fixtureStore()
+    const c = d.cargo_items.find((x) => x.id === id && x.added_by_loader)
     if (!c) throw new AppError('BAD_ITEMS')
-    Object.assign(c, {
-      label: item.label,
-      length_cm: item.lengthCm,
-      width_cm: item.widthCm,
-      height_cm: item.heightCm,
-      weight_kg: item.weightKg,
-      quantity: item.quantity,
-      drop_stop_id: item.dropStopId,
-      fragile: item.fragile,
-      upright_only: item.uprightOnly,
-      stackable: item.stackable,
-    })
+    const next = guardCargo(
+      d,
+      {
+        ...c,
+        label: item.label,
+        length_cm: item.lengthCm,
+        width_cm: item.widthCm,
+        height_cm: item.heightCm,
+        weight_kg: item.weightKg,
+        quantity: item.quantity,
+        drop_stop_id: item.dropStopId,
+        fragile: item.fragile,
+        upright_only: item.uprightOnly,
+        stackable: item.stackable,
+      },
+      { old: c, actor: 'loader' },
+    )
+    Object.assign(c, next)
     return fixtureDelay(undefined)
   }
-  const { data, error } = await getSupabase().rpc('loader_update_cargo', { p_token: token, p_id: id, p_item: item as never })
+  const { data, error } = await getSupabase().rpc('loader_update_cargo', {
+    p_token: token,
+    p_id: id,
+    p_item: item as never,
+  })
   if (error) throw toAppError(error)
   throwIfDataError(data)
 }
@@ -245,7 +327,9 @@ export async function updateLoaderItem(token: string, id: string, row: CheckRow)
 export async function deleteLoaderItem(token: string, id: string): Promise<void> {
   if (isFixtureMode()) {
     const d = fixtureStore()
-    d.cargo_items = d.cargo_items.filter((c) => !(c.id === id && c.added_by_loader))
+    const c = d.cargo_items.find((x) => x.id === id && x.added_by_loader)
+    if (c) logChange(d, 'delete', c, c, 'loader')
+    d.cargo_items = d.cargo_items.filter((x) => !(x.id === id && x.added_by_loader))
     return fixtureDelay(undefined)
   }
   const { data, error } = await getSupabase().rpc('loader_delete_cargo', { p_token: token, p_id: id })

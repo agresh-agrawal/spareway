@@ -1,6 +1,7 @@
 // Load provider form rules and the offer calculator (stages 5 and 6). Pure.
 import { z } from 'zod'
 import { kmBetween } from '@/lib/geo'
+import { checkCargo } from '@/features/cargo'
 
 const num = (min: number, max: number, msg: string) =>
   z.coerce.number({ message: msg }).min(min, msg).max(max, msg)
@@ -28,6 +29,19 @@ export const loadFormSchema = z
     note: z.string().max(200),
   })
   .refine((v) => v.from !== v.to, { message: 'provider:err.same', path: ['to'] })
+  // same density limits as listing_integrity_guard: refused there too
+  .refine(
+    (v) =>
+      checkCargo({
+        label: v.goods,
+        length_cm: v.lengthCm,
+        width_cm: v.widthCm,
+        height_cm: v.heightCm,
+        weight_kg: v.weightKg,
+        quantity: v.quantity,
+      }).blocks.length === 0,
+    { message: 'provider:err.irrelevant', path: ['weightKg'] },
+  )
   .refine((v) => !v.deliverBy || !v.readyFrom || v.deliverBy >= v.readyFrom, {
     message: 'provider:err.dates',
     path: ['deliverBy'],

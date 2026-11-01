@@ -133,3 +133,6 @@
 | 2026-11-01 | Pre-4 | Cargo photos deleted after 30 days by an Edge Function (Storage API), AI results kept | Storage objects cannot be deleted from SQL |
 | 2026-11-01 | Pre-4 | Best route = fewest stops reached after the delivery time, then lowest score | A cheaper route that misses the delivery is not the best |
 | 2026-11-01 | Pre-4 | Demo trip windows widened (Ahmedabad +26–46 h, Mumbai +52–70 h) by patching `_seed_company` in place | The old ones could not be met by any route once rest stops and no-entry hours are counted |
+| 2026-11-01 | Pre-4 | Typed / AI / loader weights are "declared"; only a weighbridge slip measures. Confidence per line is an estimate capped at 97 % | Anti-poisoning: no number entered by a person or AI is treated as proof |
+| 2026-11-01 | Pre-4 | Impossible lines are refused (UI + trigger); unusual ones are only flagged and need a photo or an owner's reason | Blocking unusual but real goods (steel, foam) would stop real work |
+| 2026-11-01 | Pre-4 | Irrelevant data shows one plain line "Data looks irrelevant — …" | Owner's request: simple text |

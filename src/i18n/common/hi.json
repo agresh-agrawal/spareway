@@ -206,7 +206,8 @@
     "offer_answer": "{{code}} के लिए आपके ऑफ़र (₹{{amount}}) का जवाब आया",
     "trip_started": "{{code}} निकल गई — ट्रिप शुरू",
     "trip_done": "{{code}} पूरी हुई — कमाई देखें",
-    "trip_cancelled": "{{code}} रद्द हो गई"
+    "trip_cancelled": "{{code}} रद्द हो गई",
+    "weighing_check": "काँटे की जाँच — {{code}}: तौला {{net}} kg, बताया {{declared}} kg"
   },
   "fixture": {
     "banner": "फ़िक्सचर मोड — नमूना डेटा, कुछ सेव नहीं होता",

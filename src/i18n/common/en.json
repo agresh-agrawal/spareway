@@ -206,7 +206,8 @@
     "offer_answer": "Your offer for {{code}} (₹{{amount}}) was answered",
     "trip_started": "{{code}} has left — trip started",
     "trip_done": "{{code}} finished — see the earnings",
-    "trip_cancelled": "{{code}} was cancelled"
+    "trip_cancelled": "{{code}} was cancelled",
+    "weighing_check": "Weighbridge check — {{code}}: weighed {{net}} kg vs declared {{declared}} kg"
   },
   "fixture": {
     "banner": "Fixture mode — sample data, nothing is saved",

@@ -6,7 +6,9 @@ import { PlainButton } from '@/components/common'
 import { useLang } from '@/lib/i18n'
 import { queryKeys } from '@/lib/queryKeys'
 import { cn } from '@/lib/cn'
-import { useTripStops } from '@/features/trips'
+import { useTrip, useTripStops } from '@/features/trips'
+import { useTruck } from '@/features/trucks'
+import type { IntegrityTruck } from '@/features/cargo'
 import type { LoaderJobOk } from '@/types/domain'
 import {
   addAsLoader,
@@ -31,11 +33,13 @@ function SmartAdd({
   who,
   stops,
   big,
+  truck,
   onConfirm,
 }: {
   who: Who
   stops: DropStop[]
   big?: boolean
+  truck?: IntegrityTruck | null
   onConfirm: (rows: CheckRow[], source: Source, scan: AiResult) => Promise<void>
 }) {
   const { t } = useLang('smart-input')
@@ -84,7 +88,11 @@ function SmartAdd({
         stops={stops}
         photos={photoUrls}
         ai={source === 'camera'}
-        onConfirm={(checked) => onConfirm(checked, source, scan ?? { scanId: null, imagePaths: [], items: [], warnings: [] })}
+        source={source}
+        truck={truck}
+        onConfirm={(checked) =>
+          onConfirm(checked, source, scan ?? { scanId: null, imagePaths: [], items: [], warnings: [] })
+        }
       />
     </>
   )
@@ -95,11 +103,24 @@ export function OwnerSmartAdd({ tripId, onAdded }: { tripId: string; onAdded?: (
   const { t } = useLang('smart-input')
   const qc = useQueryClient()
   const stops = useTripStops(tripId)
-  const drops: DropStop[] = (stops.data ?? []).filter((s) => s.stop_type !== 'origin').map((s) => ({ id: s.id, seq: s.seq, name: s.name }))
+  const trip = useTrip(tripId)
+  const tr = useTruck(trip.data?.trip.truck_id).data
+  const truck = tr
+    ? {
+        lengthCm: Number(tr.internal_length_cm),
+        widthCm: Number(tr.internal_width_cm),
+        heightCm: Number(tr.internal_height_cm),
+        payloadKg: Number(tr.payload_kg),
+      }
+    : null
+  const drops: DropStop[] = (stops.data ?? [])
+    .filter((s) => s.stop_type !== 'origin')
+    .map((s) => ({ id: s.id, seq: s.seq, name: s.name }))
   return (
     <SmartAdd
       who={{ tripId }}
       stops={drops}
+      truck={truck}
       onConfirm={async (rows, source, scan) => {
         const n = await addAsOwner(tripId, rows, source, scan)
         await qc.invalidateQueries({ queryKey: queryKeys.trip(tripId) })
@@ -118,7 +139,9 @@ export function LoaderSmartAdd({ token, job }: { token: string; job: LoaderJobOk
   const key = ['loaderItems', token]
   const items = useQuery({ queryKey: key, queryFn: () => listLoaderItems(token) })
   const [editing, setEditing] = useState<LoaderItem | null>(null)
-  const drops: DropStop[] = job.stops.filter((s) => s.type !== 'origin').map((s) => ({ id: s.id, seq: s.seq, name: s.name }))
+  const drops: DropStop[] = job.stops
+    .filter((s) => s.type !== 'origin')
+    .map((s) => ({ id: s.id, seq: s.seq, name: s.name }))
   const refresh = () => qc.invalidateQueries({ queryKey: key })
   const stopOf = (id: string) => drops.find((s) => s.id === id)
   const list = items.data ?? []
@@ -128,6 +151,7 @@ export function LoaderSmartAdd({ token, job }: { token: string; job: LoaderJobOk
         <SmartAdd
           who={{ loaderToken: token }}
           stops={drops}
+          truck={job.truck}
           big
           onConfirm={async (rows, source, scan) => {
             await addAsLoader(token, rows, source, scan)
@@ -149,7 +173,8 @@ export function LoaderSmartAdd({ token, job }: { token: string; job: LoaderJobOk
                       {td(it.label)} × {it.quantity}
                     </span>
                     <span className="block text-ink-2 tabular">
-                      {it.lengthCm} × {it.widthCm} × {it.heightCm} cm · {it.weightKg} kg{s ? ` · ${s.seq} ${td(s.name)}` : ''}
+                      {it.lengthCm} × {it.widthCm} × {it.heightCm} cm · {it.weightKg} kg
+                      {s ? ` · ${s.seq} ${td(s.name)}` : ''}
                     </span>
                   </span>
                   <PlainButton icon={Pencil} onClick={() => setEditing(it)} className="h-12 px-3">
@@ -164,9 +189,15 @@ export function LoaderSmartAdd({ token, job }: { token: string; job: LoaderJobOk
       <CheckItemsSheet
         open={editing !== null}
         onOpenChange={(o) => !o && setEditing(null)}
-        initial={editing ? toRows([{ ...editing, notes: '', confidence: editing.confidence ?? 1 }], editing.dropStopId) : []}
+        initial={
+          editing
+            ? toRows([{ ...editing, notes: '', confidence: editing.confidence ?? 1 }], editing.dropStopId)
+            : []
+        }
         stops={drops}
         ai={false}
+        source={editing?.source}
+        truck={job.truck}
         confirmLabel={t('mine.save')}
         onRemove={
           editing

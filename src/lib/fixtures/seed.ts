@@ -21,6 +21,8 @@ export interface FixtureData {
   trips: Tables<'trips'>[]
   trip_stops: Tables<'trip_stops'>[]
   cargo_items: Tables<'cargo_items'>[]
+  cargo_changes: Tables<'cargo_changes'>[]
+  trip_weighings: Tables<'trip_weighings'>[]
   load_plans: Tables<'load_plans'>[]
   loading_progress: Tables<'loading_progress'>[]
   route_options: Tables<'route_options'>[]
@@ -234,6 +236,12 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     image_path: null,
     confidence: null,
     created_at: created,
+    integrity_flags: [],
+    integrity_status: 'ok',
+    evidence_path: null,
+    integrity_note: null,
+    integrity_confirmed_at: null,
+    integrity_confirmed_by: null,
   })
 
   const cargo_items = [
@@ -445,6 +453,8 @@ export function buildSeed(now: Date = new Date()): FixtureData {
     trips,
     trip_stops,
     cargo_items,
+    cargo_changes: [],
+    trip_weighings: [],
     load_plans,
     loading_progress: [],
     route_options: [],

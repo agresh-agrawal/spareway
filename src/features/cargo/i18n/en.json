@@ -64,5 +64,94 @@
     "weight": "Type the weight of one piece",
     "quantity": "Type how many pieces",
     "drop": "Choose where this cargo is dropped"
+  },
+  "integrity": {
+    "irrelevant": "Data looks irrelevant",
+    "blocks": {
+      "DENSITY_IMPOSSIBLE_HIGH": "no real goods this size are that heavy",
+      "DENSITY_IMPOSSIBLE_LOW": "no real goods this size are that light",
+      "UNIT_OVER_PAYLOAD": "one piece is heavier than the truck can carry"
+    },
+    "flags": {
+      "DENSITY_HIGH": "Very heavy for its size — add a photo or a reason",
+      "DENSITY_LOW": "Very light for its size — add a photo or a reason",
+      "LINE_OVER_PAYLOAD": "This line alone is heavier than the truck can carry",
+      "LINE_OVER_VOLUME": "This line alone is bigger than the truck",
+      "NO_FIT": "One piece won't fit this truck",
+      "VAGUE_LABEL": "write what is inside, e.g. LED TV 43 inch",
+      "HISTORY_MISMATCH": "Usually {{usual}} each in your past trips — check the weight",
+      "LOW_AI_CONFIDENCE": "AI was not sure — check the numbers"
+    },
+    "usual": "Usually {{kg}} each in your past trips",
+    "status": {
+      "review": "Check needed",
+      "checked": "Checked"
+    },
+    "confidence": "Estimated {{pct}}% sure",
+    "locked": "The truck has left — cargo can't be changed now",
+    "proof": "Add proof photo",
+    "proofAdded": "Proof photo added",
+    "proofView": "See proof photo",
+    "confirm": "Mark as checked",
+    "confirmTitle": "Mark {{label}} as checked",
+    "reason": "Why is this right?",
+    "reasonHelp": "At least 10 letters, e.g. Steel parts — checked the bill",
+    "reasonShort": "Write at least 10 letters",
+    "confirmed": "Marked as checked",
+    "note": "Checked: {{note}}",
+    "history": "Change history",
+    "historyEmpty": "No changes yet",
+    "actors": {
+      "owner": "You",
+      "loader": "Loader",
+      "system": "System"
+    },
+    "actions": {
+      "insert": "added",
+      "update": "changed",
+      "delete": "removed"
+    },
+    "fields": {
+      "label": "name",
+      "length_cm": "length",
+      "width_cm": "width",
+      "height_cm": "height",
+      "weight_kg": "weight",
+      "quantity": "pieces",
+      "drop_stop_id": "drop stop",
+      "fragile": "fragile",
+      "upright_only": "upright",
+      "stackable": "stacking",
+      "evidence_path": "proof photo",
+      "integrity_note": "check note"
+    },
+    "errors": {
+      "impossible": "Data looks irrelevant — that weight is impossible for this size",
+      "slip": "Add a photo of the slip",
+      "tare": "Full weight must be more than the empty truck weight"
+    },
+    "weigh": {
+      "title": "Weighbridge",
+      "none": "No weighbridge slip yet — weigh the loaded truck to prove the weight",
+      "add": "Add weighbridge slip",
+      "gross": "Full truck weight (gross)",
+      "tare": "Empty truck weight (tare)",
+      "tareHelp": "Leave empty to use {{kg}} from the truck record",
+      "slip": "Photo of the slip",
+      "slipTake": "Take photo",
+      "slipReady": "Slip photo ready",
+      "save": "Save slip",
+      "saved": "Weighbridge slip saved",
+      "result": "Weighed {{net}} · declared {{declared}}",
+      "match": "Matches the declared weight",
+      "mismatch": "Off by {{diff}} — check the cargo",
+      "placeOk": "Weighed near the loading point",
+      "placeFar": "Weighed {{km}} km from the loading point — may not be this load",
+      "placeUnknown": "No location for this slip",
+      "byDriver": "Entered by the driver",
+      "useGps": "Phone location is saved with the slip"
+    },
+    "reviewBanner_one": "1 line needs a photo or a reason before loading",
+    "reviewBanner_other": "{{count}} lines need a photo or a reason before loading"
   }
 }
