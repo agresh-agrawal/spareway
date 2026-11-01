@@ -177,8 +177,8 @@ export function buildSeed(now: Date = new Date()): FixtureData {
   const trip_stops = [
     stop(310, demo.id, 0, 'origin', 'Manesar warehouse', 'Gurugram', 28.354, 76.9366),
     stop(311, demo.id, 1, 'drop', 'Jaipur (Sitapura)', 'Jaipur', 26.7787, 75.8306, w(5, 10)),
-    stop(312, demo.id, 2, 'drop', 'Ahmedabad (Narol)', 'Ahmedabad', 22.9536, 72.5947, w(18, 28)),
-    stop(313, demo.id, 3, 'drop', 'Mumbai (Bhiwandi)', 'Bhiwandi', 19.2813, 73.0483, w(34, 46)),
+    stop(312, demo.id, 2, 'drop', 'Ahmedabad (Narol)', 'Ahmedabad', 22.9536, 72.5947, w(26, 46)),
+    stop(313, demo.id, 3, 'drop', 'Mumbai (Bhiwandi)', 'Bhiwandi', 19.2813, 73.0483, w(52, 70)),
     stop(290, live.id, 0, 'origin', 'Ahmedabad (Aslali)', 'Ahmedabad', 22.9196, 72.5996, { status: 'done' }),
     stop(291, live.id, 1, 'drop', 'Vadodara (Makarpura)', 'Vadodara', 22.2587, 73.1902, {
       status: 'done',

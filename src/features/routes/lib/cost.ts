@@ -35,13 +35,22 @@ export function costRoute(distanceKm: number, plan: RoutePlan, truck: CostTruck,
   }
 }
 
-/** Index of the Best route (lowest score; ties → shorter time → list order), or -1. */
-export function bestIndex(items: { cost: CostBreakdown; plan: Pick<RoutePlan, 'totalMin'> }[]): number {
+type BestItem = { cost: CostBreakdown; plan: Pick<RoutePlan, 'totalMin'> & { schedule?: { warnings: { code: string }[] } } }
+const lateCount = (x: BestItem) => x.plan.schedule?.warnings.filter((w) => w.code === 'LATE').length ?? 0
+
+/**
+ * Index of the Best route, or -1: fewest stops reached after their delivery time first (a cheap route that misses
+ * the delivery is not "best"), then lowest score, then shorter time, then list order.
+ */
+export function bestIndex(items: BestItem[]): number {
   let best = -1
   items.forEach((x, i) => {
     if (best < 0) return void (best = i)
     const b = items[best]
-    if (x.cost.score < b.cost.score || (x.cost.score === b.cost.score && x.plan.totalMin < b.plan.totalMin)) best = i
+    const lx = lateCount(x)
+    const lb = lateCount(b)
+    if (lx < lb || (lx === lb && (x.cost.score < b.cost.score || (x.cost.score === b.cost.score && x.plan.totalMin < b.plan.totalMin))))
+      best = i
   })
   return best
 }

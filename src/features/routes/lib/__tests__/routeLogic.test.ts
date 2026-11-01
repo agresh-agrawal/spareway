@@ -201,7 +201,17 @@ describe('costRoute', () => {
       return { plan, cost: costRoute(r.distanceKm, plan, truck, settings) }
     })
     const best = bestIndex(items)
-    expect(items.every((x) => x.cost.score >= items[best].cost.score)).toBe(true)
+    const late = (x: (typeof items)[number]) => x.plan.schedule.warnings.filter((w) => w.code === 'LATE').length
+    const onTime = items.filter((x) => late(x) === late(items[best]))
+    expect(onTime.every((x) => x.cost.score >= items[best].cost.score)).toBe(true)
+    expect(items.every((x) => late(x) >= late(items[best]))).toBe(true)
     expect(bestIndex([])).toBe(-1)
+  })
+
+  it('a cheaper route that misses a delivery time is not Best', () => {
+    const cost = (score: number) => ({ score }) as Parameters<typeof bestIndex>[0][number]['cost']
+    const cheapLate = { cost: cost(100), plan: { totalMin: 600, schedule: { warnings: [{ code: 'LATE' }] } } }
+    const dearOnTime = { cost: cost(200), plan: { totalMin: 500, schedule: { warnings: [] } } }
+    expect(bestIndex([cheapLate, dearOnTime])).toBe(1)
   })
 })
