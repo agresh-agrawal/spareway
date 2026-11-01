@@ -67,6 +67,35 @@
     "issueMark": "Problem reported",
     "in3d": "3D",
     "byLayer": "Layer by layer",
-    "layers": "Layers"
+    "layers": "Layers",
+    "loadedAll": "All {{n}} loaded",
+    "onlyOne": "Only 1 loaded",
+    "runHint": "{{n}} same items go here together — load them all, then tap once.",
+    "layerDone": "{{layer}}: all {{n}} loaded",
+    "markedN_one": "{{count}} item marked loaded",
+    "markedN_other": "{{count}} items marked loaded",
+    "undo": "Undo",
+    "onLayer": "On this layer",
+    "tapItem": "Tap an item to see what it is",
+    "doneOf": "{{done}}/{{total}} loaded",
+    "item": {
+      "title": "Item #{{step}}",
+      "what": "What it is",
+      "size": "Size (L × W × H)",
+      "weight": "Weight",
+      "where": "Where in the truck",
+      "goesTo": "Unload at",
+      "same": "{{i}} of {{n}} {{label}} in this load",
+      "status": {
+        "pending": "Not loaded yet",
+        "done": "Loaded",
+        "issue": "Problem reported"
+      },
+      "markLoaded": "Mark loaded",
+      "markNot": "Not loaded — undo",
+      "goTo": "Load this one now",
+      "heavy": "Heavy — lift with 2 people",
+      "unloadHint": "Comes out at stop {{n}}. Colour = unload stop."
+    }
   }
 }

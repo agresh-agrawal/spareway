@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
-import { AlertTriangle, ArrowLeft, Check, CheckCircle2, ClipboardList, Hourglass, LinkIcon, Send } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, Check, CheckCheck, CheckCircle2, ClipboardList, Hourglass, Info, Layers, LinkIcon, Send } from 'lucide-react'
 import { LanguageButton, Logo, MainButton, PlainButton, Sheet, Skeleton, StopChip, stopColor, ThemeButton } from '@/components/common'
 import { Slot } from '@/app/slots'
 import { TruckScene } from '@/features/load-planner'
@@ -12,9 +12,11 @@ import { toAppError } from '@/lib/errors'
 import { formatCargoSize, formatWeight } from '@/lib/format'
 import { cn } from '@/lib/cn'
 import type { LoaderJobOk, Placement } from '@/types/domain'
-import { useLoaderJob, useUpdateStep } from '../hooks'
-import { firstOpenStep, positionWords } from '../lib/position'
+import { useLoaderJob, useUpdateStep, useUpdateSteps } from '../hooks'
+import { firstOpenStep, layerBand, pendingOnLayer, positionWords, sameRun } from '../lib/position'
 import { LayerView } from '../components/LayerView'
+import { LayerList } from '../components/LayerList'
+import { ItemSheet, type ItemStatus } from '../components/ItemSheet'
 
 const REASONS = ['missing', 'damaged', 'size', 'other'] as const
 
@@ -76,6 +78,9 @@ export default function LoaderPage() {
   const { t, td } = useLang('loader')
   const job = useLoaderJob(token)
   const update = useUpdateStep(token)
+  const bulk = useUpdateSteps(token)
+  const [picked, setPicked] = useState<Placement | null>(null)
+  const [problemStep, setProblemStep] = useState<number | null>(null)
   const [step, setStep] = useState<number | null>(null)
   const [view, setView] = useState<'layer' | '3d'>('layer')
   const [layer, setLayer] = useState<number | null>(null)
@@ -88,6 +93,7 @@ export default function LoaderPage() {
   const plan = data?.plan ?? null
   const placements = useMemo(() => (plan?.placements ?? []).slice().sort((a, b) => a.step - b.step), [plan])
   const total = placements.length
+  const band = useMemo(() => layerBand(placements), [placements])
   const progress = useMemo(() => data?.progress ?? [], [data])
   const doneCount = progress.filter((p) => p.status === 'done').length
   const states = useMemo(() => {
@@ -139,9 +145,16 @@ export default function LoaderPage() {
   const words = p ? positionWords(p, data.truck, placements) : null
   const container = { lengthCm: data.truck.lengthCm, widthCm: data.truck.widthCm, heightCm: data.truck.heightCm }
 
-  const nextOpen = (after: number) => {
-    const open = progress.filter((x) => x.status === 'pending' && x.step > after).sort((a, b) => a.step - b.step)[0]
-    return open?.step ?? Math.min(after + 1, total)
+  // next box still to load after `after`, skipping the ones just marked (the poll has not caught up yet)
+  const nextOpen = (after: number, skip: number[] = []) => {
+    const open = progress
+      .filter((x) => x.status === 'pending' && !skip.includes(x.step))
+      .sort((a, b) => a.step - b.step)
+    return (open.find((x) => x.step > after) ?? open[0])?.step ?? Math.min(after + 1, total)
+  }
+  const statusOf = (stepN: number): ItemStatus => {
+    const st = progress.find((x) => x.step === stepN)?.status
+    return st === 'done' ? 'done' : st === 'issue' ? 'issue' : 'pending'
   }
 
   const goTo = (n: number) => {
@@ -149,22 +162,43 @@ export default function LoaderPage() {
     setStep(n)
   }
 
-  const send = async (s: 'done' | 'issue', text = '') => {
+  const failed = async (e: unknown) => {
+    const code = toAppError(e).code
+    if (code === 'PLAN_CHANGED') {
+      toast(t('page.planChanged'))
+      await job.refetch() // same step number on the new plan
+    } else toast.error(t(`common:errors.${code}`))
+  }
+
+  const send = async (s: 'done' | 'issue', text = '', target = current) => {
     if (!p) return
     try {
-      await update.mutateAsync({ planId: plan.id, step: current, status: s, note: text })
+      await update.mutateAsync({ planId: plan.id, step: target, status: s, note: text })
       if (s === 'issue') {
         toast.success(t('page.problemSent'))
         setProblemOpen(false)
         setNote('')
+        setProblemStep(null)
       }
-      goTo(nextOpen(current))
+      if (target === current) goTo(nextOpen(current, [current]))
     } catch (e) {
-      const code = toAppError(e).code
-      if (code === 'PLAN_CHANGED') {
-        toast(t('page.planChanged'))
-        await job.refetch() // same step number on the new plan
-      } else toast.error(t(`common:errors.${code}`))
+      await failed(e)
+    }
+  }
+
+  /** One tap for many boxes; a toast offers Undo in case it was tapped by mistake. */
+  const markMany = async (steps: number[], s: 'done' | 'pending' = 'done') => {
+    if (steps.length === 0) return
+    try {
+      await bulk.mutateAsync({ planId: plan.id, steps, status: s })
+      if (s === 'done') {
+        toast.success(t('page.markedN', { count: steps.length }), {
+          action: { label: t('page.undo'), onClick: () => void markMany(steps, 'pending') },
+        })
+        if (steps.includes(current)) goTo(nextOpen(Math.max(...steps), steps))
+      }
+    } catch (e) {
+      await failed(e)
     }
   }
 
@@ -177,6 +211,12 @@ export default function LoaderPage() {
     )
 
   const layerWord = words ? (words.layer <= 3 ? t(`page.layer.${words.layer}`) : t('page.layer.n', { n: words.layer })) : ''
+  const run = p ? sameRun(placements, progress, current, band) : []
+  const shownLayer = layer ?? words?.layer ?? 1
+  const shownWord = shownLayer <= 3 ? t(`page.layer.${shownLayer}`) : t('page.layer.n', { n: shownLayer })
+  const pendingHere = pendingOnLayer(placements, progress, shownLayer, band)
+  const busy = update.isPending || bulk.isPending
+  const stopNameOf = (q: Placement) => drops[q.unloadOrder - 1]?.name
 
   return (
     <Frame job={data}>
@@ -193,7 +233,12 @@ export default function LoaderPage() {
       {p && (
         <section className="rounded-card border border-line bg-surface p-4" aria-live="polite">
           <div className="flex items-start justify-between gap-3">
-            <h1 className="text-[26px] leading-8 font-semibold">{td(p.label)}</h1>
+            <button type="button" onClick={() => setPicked(p)} className="flex min-w-0 items-start gap-2 text-left">
+              <h1 className="text-[26px] leading-8 font-semibold">
+                {run.length > 1 ? `${run.length} × ${td(p.label)}` : td(p.label)}
+              </h1>
+              <Info size={22} className="mt-1.5 shrink-0 text-ink-3" aria-label={t('page.item.what')} />
+            </button>
             {status === 'issue' && (
               <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-crit/15 px-2 py-1 text-label font-semibold text-crit">
                 <AlertTriangle size={14} aria-hidden />
@@ -209,6 +254,7 @@ export default function LoaderPage() {
             {t('page.sizeWeight', { size: formatCargoSize(p.l, p.w, p.h), kg: formatWeight(p.weightKg) })}
           </p>
           {p.fragile && <p className="mt-1 text-[19px] leading-7 font-medium text-warn">{t('page.fragile')}</p>}
+          {run.length > 1 && <p className="mt-1 text-[17px] leading-6 text-ink-2">{t('page.runHint', { n: run.length })}</p>}
 
           {words && (
             <div className="mt-4 rounded-tile bg-accent-soft p-3">
@@ -246,19 +292,43 @@ export default function LoaderPage() {
                 highlightKey={p.key}
                 states={states}
                 visibleSteps={current}
-                layer={layer ?? words?.layer ?? 1}
+                layer={shownLayer}
                 onLayer={setLayer}
+                onPick={setPicked}
               />
             )}
           </div>
         </section>
       )}
 
-      <MainButton icon={Check} size="lg" onClick={() => send('done')} loading={update.isPending} className="w-full">
-        {t('page.done')}
-      </MainButton>
+      {run.length > 1 ? (
+        <div className="flex flex-col gap-2">
+          <MainButton icon={CheckCheck} size="lg" onClick={() => void markMany(run)} loading={busy} className="w-full">
+            {t('page.loadedAll', { n: run.length })}
+          </MainButton>
+          <PlainButton icon={Check} onClick={() => send('done')} disabled={busy} className="h-14 text-[18px]">
+            {t('page.onlyOne')}
+          </PlainButton>
+        </div>
+      ) : (
+        <MainButton icon={Check} size="lg" onClick={() => send('done')} loading={busy} className="w-full">
+          {t('page.done')}
+        </MainButton>
+      )}
+      {pendingHere.length > 1 && pendingHere.length !== run.length && (
+        <PlainButton icon={Layers} onClick={() => void markMany(pendingHere)} disabled={busy} className="h-14 text-[18px]">
+          {t('page.layerDone', { layer: shownWord, n: pendingHere.length })}
+        </PlainButton>
+      )}
       <div className="grid grid-cols-2 gap-2">
-        <PlainButton icon={AlertTriangle} onClick={() => setProblemOpen(true)} className="h-14 text-[18px]">
+        <PlainButton
+          icon={AlertTriangle}
+          onClick={() => {
+            setProblemStep(current)
+            setProblemOpen(true)
+          }}
+          className="h-14 text-[18px]"
+        >
           {t('page.problem')}
         </PlainButton>
         <PlainButton icon={ArrowLeft} onClick={() => goTo(Math.max(1, current - 1))} disabled={current <= 1} className="h-14 text-[18px]">
@@ -266,15 +336,42 @@ export default function LoaderPage() {
         </PlainButton>
       </div>
 
+      <section className="rounded-card border border-line bg-surface p-4">
+        <LayerList placements={placements} states={states} layer={shownLayer} band={band} currentStep={current} onPick={setPicked} />
+      </section>
+
       <Slot name="loader.actions" props={{ token, job: data }} />
+
+      <ItemSheet
+        item={picked}
+        all={placements}
+        status={picked ? statusOf(picked.step) : 'pending'}
+        container={container}
+        stopName={picked ? stopNameOf(picked) : undefined}
+        busy={busy}
+        onClose={() => setPicked(null)}
+        onMark={(q, st) => {
+          setPicked(null)
+          void (st === 'done' && q.step === current ? send('done') : markMany([q.step], st))
+        }}
+        onProblem={(q) => {
+          setPicked(null)
+          setProblemStep(q.step)
+          setProblemOpen(true)
+        }}
+        onGoTo={(q) => {
+          setPicked(null)
+          goTo(q.step)
+        }}
+      />
 
       <Sheet
         open={problemOpen}
         onOpenChange={setProblemOpen}
-        title={t('page.problemTitle')}
+        title={problemStep && problemStep !== current ? `${t('page.problemTitle')} · #${problemStep}` : t('page.problemTitle')}
         dirty={note.length > 0}
         footer={
-          <MainButton icon={Send} size="lg" onClick={() => send('issue', `${t(`page.reasons.${reason}`)}${note ? ` — ${note}` : ''}`)} loading={update.isPending} className="w-full">
+          <MainButton icon={Send} size="lg" onClick={() => send('issue', `${t(`page.reasons.${reason}`)}${note ? ` — ${note}` : ''}`, problemStep ?? current)} loading={update.isPending} className="w-full">
             {t('page.sendProblem')}
           </MainButton>
         }

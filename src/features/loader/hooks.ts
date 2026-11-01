@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import i18n from '@/i18n/setup'
 import { enqueue, isOfflineError } from '@/features/offline'
 import type { LoaderJob, LoaderStepStatus } from '@/types/domain'
-import { createLoaderLink, disableLoaderLink, getJob, getLinkState, getLoaderAlerts, getProgress, updateStep } from './api'
+import { createLoaderLink, disableLoaderLink, getJob, getLinkState, getLoaderAlerts, getProgress, updateStep, updateSteps } from './api'
 import { pollInterval } from './lib/position'
 
 // ---------- owner ----------
@@ -86,6 +86,30 @@ export function useUpdateStep(token: string) {
     },
     onSettled: () => {
       if (navigator.onLine) void qc.invalidateQueries({ queryKey: queryKeys.loaderJob(token) }) // own writes → refetch now
+    },
+  })
+}
+
+/** Many boxes at once ("all 12 loaded", "whole layer loaded"). Offline: each box joins the queue as a loader_step. */
+export function useUpdateSteps(token: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (v: { planId: string; steps: number[]; status: 'done' | 'pending' }) => {
+      try {
+        await updateSteps(token, v.planId, v.steps, v.status)
+      } catch (e) {
+        if (!isOfflineError(e)) throw e
+        for (const step of v.steps) enqueue('loader_step', { token, planId: v.planId, step, status: v.status, note: '' })
+        qc.setQueryData<LoaderJob>(queryKeys.loaderJob(token), (old) =>
+          old && 'progress' in old
+            ? { ...old, progress: old.progress.map((p) => (v.steps.includes(p.step) ? { ...p, status: v.status, note: '' } : p)) }
+            : old,
+        )
+        toast(i18n.t('offline:queued'))
+      }
+    },
+    onSettled: () => {
+      if (navigator.onLine) void qc.invalidateQueries({ queryKey: queryKeys.loaderJob(token) })
     },
   })
 }

@@ -18,6 +18,7 @@ export function LayerView({
   visibleSteps,
   layer,
   onLayer,
+  onPick,
 }: {
   container: Pick<PackContainer, 'lengthCm' | 'widthCm'>
   placements: Placement[]
@@ -27,6 +28,8 @@ export function LayerView({
   /** 1 = floor */
   layer: number
   onLayer: (n: number) => void
+  /** tap a box on this layer → what it is */
+  onPick?: (p: Placement) => void
 }) {
   const { t, td } = useLang('loader')
   const band = useMemo(() => layerBand(placements), [placements])
@@ -79,7 +82,13 @@ export function LayerView({
             const hi = p.key === highlightKey
             const size = Math.min(p.w, p.l)
             return (
-              <g key={p.key}>
+              <g
+                key={p.key}
+                role={onPick ? 'button' : undefined}
+                aria-label={onPick ? `${p.step}. ${td(p.label)}` : undefined}
+                className={onPick ? 'cursor-pointer' : undefined}
+                onClick={onPick ? () => onPick(p) : undefined}
+              >
                 <rect
                   x={toX(p) + 1}
                   y={p.x + 1}

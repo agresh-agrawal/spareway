@@ -57,3 +57,46 @@ export function firstOpenStep(progress: { step: number; status: string }[]): num
   if (open) return open.step
   return progress.length ? Math.max(...progress.map((p) => p.step)) : 1
 }
+
+/**
+ * The boxes the loader can put in one go from `step` on: the next pending steps in order with the same goods,
+ * same layer and same drop stop (e.g. "12 × Cartons on the floor") — one tap for all of them, not 12.
+ */
+export function sameRun(
+  placements: Placement[],
+  progress: { step: number; status: string }[],
+  step: number,
+  band: number,
+  max = 60,
+): number[] {
+  const sorted = placements.slice().sort((a, b) => a.step - b.step)
+  const first = sorted.find((p) => p.step === step)
+  if (!first) return []
+  const pending = new Set(progress.filter((x) => x.status === 'pending').map((x) => x.step))
+  const out: number[] = []
+  for (const p of sorted) {
+    if (p.step < step) continue
+    if (!pending.has(p.step)) {
+      if (p.step === step) continue // the current one may be a re-tap of a problem box
+      break
+    }
+    if (p.label !== first.label || p.unloadOrder !== first.unloadOrder || layerOf(p, band) !== layerOf(first, band)) break
+    out.push(p.step)
+    if (out.length >= max) break
+  }
+  return out
+}
+
+/** Pending steps on one layer, in loading order. */
+export function pendingOnLayer(
+  placements: Placement[],
+  progress: { step: number; status: string }[],
+  layer: number,
+  band: number,
+): number[] {
+  const pending = new Set(progress.filter((x) => x.status === 'pending').map((x) => x.step))
+  return placements
+    .filter((p) => layerOf(p, band) === layer && pending.has(p.step))
+    .map((p) => p.step)
+    .sort((a, b) => a - b)
+}

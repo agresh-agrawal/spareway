@@ -184,3 +184,27 @@ export async function updateStep(token: string, planId: string, step: number, st
   if (error) throw toAppError(error)
   throwIfDataError(data)
 }
+
+/** Several steps done (or back to pending) in one tap (loader_update_steps). Errors LINK_INVALID | BAD_STATUS | PLAN_CHANGED. */
+export async function updateSteps(token: string, planId: string, steps: number[], status: 'done' | 'pending'): Promise<void> {
+  if (steps.length === 0) return
+  if (isFixtureMode()) {
+    const d = fixtureStore()
+    const t = d.trips.find((x) => x.loader_token === token)
+    if (!t) throw new AppError('LINK_INVALID')
+    if (!d.load_plans.some((p) => p.id === planId && p.status === 'active' && p.trip_id === t.id)) throw new AppError('PLAN_CHANGED')
+    const now = new Date().toISOString()
+    for (const row of d.loading_progress)
+      if (row.load_plan_id === planId && steps.includes(row.step_index)) Object.assign(row, { status, note: '', updated_at: now })
+    if (t.status === 'planned') t.status = 'loading'
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('loader_update_steps', {
+    p_token: token,
+    p_plan_id: planId,
+    p_steps: steps,
+    p_status: status,
+  })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
+}
