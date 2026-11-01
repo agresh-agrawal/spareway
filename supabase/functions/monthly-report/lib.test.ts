@@ -67,6 +67,24 @@ describe('monthly report', () => {
     expect(tipText({ code: 'SPACE', pct: 50 }, 'hi')).toContain('50%')
   })
 
+  it('finds the best and weakest trip, each truck and where the money went', () => {
+    const r = buildReport(
+      '2026-10',
+      [trip({ truck: 'MP09 HG 4821' }), trip({ code: 'B', truck: 'GJ01 KT 2208', netInr: -1500, miscInr: 2000, challanInr: 2000 })],
+      null,
+      3,
+    )
+    expect(r.best).toMatchObject({ code: 'TRP-2026-0030', netInr: 8000 })
+    expect(r.worst).toMatchObject({ code: 'B', netInr: -1500 })
+    expect(r.byTruck.map((x) => x.truck)).toEqual(['MP09 HG 4821', 'GJ01 KT 2208'])
+    expect(r.costParts).toEqual({ routeInr: 44000, extraCostInr: 0, challanInr: 2000, otherInr: 0 })
+    expect(r.marginPct).toBe(11)
+    const html = renderEmail(r, 'en', 'A', 'Agrawal Transport', 'https://spareway.vercel.app').html
+    expect(html).toContain('Weakest · B')
+    expect(html).toContain('month before: 3')
+    expect(html).toContain('−₹1,500')
+  })
+
   it('reads the sender', () => {
     expect(parseSender('Spareway <hello@agreshagrawal.com>')).toEqual({ email: 'hello@agreshagrawal.com', name: 'Spareway' })
     expect(parseSender('hello@agreshagrawal.com')).toEqual({ email: 'hello@agreshagrawal.com', name: 'Spareway' })

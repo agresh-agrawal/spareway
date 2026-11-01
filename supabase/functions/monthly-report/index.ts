@@ -27,7 +27,10 @@ async function tripsFor(admin: SupabaseClient, companyId: string, month: string)
   if (error) throw error
   const ids = (data ?? []).map((r) => r.trip_id)
   const space = new Map<string, number | null>()
+  const truckOf = new Map<string, string>()
   if (ids.length) {
+    const { data: tr } = await admin.from('trips').select('id, trucks(reg_no)').in('id', ids)
+    for (const t of (tr ?? []) as { id: string; trucks: { reg_no: string } | null }[]) truckOf.set(t.id, t.trucks?.reg_no ?? '')
     const { data: ov, error: oErr } = await admin.from('trip_overview').select('id, plan_volume_used_pct').in('id', ids)
     if (oErr) throw oErr
     for (const o of ov ?? []) space.set(o.id, o.plan_volume_used_pct === null ? null : Number(o.plan_volume_used_pct))
@@ -45,6 +48,7 @@ async function tripsFor(admin: SupabaseClient, companyId: string, month: string)
     challanInr: Number(r.challan_cost_inr ?? 0),
     netInr: Number(r.net_earnings_inr ?? 0),
     spacePct: space.get(r.trip_id) ?? null,
+    truck: truckOf.get(r.trip_id) ?? '',
   }))
 }
 
@@ -56,7 +60,7 @@ function prevOf(month: string): string {
 async function reportFor(admin: SupabaseClient, companyId: string, month: string) {
   const [trips, prev] = await Promise.all([tripsFor(admin, companyId, month), tripsFor(admin, companyId, prevOf(month))])
   const prevNet = prev.length ? prev.reduce((a, t) => a + t.netInr, 0) : null
-  return buildReport(month, trips, prevNet)
+  return buildReport(month, trips, prevNet, prev.length)
 }
 
 async function sendBrevo(key: string, sender: { email: string; name: string }, to: { email: string; name: string }, subject: string, html: string) {

@@ -1,4 +1,5 @@
 // monthly-report — pure parts: the month's numbers, tips to cut costs, and the email (en / hi). Tested with Vitest.
+import { bars, button, C, esc, h2, inr, kpis, layout, p, table } from './email.ts'
 
 export interface ReportTrip {
   code: string
@@ -14,6 +15,22 @@ export interface ReportTrip {
   netInr: number
   /** % of the truck's space used by the active load plan (null = no plan) */
   spacePct: number | null
+  /** truck number, for the per-truck table */
+  truck?: string
+}
+
+export interface TripLine {
+  code: string
+  truck: string
+  km: number
+  netInr: number
+}
+
+export interface TruckLine {
+  truck: string
+  trips: number
+  km: number
+  netInr: number
 }
 
 export interface MonthReport {
@@ -32,6 +49,15 @@ export interface MonthReport {
   costPerKmInr: number | null
   freightPerKmInr: number | null
   prevNetInr: number | null
+  prevTrips: number | null
+  extraInr: number
+  /** net ÷ revenue, % */
+  marginPct: number | null
+  avgNetPerTripInr: number | null
+  costParts: { routeInr: number; extraCostInr: number; challanInr: number; otherInr: number }
+  best: TripLine | null
+  worst: TripLine | null
+  byTruck: TruckLine[]
   tips: Tip[]
 }
 
@@ -62,7 +88,7 @@ export function monthRange(month: string): { month: string; startIso: string; en
 const round = (n: number) => Math.round(n)
 
 /** Numbers for completed trips that finished in the month; tips from the same numbers. */
-export function buildReport(month: string, trips: ReportTrip[], prevNetInr: number | null): MonthReport {
+export function buildReport(month: string, trips: ReportTrip[], prevNetInr: number | null, prevTrips: number | null = null): MonthReport {
   const done = trips.filter((t) => t.status === 'completed')
   const sum = (f: (t: ReportTrip) => number) => done.reduce((a, t) => a + f(t), 0)
   const km = sum((t) => t.km)
@@ -87,8 +113,36 @@ export function buildReport(month: string, trips: ReportTrip[], prevNetInr: numb
   if (other > 0 && revenue > 0 && other > 0.03 * revenue) tips.push({ code: 'OTHER_COSTS', inr: round(other) })
   if (done.length > 0 && tips.length === 0) tips.push({ code: 'GOOD' })
 
+  const line = (t: ReportTrip): TripLine => ({ code: t.code, truck: t.truck ?? '', km: round(t.km), netInr: round(t.netInr) })
+  const byNet = done.slice().sort((a, b) => b.netInr - a.netInr)
+  const trucks = new Map<string, TruckLine>()
+  for (const t of done) {
+    const k = t.truck ?? ''
+    const r = trucks.get(k) ?? { truck: k, trips: 0, km: 0, netInr: 0 }
+    r.trips++
+    r.km += t.km
+    r.netInr += t.netInr
+    trucks.set(k, r)
+  }
+  const net = sum((t) => t.netInr)
+
   return {
     month,
+    prevTrips,
+    extraInr: round(sum((t) => t.extraInr)),
+    marginPct: revenue > 0 ? Math.round((100 * net) / revenue) : null,
+    avgNetPerTripInr: done.length ? round(net / done.length) : null,
+    costParts: {
+      routeInr: round(sum((t) => t.routeCostInr)),
+      extraCostInr: round(sum((t) => t.extraCostInr)),
+      challanInr: round(challan),
+      otherInr: round(other),
+    },
+    best: byNet.length ? line(byNet[0]) : null,
+    worst: byNet.length > 1 ? line(byNet[byNet.length - 1]) : null,
+    byTruck: [...trucks.values()]
+      .map((r) => ({ ...r, km: round(r.km), netInr: round(r.netInr) }))
+      .sort((a, b) => b.netInr - a.netInr),
     trips: done.length,
     km: round(km),
     revenueInr: round(revenue),
@@ -109,7 +163,6 @@ export function buildReport(month: string, trips: ReportTrip[], prevNetInr: numb
 
 type Lang = 'en' | 'hi'
 
-const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`
 
 const WORDS = {
   en: {
@@ -135,8 +188,22 @@ const WORDS = {
       NO_TRIPS: () => 'No trips were finished this month.',
       GOOD: () => 'Good month — no challans, no loss-making trips and trucks well filled. Keep it up.',
     },
-    open: 'Open Spareway',
-    footer: 'You get this email on the 1st of every month. Sent by Spareway.',
+    open: 'Open trip history',
+    footer: 'You get this email on the 1st of every month. Costs are worked out from each truck\'s cost per km plus the challans and costs added on the trip (Estimated). Sent by Spareway.',
+    title: (m: string) => `Your ${m} report`,
+    preheader: (net: string, trips: number) => `${trips} trips · net ${net}`,
+    margin: 'Profit margin',
+    perTrip: 'Average per trip',
+    extra: 'From extra loads',
+    tripsSub: (prev: number) => `month before: ${prev}`,
+    moneyWent: 'Where the money went',
+    parts: { route: 'Diesel, tolls and driver (route)', extraCost: 'Extra-load detours', challan: 'Challans', other: 'Breakdowns, police, parking, loading' },
+    bestWorst: 'Best and weakest trip',
+    best: 'Best',
+    worst: 'Weakest',
+    byTruck: 'Each truck',
+    head: { truck: 'Truck', trips: 'Trips', km: 'km', net: 'Net' },
+    noTruck: 'Truck not set',
   },
   hi: {
     subject: (m: string, net: string) => `${m} की Spareway रिपोर्ट: आपकी कमाई ${net}`,
@@ -161,8 +228,22 @@ const WORDS = {
       NO_TRIPS: () => 'इस महीने कोई ट्रिप पूरी नहीं हुई।',
       GOOD: () => 'अच्छा महीना — न चालान, न घाटे की ट्रिप, और ट्रक अच्छे से भरे। ऐसे ही चलाते रहें।',
     },
-    open: 'Spareway खोलें',
-    footer: 'यह ईमेल हर महीने की 1 तारीख को आता है। Spareway की ओर से।',
+    open: 'ट्रिप इतिहास खोलें',
+    footer: 'यह ईमेल हर महीने की 1 तारीख को आता है। खर्च हर ट्रक के प्रति km खर्च और ट्रिप में जोड़े गए चालान व खर्च से निकाला गया है (अनुमानित)। Spareway की ओर से।',
+    title: (m: string) => `आपकी ${m} की रिपोर्ट`,
+    preheader: (net: string, trips: number) => `${trips} ट्रिप · शुद्ध ${net}`,
+    margin: 'मुनाफ़ा',
+    perTrip: 'हर ट्रिप औसत',
+    extra: 'अतिरिक्त लोड से',
+    tripsSub: (prev: number) => `पिछला महीना: ${prev}`,
+    moneyWent: 'पैसा कहाँ गया',
+    parts: { route: 'डीज़ल, टोल और ड्राइवर (रूट)', extraCost: 'अतिरिक्त लोड का चक्कर', challan: 'चालान', other: 'खराबी, पुलिस, पार्किंग, लोडिंग' },
+    bestWorst: 'सबसे अच्छी और कमज़ोर ट्रिप',
+    best: 'सबसे अच्छी',
+    worst: 'सबसे कमज़ोर',
+    byTruck: 'हर ट्रक',
+    head: { truck: 'ट्रक', trips: 'ट्रिप', km: 'km', net: 'शुद्ध' },
+    noTruck: 'ट्रक नहीं जुड़ा',
   },
 }
 
@@ -171,49 +252,69 @@ export function monthName(month: string, lang: Lang): string {
   return new Date(Date.UTC(y, m - 1, 15)).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 export function tipText(tip: Tip, lang: Lang): string {
   const w = WORDS[lang].tip as Record<string, (t: never) => string>
   return w[tip.code](tip as never)
 }
 
-/** Subject + simple, phone-friendly HTML (inline styles only — email clients drop <style>). */
+/** Subject + phone-friendly HTML: headline number, KPIs, where the money went, best / weakest trip, each truck, tips. */
 export function renderEmail(r: MonthReport, lang: Lang, ownerName: string, company: string, appUrl: string): { subject: string; html: string } {
   const w = WORDS[lang]
   const m = monthName(r.month, lang)
-  const row = (k: string, v: string) =>
-    `<tr><td style="padding:8px 0;color:#555;border-bottom:1px solid #eee">${esc(k)}</td><td style="padding:8px 0;text-align:right;font-weight:600;border-bottom:1px solid #eee">${esc(v)}</td></tr>`
-  const rows = [
-    row(w.trips, String(r.trips)),
-    row(w.km, `${r.km.toLocaleString('en-IN')} km`),
-    row(w.revenue, inr(r.revenueInr)),
-    row(w.cost, inr(r.costInr)),
-    row(w.challans, inr(r.challanInr)),
-  ]
-  if (r.avgSpacePct !== null) rows.push(row(w.space, `${r.avgSpacePct}%`))
-  if (r.costPerKmInr !== null && r.freightPerKmInr !== null) rows.push(row(w.perKm, `₹${r.costPerKmInr} / ₹${r.freightPerKmInr}`))
+  const km = (n: number) => `${n.toLocaleString('en-IN')} km`
   const prev =
     r.prevNetInr !== null && r.trips > 0
-      ? `<p style="margin:4px 0 0;color:#555">${esc(w.vsPrev(inr(Math.abs(r.netInr - r.prevNetInr)), r.netInr >= r.prevNetInr))}</p>`
+      ? `<p style="margin:2px 0 0;font-size:14px;font-weight:600;color:${r.netInr >= r.prevNetInr ? C.ok : C.crit}">${r.netInr >= r.prevNetInr ? '▲' : '▼'} ${esc(w.vsPrev(inr(Math.abs(r.netInr - r.prevNetInr)), r.netInr >= r.prevNetInr))}</p>`
       : ''
-  const tips = r.tips.map((t) => `<li style="margin:0 0 10px">${esc(tipText(t, lang))}</li>`).join('')
-  const html = `<!doctype html><html><body style="margin:0;background:#f4f5f0;font-family:Arial,Helvetica,sans-serif;color:#1a1d14">
-<div style="max-width:560px;margin:0 auto;padding:24px 16px">
-<p style="font-size:20px;font-weight:700;margin:0 0 16px">Spareway · ${esc(company)}</p>
-<div style="background:#fff;border-radius:16px;padding:20px">
-<p style="margin:0 0 4px;font-size:16px">${esc(w.hello(ownerName))}</p>
-<p style="margin:0 0 16px;font-size:16px;color:#555">${esc(w.intro(m))}</p>
-<p style="margin:0;color:#555">${esc(w.net)}</p>
-<p style="margin:0;font-size:32px;font-weight:700;color:${r.netInr >= 0 ? '#2f7d1f' : '#c0392b'}">${esc(inr(r.netInr))}</p>
-${prev}
-<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:15px">${rows.join('')}</table>
-<p style="font-size:17px;font-weight:700;margin:16px 0 8px">${esc(w.tipsTitle)}</p>
-<ul style="padding-left:20px;margin:0;font-size:15px;line-height:22px">${tips}</ul>
-<p style="margin:20px 0 0"><a href="${esc(appUrl)}/history" style="display:inline-block;background:#9ccc2c;color:#1a1d14;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:12px">${esc(w.open)}</a></p>
-</div>
-<p style="font-size:12px;color:#777;margin:16px 0 0">${esc(w.footer)}</p>
-</div></body></html>`
+  let body = `${p(w.hello(ownerName), C.ink)}${p(w.intro(m))}
+<div style="background:${C.bg};border-radius:14px;padding:16px;margin:12px 0">
+<div style="font-size:14px;color:${C.ink2}">${esc(w.net)}</div>
+<div style="font-size:34px;font-weight:700;color:${r.netInr >= 0 ? C.ok : C.crit}">${esc(inr(r.netInr))}</div>${prev}
+</div>`
+  if (r.trips > 0) {
+    body += kpis([
+      { label: w.trips, value: String(r.trips), sub: r.prevTrips !== null ? w.tripsSub(r.prevTrips) : undefined },
+      { label: w.km, value: km(r.km) },
+      { label: w.revenue, value: inr(r.revenueInr) },
+      { label: w.cost, value: inr(r.costInr) },
+      ...(r.marginPct !== null ? [{ label: w.margin, value: `${r.marginPct}%`, tone: r.marginPct >= 5 ? ('ok' as const) : ('crit' as const) }] : []),
+      ...(r.avgNetPerTripInr !== null ? [{ label: w.perTrip, value: inr(r.avgNetPerTripInr) }] : []),
+      ...(r.extraInr > 0 ? [{ label: w.extra, value: inr(r.extraInr), tone: 'ok' as const }] : []),
+      ...(r.avgSpacePct !== null ? [{ label: w.space, value: `${r.avgSpacePct}%` }] : []),
+      ...(r.costPerKmInr !== null && r.freightPerKmInr !== null ? [{ label: w.perKm, value: `₹${r.costPerKmInr} / ₹${r.freightPerKmInr}` }] : []),
+    ])
+    const parts = [
+      { label: w.parts.route, value: r.costParts.routeInr, color: C.ink2 },
+      { label: w.parts.extraCost, value: r.costParts.extraCostInr, color: C.brandDark },
+      { label: w.parts.challan, value: r.costParts.challanInr, color: C.crit },
+      { label: w.parts.other, value: r.costParts.otherInr, color: C.warn },
+    ].filter((x) => x.value > 0)
+    if (parts.length) body += h2(w.moneyWent) + bars(parts.map((x) => ({ ...x, text: inr(x.value) })))
+    if (r.best) {
+      const rows = [[`${w.best} · ${r.best.code}`, km(r.best.km), inr(r.best.netInr)]]
+      if (r.worst) rows.push([`${w.worst} · ${r.worst.code}`, km(r.worst.km), inr(r.worst.netInr)])
+      body += h2(w.bestWorst) + table([], rows)
+    }
+    if (r.byTruck.length > 1 || (r.byTruck[0] && r.byTruck[0].truck))
+      body +=
+        h2(w.byTruck) +
+        table(
+          [w.head.truck, w.head.trips, w.head.km, w.head.net],
+          r.byTruck.map((x) => [x.truck || w.noTruck, String(x.trips), x.km.toLocaleString('en-IN'), inr(x.netInr)]),
+        )
+  }
+  body += h2(w.tipsTitle)
+  body += r.tips
+    .map(
+      (t, i) =>
+        `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px"><tr>
+<td width="30" valign="top"><div style="width:24px;height:24px;border-radius:12px;background:${t.code === 'GOOD' ? C.ok : C.brand};color:${t.code === 'GOOD' ? '#fff' : C.ink};font-weight:700;font-size:13px;line-height:24px;text-align:center">${i + 1}</div></td>
+<td style="font-size:15px;line-height:22px">${esc(tipText(t, lang))}</td></tr></table>`,
+    )
+    .join('')
+  body += button(`${appUrl}/history`, w.open)
+  const html = layout({ lang, preheader: w.preheader(inr(r.netInr), r.trips), company, title: w.title(m), body, footer: w.footer })
   return { subject: w.subject(m, inr(r.netInr)), html }
 }
 
