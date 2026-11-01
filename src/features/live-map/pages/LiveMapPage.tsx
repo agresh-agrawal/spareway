@@ -6,7 +6,7 @@ import { FilterChips } from '@/components/common/FilterChips'
 import { Switch } from '@/components/ui/switch'
 import { useLang } from '@/lib/i18n'
 import { useLowData } from '@/lib/lowData'
-import { formatDuration, formatKm, formatPct, formatTime } from '@/lib/format'
+import { formatDuration, formatKm, formatPct, formatRelative, formatTime } from '@/lib/format'
 import { cn } from '@/lib/cn'
 import { useLiveFleet, type LiveTruck } from '../hooks'
 
@@ -59,6 +59,11 @@ function TruckCard({ f, onClose }: { f: LiveTruck; onClose: () => void }) {
               {t('card.breakDue', { time: formatDuration(f.breakInMin, lang) })}
             </p>
           )}
+          <p className={f.source === 'gps' ? 'text-label font-medium text-ok' : 'text-label text-ink-3'}>
+            {f.source === 'gps' && f.gpsAt !== null
+              ? t('card.gps', { ago: formatRelative(f.gpsAt, lang), m: Math.round(f.accuracyM ?? 0) })
+              : t('card.simulated')}
+          </p>
           {f.approximate && <p className="text-label text-ink-3">{t('card.approximate')}</p>}
         </div>
       ) : f.trip?.status === 'loading' ? (

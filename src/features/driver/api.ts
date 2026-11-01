@@ -176,3 +176,21 @@ export async function addDriverExpense(token: string, kind: string, amountInr: n
   if (error) throw toAppError(error)
   throwIfDataError(data)
 }
+
+/** Phone GPS → the owner's map (driver_send_location; at most one point every 20 s is kept). */
+export async function sendDriverLocation(token: string, lat: number, lng: number, accuracyM: number | null, speedKmph: number | null): Promise<void> {
+  if (isFixtureMode()) {
+    const t = fixtureTripFor(token)
+    Object.assign(t, { gps_lat: lat, gps_lng: lng, gps_accuracy_m: accuracyM, gps_speed_kmph: speedKmph, gps_at: new Date().toISOString() })
+    return fixtureDelay(undefined)
+  }
+  const { data, error } = await getSupabase().rpc('driver_send_location', {
+    p_token: token,
+    p_lat: lat,
+    p_lng: lng,
+    p_accuracy_m: accuracyM ?? undefined,
+    p_speed_kmph: speedKmph ?? undefined,
+  })
+  if (error) throw toAppError(error)
+  throwIfDataError(data)
+}

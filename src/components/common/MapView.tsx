@@ -39,7 +39,7 @@ const isHindiWrap = (v: unknown): v is [string, unknown, Expr] =>
   Array.isArray(v) && v[0] === 'coalesce' && JSON.stringify(v[1]) === '["get","name:hi"]'
 
 /** Place and water labels in Hindi (OpenStreetMap name:hi, else the usual name) when the app is in Hindi. */
-function applyLabelLang(map: MapInstance, lang: string) {
+export function applyLabelLang(map: MapInstance, lang: string) {
   for (const layer of map.getStyle()?.layers ?? []) {
     if (layer.type !== 'symbol' || !(layer.id.startsWith('place_') || layer.id === 'water_name')) continue
     const current = map.getLayoutProperty(layer.id, 'text-field') as Expr | undefined
@@ -50,7 +50,8 @@ function applyLabelLang(map: MapInstance, lang: string) {
   }
 }
 
-function useStyleUrl(): string {
+/** Map style for the current theme / low-data setting (same-origin style, else OpenFreeMap). */
+export function useMapStyleUrl(): string {
   const { lowData } = useLowData()
   const { theme } = useTheme()
   const wanted = STYLES[theme][lowData ? 'lite' : 'full']
@@ -88,7 +89,7 @@ export function MapView({
   onRecentre?: () => void
 }) {
   const ref = useRef<MapRef>(null)
-  const styleUrl = useStyleUrl()
+  const styleUrl = useMapStyleUrl()
   const { lang } = useLang()
   useEffect(() => {
     const map = ref.current?.getMap()

@@ -22,7 +22,15 @@ export interface LiveTruck {
   breakInMin: number | null
   fromStop: string | null
   toStop: string | null
+  /** where the position comes from: the driver's phone (fresh fix), the simulation, or the truck's last point */
+  source: 'gps' | 'simulated' | 'last'
+  /** time of the phone fix (source gps) */
+  gpsAt: number | null
+  accuracyM: number | null
 }
+
+/** A phone fix older than this is not "live" any more — the simulation takes over (labelled Simulated). */
+export const GPS_FRESH_MS = 10 * 60_000
 
 export function useLiveData() {
   useRealtime('trucks', [[...queryKeys.trucks, 'live']])
@@ -80,9 +88,39 @@ export function useLiveFleet(): { fleet: LiveTruck[]; isLoading: boolean; error:
         breakInMin: null,
         fromStop: null,
         toStop: null,
+        source: 'last',
+        gpsAt: null,
+        accuracyM: null,
       }
       if (!trip || !geo) return base
       if (trip.status === 'loading') return { ...base, position: geo.line[0], line: geo.line, approximate: geo.approximate, fromStop: trip.stops[0]?.name ?? null, toStop: trip.stops[1]?.name ?? null }
+      const totalKm0 = geo.cum[geo.cum.length - 1]
+      const scale0 = trip.route ? trip.route.distanceKm / totalKm0 : roadFactor
+      const gpsAt = trip.gps ? new Date(trip.gps.at).getTime() : null
+      if (trip.gps && gpsAt !== null && now - gpsAt < GPS_FRESH_MS) {
+        // real position from the driver's phone: progress, km left and ETA from where the truck really is
+        const pos: LngLat = [trip.gps.lng, trip.gps.lat]
+        const km = kmOfPoint(geo.line, pos, geo.cum)
+        const next = nextStopIndex(geo.stopKms, km)
+        const kmLeft = Math.max(0, (totalKm0 - km) * scale0)
+        const kmph = trip.gps.speedKmph !== null && trip.gps.speedKmph >= 15 ? trip.gps.speedKmph : speed
+        return {
+          ...base,
+          position: pos,
+          line: geo.line,
+          approximate: geo.approximate,
+          progressPct: Math.round((100 * km) / Math.max(0.001, totalKm0)),
+          kmLeft: Math.round(kmLeft),
+          arrivesAt: now + (kmLeft / Math.max(15, kmph)) * 3_600_000,
+          speedKmph: trip.gps.speedKmph === null ? null : Math.round(trip.gps.speedKmph),
+          breakInMin: null,
+          fromStop: trip.stops[Math.max(0, next - 1)]?.name ?? null,
+          toStop: trip.stops[next]?.name ?? null,
+          source: 'gps',
+          gpsAt,
+          accuracyM: trip.gps.accuracyM,
+        }
+      }
       const dep = trip.departure ? new Date(trip.departure).getTime() : now
       const fraction = simulatedFraction(dep, geo.durationMin, now, opened.current)
       const { point, km } = pointAlong(geo.line, fraction, geo.cum)
@@ -102,6 +140,7 @@ export function useLiveFleet(): { fleet: LiveTruck[]; isLoading: boolean; error:
         breakInMin: minutesToBreak(fraction * geo.durationMin, breakAfter),
         fromStop: trip.stops[Math.max(0, next - 1)]?.name ?? null,
         toStop: trip.stops[next]?.name ?? null,
+        source: 'simulated',
       }
     })
   }, [q.data, tripGeo, now, speed, roadFactor, breakAfter])

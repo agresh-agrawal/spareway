@@ -12,8 +12,8 @@
   },
   "showRoutes": "Show routes",
   "showProblems": "Show problems",
-  "footer": "Simulated — updates every 3 s",
-  "footerLow": "Simulated — updates every 10 s",
+  "footer": "Simulated, except trucks whose driver shares live GPS — updates every 3 s",
+  "footerLow": "Simulated, except trucks whose driver shares live GPS — updates every 10 s",
   "card": {
     "progress": "Trip done",
     "arrives": "Arrives {{time}} · {{km}} left",
@@ -26,7 +26,9 @@
     "openTrip": "Open trip",
     "close": "Close",
     "problem": "Has a problem — see Home",
-    "approximate": "Route not chosen yet — straight line between stops"
+    "approximate": "Route not chosen yet — straight line between stops",
+    "gps": "Live GPS from the driver’s phone · {{ago}} · ±{{m}} m",
+    "simulated": "Simulated position — the driver has not opened the Spareway map in the last 10 min"
   },
   "noPosition": "No position yet",
   "noPositionList": "Trucks without a position",

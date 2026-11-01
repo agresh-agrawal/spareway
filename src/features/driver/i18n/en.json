@@ -51,5 +51,73 @@
   "paidChallan": "Paid a challan or cost",
   "careful": "Be careful on this trip",
   "avoidChallan": "Papers and fines — avoid a challan",
-  "myCosts": "Costs you reported"
+  "myCosts": "Costs you reported",
+  "navStart": "Drive with Spareway map",
+  "navStartHelp": "Live map on the truck route — turns, time, speed, tolls",
+  "navigateGoogle": "Google Maps",
+  "nav": {
+    "title": "Spareway drive",
+    "intro": "Live map that follows your truck on the route your owner planned for trucks — it avoids no-entry hours and truck-banned roads, and knows the tolls and rest stops.",
+    "points": {
+      "p1": "Big next-turn arrow and spoken directions in your language",
+      "p2": "Arrival time and km left to the next stop",
+      "p3": "Speed warning above the truck limit — avoid challans",
+      "p4": "Warns you when you leave the truck route"
+    },
+    "privacy": "While this screen is open your location is shared with {{company}} so they can see the truck. It stops when you close it.",
+    "start": "Start driving",
+    "demo": "Try a demo drive",
+    "simulated": "Demo drive — Simulated, not your real location",
+    "exit": "Close map",
+    "mute": "Voice off",
+    "unmute": "Voice on",
+    "overview": "Whole route",
+    "recentre": "Follow truck",
+    "you": "You are here",
+    "speed": "Your speed",
+    "waiting": "Finding your location…",
+    "gps": {
+      "denied": "Location is blocked. Allow location for this site in the phone settings, or",
+      "unavailable": "No GPS signal yet. Move to open sky, or"
+    },
+    "unit": {
+      "m": "m",
+      "km": "km"
+    },
+    "straight": "Go straight for {{dist}}",
+    "turn": {
+      "left": "In {{dist}} turn left",
+      "right": "In {{dist}} turn right",
+      "slightLeft": "In {{dist}} keep left",
+      "slightRight": "In {{dist}} keep right",
+      "sharpLeft": "In {{dist}} sharp left",
+      "sharpRight": "In {{dist}} sharp right",
+      "uturn": "In {{dist}} make a U-turn"
+    },
+    "dir": {
+      "left": "left",
+      "right": "right",
+      "slightLeft": "keep left",
+      "slightRight": "keep right",
+      "sharpLeft": "sharp left",
+      "sharpRight": "sharp right",
+      "uturn": "U-turn"
+    },
+    "then": "then {{what}}",
+    "off": "Off the truck route — go back to the green road ({{dist}})",
+    "offSay": "You have left the truck route. Please go back to the planned road.",
+    "slowDown": "Slow down — truck limit {{limit}} km/h",
+    "slowDownSay": "Please slow down. The truck limit is {{limit}} kilometres per hour.",
+    "arrived": "You have reached {{stop}}",
+    "arrivedSay": "You have reached {{stop}}.",
+    "to": "To {{stop}}",
+    "total": "{{dist}} to the last stop",
+    "halt": {
+      "break": "Break",
+      "overnight": "Night halt",
+      "no_entry_wait": "No-entry wait",
+      "checkpoint": "Checkpoint"
+    },
+    "sharing": "Location shared with the owner · accuracy {{m}} m"
+  }
 }

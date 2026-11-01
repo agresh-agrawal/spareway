@@ -28,6 +28,7 @@ import type { Halt } from '@/types/domain'
 import { addDriverExpense, getDriverTrip, markDriverStop, type DriverStop, type DriverTrip } from '../api'
 
 const DriverMap = lazy(() => import('../components/DriverMap'))
+const NavMode = lazy(() => import('../components/NavMode'))
 
 /** Driver page language: saved on this phone, Hindi the first time (like the loader page). */
 function useDriverLanguage() {
@@ -74,6 +75,7 @@ export default function DriverPage() {
   const { t, td, lang } = useLang('driver')
   const qc = useQueryClient()
   const [costOpen, setCostOpen] = useState(false)
+  const [navOpen, setNavOpen] = useState(false)
   const key = ['driverTrip', token]
   const q = useQuery({
     queryKey: key,
@@ -132,6 +134,16 @@ export default function DriverPage() {
 
   return (
     <Frame data={d}>
+      {navOpen && (
+        <Suspense fallback={<div className="fixed inset-0 z-50 bg-canvas" />}>
+          <NavMode
+            token={token}
+            data={d}
+            onClose={() => setNavOpen(false)}
+            onArrived={(s) => mark.mutate({ stopId: s.id, status: 'arrived' })}
+          />
+        </Suspense>
+      )}
       <div>
         <h1 className="text-page-title font-semibold">{t('hello', { name: d.truck.driverName.split(' ')[0] || '' })}</h1>
         <p className="mt-1 text-[18px] text-ink-2">
@@ -153,14 +165,25 @@ export default function DriverPage() {
               </p>
             )}
           </div>
+          <button
+            type="button"
+            onClick={() => setNavOpen(true)}
+            className="mt-4 flex min-h-16 w-full items-center justify-center gap-3 rounded-control bg-accent px-3 py-2 text-accent-ink"
+          >
+            <Navigation size={26} aria-hidden />
+            <span className="text-left">
+              <span className="block text-[20px] leading-6 font-semibold">{t('navStart')}</span>
+              <span className="block text-[14px] opacity-80">{t('navStartHelp')}</span>
+            </span>
+          </button>
           <a
             href={mapsUrl(next)}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-flex h-16 w-full items-center justify-center gap-2 rounded-control bg-accent text-[20px] font-semibold text-accent-ink"
+            className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control border border-line-strong bg-surface-2 text-[17px] font-semibold"
           >
-            <Navigation size={24} aria-hidden />
-            {t('navigate')}
+            <MapPin size={20} aria-hidden />
+            {t('navigateGoogle')}
           </a>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <button
