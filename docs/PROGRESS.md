@@ -107,6 +107,11 @@ Open (owner): apply `supabase/sql/prephase4code_photo_retention.sql` (the daily 
 
 **Left:** 9 camera / voice test on a real phone; 10 signed-in test of all four roles on the live site (needs the owner — I don't sign in with passwords). Company phone is needed for "Call owner" (Settings).
 
+## Demo pass — 2026-11-01
+
+Load plan back to the earlier packing (auto-balance reverted), no left/right weight warning; "Challan corner" tab is now "Misc"; Light / Dark switch on sign-in pages; home: live map beside the trips; 6 unused packages removed; README added. Secret scan of tracked files and git history: clean (`.env` holds only public `VITE_*` values). `npm run check` 394 tests + build pass. Browser (fixture): every owner page opens with no console errors; load plan "Everything fits", Balance OK; login Light ⇄ Dark works.
+Not verified: signed-in flows on the live database (the agent does not sign in with passwords).
+
 ## Cargo data integrity (anti-poisoning) — 2026-11-01, branch code/prephase4-fixes
 
 Database (`supabase/sql/prephase4code_cargo_integrity.sql`, applied earlier as two migrations, not re-run): trigger `cargo_integrity_guard` refuses impossible lines (density > 8,000 or < 2 kg/m³, one piece over payload) and stores flags + status (`ok` / `review` / `checked`); client fields locked; cargo locked once the trip has left; append-only `cargo_changes`; `confirm_cargo_check(id, note)`; `trip_weighings` (net, declared, match ±10 % / 300 kg, distance to loading point computed in SQL) + `driver_add_weighing`; `listing_integrity_guard` on market loads. Live check with the anon key: tables exist and are closed to anon, `driver_add_weighing` answers `LINK_INVALID`, `confirm_cargo_check` closed to anon.

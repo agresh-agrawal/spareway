@@ -1,7 +1,7 @@
 import type { PackContainer, PackItem, PackOptions, Placement } from '@/types/domain'
 import { sha256Hex } from './sha256'
 
-export const ENGINE_VERSION = 'sw-pack-2'
+export const ENGINE_VERSION = 'sw-pack-1'
 
 export interface ResolvedOptions {
   supportRatio: number

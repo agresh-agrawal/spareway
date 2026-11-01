@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Activity as ActivityIcon, AlertTriangle, CheckCircle2, Route, Truck, Zap } from 'lucide-react'
 import {
   BigTile,
@@ -32,7 +32,7 @@ function Greeting() {
   const part = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'
   const name = (profile?.full_name ?? '').split(' ')[0] || ''
   return (
-    <div className="mb-5">
+    <div>
       <h2 className="text-[22px] leading-7 font-semibold sm:text-page-title">{t(`greeting.${part}`, { name })}</h2>
       <p className="mt-1 text-ink-2">{formatLongDate(new Date(), lang)}</p>
     </div>
@@ -172,13 +172,45 @@ function RecentActivity() {
   )
 }
 
+const MAP_WIDGET = 'live-map'
+
+/** home.widgets entries, the live map apart so it can sit near the top. */
+function Widgets({ map }: { map: boolean }) {
+  const entries = useSlot('home.widgets', {}).filter((e) => (e.id === MAP_WIDGET) === map)
+  return (
+    <>
+      {entries.map((e) => {
+        const C = e.component
+        return (
+          <Suspense key={e.id} fallback={<Skeleton className="h-72" />}>
+            <C />
+          </Suspense>
+        )
+      })}
+    </>
+  )
+}
+
 export default function HomePage() {
+  const hasMap = useSlot('home.widgets', {}).some((e) => e.id === MAP_WIDGET)
   return (
     <div className="flex flex-col gap-4">
       <Greeting />
       <Tiles />
-      <TripsNow />
-      <Slot name="home.widgets" props={{}} />
+      {/* the map first on phones; beside the trips on wide screens */}
+      <div className="grid gap-4 lg:grid-cols-5">
+        {hasMap && (
+          <div className="min-w-0 lg:col-span-3">
+            <Widgets map />
+          </div>
+        )}
+        <div className={hasMap ? 'min-w-0 lg:col-span-2' : 'min-w-0 lg:col-span-5'}>
+          <TripsNow />
+        </div>
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Widgets map={false} />
+      </div>
       <QuickActions />
       <div className="grid gap-4 lg:grid-cols-2">
         <Problems />

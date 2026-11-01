@@ -1,6 +1,6 @@
 export { pack, fitAdditional, orientations, sortItems } from './pack'
 export { buildPackItems, type CargoRowInput, type StopInput, type TruckInput } from './buildPackItems'
 export { computeInputHash, resolveOptions, ENGINE_VERSION } from './hash'
-export { computeMetrics, computeWarnings, COG_X_RANGE, COG_Y_RANGE } from './metrics'
+export { computeMetrics, computeWarnings, COG_X_RANGE } from './metrics'
 export { validatePlan } from './validate'
 export { sha256Hex } from './sha256'

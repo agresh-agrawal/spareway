@@ -136,3 +136,7 @@
 | 2026-11-01 | Pre-4 | Typed / AI / loader weights are "declared"; only a weighbridge slip measures. Confidence per line is an estimate capped at 97 % | Anti-poisoning: no number entered by a person or AI is treated as proof |
 | 2026-11-01 | Pre-4 | Impossible lines are refused (UI + trigger); unusual ones are only flagged and need a photo or an owner's reason | Blocking unusual but real goods (steel, foam) would stop real work |
 | 2026-11-01 | Pre-4 | Irrelevant data shows one plain line "Data looks irrelevant — …" | Owner's request: simple text |
+| 2026-11-01 | Pre-4 | Automatic load balancing (87fe5d5) reverted to the earlier packing; the left/right weight warning removed | Owner's request: old placement, no warning without a fix |
+| 2026-11-01 | Pre-4 | Trip tab "Challan corner" renamed "Misc" (challan risks and trip costs stay inside) | Owner's request |
+| 2026-11-01 | Pre-4 | Sign-in pages show a labelled Light / Dark switch; home shows the live map next to "Trips now and next" | Owner's request for the demo |
+| 2026-11-01 | Pre-4 | Unused packages removed (@turf/turf, browser-image-compression, class-variance-authority, date-fns, date-fns-tz, motion) | Never imported |

@@ -3,11 +3,9 @@
 // doors, y across, z up. A box is valid only if it is inside the truck, overlaps nothing, keeps the truck
 // under payload, rests on enough strong boxes (supportRatio of its base, on stackable non-fragile boxes at
 // least as heavy) and respects stop order (nothing blocks or sits on goods that leave earlier).
-// Then the balance pass slides the whole new load along and across the floor so its centre of gravity sits
-// over the axles and in the middle (moving every box by the same amount keeps every rule above true).
 import type { PackContainer, PackItem, PackOptions, PackResult, Placement, UnplacedReason } from '@/types/domain'
 import { computeInputHash, ENGINE_VERSION, resolveOptions, type ResolvedOptions } from './hash'
-import { COG_X_RANGE, COG_X_TARGET, computeMetrics, computeWarnings } from './metrics'
+import { computeMetrics, computeWarnings } from './metrics'
 
 interface Box {
   key: string
@@ -325,46 +323,6 @@ function toPlacement(b: Box, step: number): Placement {
   }
 }
 
-/**
- * Balance pass: slide all new boxes by the same dx / dy into free floor space so the load's centre of gravity
- * is inside the safe band — along the truck to COG_X_TARGET when it is outside COG_X_RANGE, across to the middle.
- * The same shift for every box keeps support, stacking, fragile and stop-order rules exactly as checked.
- * Only when nothing is fixed (a truck already partly loaded cannot be moved).
- */
-export function balanceShift(c: PackContainer, boxes: Pick<Box, 'x' | 'y' | 'l' | 'w' | 'weightKg'>[]): { dx: number; dy: number } {
-  let kg = 0
-  let mx = 0
-  let my = 0
-  let maxX = 0
-  let maxY = 0
-  let minX = Infinity
-  let minY = Infinity
-  for (const b of boxes) {
-    kg += b.weightKg
-    mx += b.weightKg * (b.x + b.l / 2)
-    my += b.weightKg * (b.y + b.w / 2)
-    maxX = Math.max(maxX, b.x + b.l)
-    maxY = Math.max(maxY, b.y + b.w)
-    minX = Math.min(minX, b.x)
-    minY = Math.min(minY, b.y)
-  }
-  if (kg <= 0 || boxes.length === 0) return { dx: 0, dy: 0 }
-  const cogX = mx / kg
-  const cogY = my / kg
-  const pctX = (100 * cogX) / c.lengthCm
-  let dx = 0
-  if (pctX < COG_X_RANGE[0] || pctX > COG_X_RANGE[1]) {
-    const want = (COG_X_TARGET / 100) * c.lengthCm - cogX
-    dx = Math.max(-minX, Math.min(c.lengthCm - maxX, want))
-  }
-  const wantY = c.widthCm / 2 - cogY
-  let dy = Math.abs(wantY) >= 1 ? Math.max(-minY, Math.min(c.widthCm - maxY, wantY)) : 0
-  // whole cm, never past a wall
-  dx = dx >= 0 ? Math.floor(dx) : Math.ceil(dx)
-  dy = dy >= 0 ? Math.floor(dy) : Math.ceil(dy)
-  return { dx, dy }
-}
-
 function run(
   container: PackContainer,
   items: PackItem[],
@@ -431,14 +389,6 @@ function run(
       }
     }
     if (reason) unplaced.push({ key: it.key, label: it.label, reason })
-  }
-
-  if (fixed.length === 0) {
-    const { dx, dy } = balanceShift(container, packer.boxes)
-    for (const b of packer.boxes) {
-      b.x += dx
-      b.y += dy
-    }
   }
 
   // loading steps: boxes already in keep theirs; new ones follow in load order, then placement order
