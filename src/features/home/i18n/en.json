@@ -18,5 +18,12 @@
   "showFewer": "Show fewer",
   "activity": "Recent activity",
   "noActivity": "Nothing happened yet today",
-  "resolved": "Marked as done"
+  "resolved": "Marked as done",
+  "trips": {
+    "title": "Trips now and next",
+    "empty": "No open trips — start one from Trips",
+    "planLoad": "Plan the load next",
+    "freeSpace": "{{pct}}% space free — find extra loads",
+    "used": "{{pct}}% space used"
+  }
 }

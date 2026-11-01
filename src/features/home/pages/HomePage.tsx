@@ -21,6 +21,7 @@ import {
   useRecentActivity,
   useResolveProblem,
 } from '../hooks'
+import { TripsNow } from '../components/TripsNow'
 
 const MAX_PROBLEMS = 5
 
@@ -176,6 +177,7 @@ export default function HomePage() {
     <div className="flex flex-col gap-4">
       <Greeting />
       <Tiles />
+      <TripsNow />
       <Slot name="home.widgets" props={{}} />
       <QuickActions />
       <div className="grid gap-4 lg:grid-cols-2">
