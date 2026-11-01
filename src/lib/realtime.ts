@@ -3,7 +3,7 @@ import { useQueryClient, type QueryKey } from '@tanstack/react-query'
 import { getSupabase } from './supabase'
 import { isFixtureMode } from './fixtures'
 
-type Table = 'alerts' | 'activity_log' | 'loading_progress' | 'trucks' | 'cargo_items'
+type Table = 'alerts' | 'activity_log' | 'loading_progress' | 'trucks' | 'cargo_items' | 'notifications'
 
 /**
  * Owner-only realtime: any change on `table` (optionally filtered, e.g. "trip_id=eq.<id>")

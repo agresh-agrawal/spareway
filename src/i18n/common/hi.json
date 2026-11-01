@@ -203,7 +203,10 @@
       "done": "पर माल दे दिया"
     },
     "provider_load": "{{name}} ने {{count}} नए लोड भेजे — लोड पेज देखें",
-    "offer_answer": "{{code}} के लिए आपके ऑफ़र (₹{{amount}}) का जवाब आया"
+    "offer_answer": "{{code}} के लिए आपके ऑफ़र (₹{{amount}}) का जवाब आया",
+    "trip_started": "{{code}} निकल गई — ट्रिप शुरू",
+    "trip_done": "{{code}} पूरी हुई — कमाई देखें",
+    "trip_cancelled": "{{code}} रद्द हो गई"
   },
   "fixture": {
     "banner": "फ़िक्सचर मोड — नमूना डेटा, कुछ सेव नहीं होता",

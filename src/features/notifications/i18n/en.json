@@ -1,0 +1,19 @@
+{
+  "title": "Notifications",
+  "bell_one": "{{count}} new notification",
+  "bell_other": "{{count}} new notifications",
+  "unread_one": "{{count}} new",
+  "unread_other": "{{count}} new",
+  "allRead": "All caught up",
+  "markAll": "Mark all as read",
+  "empty": "No notifications yet. Problems from loaders and drivers, challans, finished trips and new loads show up here.",
+  "major": "Emailed",
+  "emailed": "Important — also sent to your email",
+  "sample": "Sample",
+  "new": "New",
+  "email": {
+    "title": "Email me important changes",
+    "text": "Loader or driver problems, challans, trips finished or cancelled, new loads from traders and offer answers are emailed to {{email}} — one email every 10 minutes at most. Everything also shows in the bell.",
+    "switch": "Send important changes to my email"
+  }
+}

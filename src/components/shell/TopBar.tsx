@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Bell, Download, Gauge, Info, LogOut, Settings } from 'lucide-react'
-import { IconButton, LanguageButton, ThemeButton } from '@/components/common'
+import { Download, Gauge, Info, LogOut, Settings } from 'lucide-react'
+import { LanguageButton, ThemeButton } from '@/components/common'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import { useAuth } from '@/app/auth/AuthProvider'
 import { useLang } from '@/lib/i18n'
 import { useLowData } from '@/lib/lowData'
 import { useInstall } from '@/features/offline'
-import { useOpenAlertCount } from './api'
+import { NotificationBell } from '@/features/notifications'
 import { SearchBox } from './SearchBox'
 import { AboutDialog } from './AboutDialog'
 
@@ -30,14 +30,13 @@ function initials(name: string) {
   )
 }
 
-/** Title · search · Hindi button · bell with problem count · avatar menu. */
+/** Title · search · Hindi button · notification bell (unread count) · avatar menu. */
 export function TopBar({ title }: { title: string }) {
   const { t } = useLang()
   const nav = useNavigate()
   const { profile, company, signOut } = useAuth()
   const { lowData, setLowData } = useLowData()
   const { canInstall, install } = useInstall()
-  const { data: count = 0 } = useOpenAlertCount()
   const [about, setAbout] = useState(false)
 
   return (
@@ -50,12 +49,7 @@ export function TopBar({ title }: { title: string }) {
         </div>
         <ThemeButton />
         <LanguageButton />
-        <IconButton
-          icon={Bell}
-          label={t('shell.problemsCount', { count })}
-          badge={count}
-          onClick={() => nav('/#problems')}
-        />
+        <NotificationBell />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button

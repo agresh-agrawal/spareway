@@ -203,7 +203,10 @@
       "done": "delivered at"
     },
     "provider_load": "{{name}} sent {{count}} new load(s) — see Loads",
-    "offer_answer": "Your offer for {{code}} (₹{{amount}}) was answered"
+    "offer_answer": "Your offer for {{code}} (₹{{amount}}) was answered",
+    "trip_started": "{{code}} has left — trip started",
+    "trip_done": "{{code}} finished — see the earnings",
+    "trip_cancelled": "{{code}} was cancelled"
   },
   "fixture": {
     "banner": "Fixture mode — sample data, nothing is saved",
