@@ -13,6 +13,21 @@ interface Group {
   items: Placement[]
 }
 
+/**
+ * Item numbers as runs ("#33–36, 40, 45–47"): the same goods can be split across layers, so one range from the first
+ * to the last number would count items that are not on this layer. Long lists end with "…".
+ */
+function stepRuns(steps: number[], max = 3): string {
+  const runs: [number, number][] = []
+  for (const s of steps) {
+    const last = runs[runs.length - 1]
+    if (last && s === last[1] + 1) last[1] = s
+    else runs.push([s, s])
+  }
+  const text = runs.slice(0, max).map(([a, b]) => (a === b ? `${a}` : `${a}–${b}`))
+  return `#${text.join(', ')}${runs.length > max ? ', …' : ''}`
+}
+
 export function LayerList({
   placements,
   states,
@@ -51,8 +66,7 @@ export function LayerList({
           const all = done === g.items.length
           const here = g.items.some((p) => p.step === currentStep)
           const first = g.items[0]
-          const steps =
-            g.items.length === 1 ? `#${first.step}` : `#${first.step}–${g.items[g.items.length - 1].step}`
+          const steps = stepRuns(g.items.map((p) => p.step))
           return (
             <li key={`${g.label}-${g.unloadOrder}-${first.step}`}>
               <button
